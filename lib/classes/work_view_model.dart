@@ -1,24 +1,36 @@
-import 'package:fl_starter/classes/work_item.dart';
-import 'package:fl_starter/classes/work_kind.dart';
+import 'package:work_tracker/classes/work_item.dart';
+import 'package:work_tracker/classes/work_kind.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:dart_date/dart_date.dart';
 
 class WorkViewModel {
   final boxName = "workData";
+  final itemsName = "items";
+  final kindsName = "kinds";
 
-  Future<Box<dynamic>> openBox() async {
-    var appDir = await getApplicationDocumentsDirectory();
-    var hiveDir = appDir.path + '/' + "fl_db";
-    Hive.init(hiveDir);
-    var box2 = await Hive.openBox(boxName);
+  static bool initialized = false;
+
+  Future<Box<T>> openBox<T>(dynamic name) async {
+    if (!initialized) {
+      var appDir = await getApplicationDocumentsDirectory();
+      var hiveDir = appDir.path + '/' + "fl_db";
+      Hive.init(hiveDir);
+      Hive.registerAdapter(WorkItemAdapter());
+      Hive.registerAdapter(WorkKindAdapter());
+      initialized = true;
+    }
+    var box2 = await Hive.openBox<T>(name);
     return box2;
   }
 
+  Box<WorkItem>? openedBox;
+
   Future<List<WorkItem>> loadItems() async {
-    var box2 = await openBox();
-    var res = box2.get("items");
-    if (res == null) {
+    openedBox = await openBox<WorkItem>(itemsName);
+    if (openedBox == null) throw Exception("failed to open the work item box");
+    var res = openedBox?.values.toList();
+    if (res == null || res.isEmpty) {
       var kinds = await loadKinds();
       res = kinds.map(($k) => WorkItem.k($k.title)).toList();
     }
@@ -26,7 +38,6 @@ class WorkViewModel {
   }
 
   Future<List<WorkItem>> loadItemByKind(String kind, DateTime when) async {
-    var b = await openBox();
     var res = await loadItems();
     if (res != null && res.isNotEmpty) {
       var filtered =
@@ -37,25 +48,37 @@ class WorkViewModel {
   }
 
   Future<List<WorkKind>> loadKinds() async {
-    var b = await openBox();
-    var kinds = b.get("kinds", defaultValue: WorkKind.kinds);
+    var b = await openBox<WorkKind>(kindsName);
+    var kinds = b.values.toList();
+    if (kinds == null || kinds.isEmpty) {
+      kinds = WorkKind.kinds;
+      b.putAll(kinds.asMap());
+    }
     return kinds;
   }
 
   Future<List<WorkKindToday>> loadWork(DateTime when) async {
-    var b = await openBox();
     var kinds = await loadKinds();
-    var res = kinds.map(($k) => WorkKindToday($k, null));
-    return await createWork(res, when);
+    var wkEmpty = kinds.map(($k) => WorkKindToday($k, null));
+    var res = await createWork(wkEmpty.toList(), when);
+    return res;
   }
 
   Future<List<WorkKindToday>> createWork(
-      Iterable<WorkKindToday> kinds, DateTime when) async {
-    for (WorkKindToday k in kinds) {
+      List<WorkKindToday> kinds, DateTime when) async {
+    var work2return = kinds.toList();
+    for (WorkKindToday k in work2return) {
       var work = await loadItemByKind(k.kind.title, when);
       k.todayWork = work;
     }
     return kinds.toList();
+  }
+
+  WorkItem store(WorkItem item) {
+    if (openedBox != null) {
+      openedBox?.add(item);
+    }
+    return item;
   }
 }
 

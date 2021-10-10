@@ -1,8 +1,11 @@
-import 'package:fl_starter/classes/work_view_model.dart';
+import 'package:work_tracker/classes/work_item.dart';
+import 'package:work_tracker/classes/work_kind.dart';
+import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:work_tracker/views/work_item_page.dart';
 
 class KindPage extends StatefulWidget {
-  KindPage({Key? key, required this.title}) : super(key: key);
+  const KindPage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -11,7 +14,27 @@ class KindPage extends StatefulWidget {
 }
 
 class _KindPageState extends State<KindPage> {
-  WorkViewModel _model = new WorkViewModel();
+  final WorkViewModel _model = WorkViewModel();
+
+  void workItemEdit(BuildContext context, WorkKindToday kToday) async {
+    var res = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (ctx) => WorkItemPage(item: WorkItem.k(kToday.kind.title))),
+    );
+    if (res != null) {
+      var item = _model.store(res);
+      kToday.todayWork ??= [];
+      setState(() {
+        kToday.todayWork?.add(item);
+      });
+    }
+  }
+
+  Future<List<WorkKindToday>> loadWorkFor(DateTime when) async {
+    return _model.loadWork(when);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,15 +44,17 @@ class _KindPageState extends State<KindPage> {
         title: Text(widget.title),
       ),
       body: FutureBuilder<List>(
-        future: _model.loadWork(DateTime.now()),
+        future: loadWorkFor(DateTime.now()),
         initialData: [],
         builder: (context, snapshot) {
           return snapshot.hasData
-              ? new ListView.builder(
+              ? ListView.builder(
                   padding: const EdgeInsets.all(10.0),
                   itemCount: snapshot.data!.length,
-                  itemBuilder: (context, i) {
-                    return _buildRow(snapshot.data![i]);
+                  itemBuilder: (ctx, i) {
+                    return GestureDetector(
+                        onTap: () => workItemEdit(ctx, snapshot.data![i]),
+                        child: _buildRow(snapshot.data![i]));
                   },
                 )
               : Center(
@@ -46,11 +71,14 @@ class _KindPageState extends State<KindPage> {
   }
 
   Widget _buildRow(WorkKindToday i) {
-    return new ListTile(
-      title: new Text(i.kind.title),
-      subtitle: new Text(i.todayWork == null || i.todayWork!.length == 0
-          ? "not now"
-          : i.todayWork!.first.created.toString()),
+    var tw = i.todayWork;
+    var last = tw != null && tw.isNotEmpty ? tw.last : null;
+
+    var subtitle = last == null ? "not now" : '${last.created} [${last.qty}]';
+
+    return ListTile(
+      title: Text(i.kind.title),
+      subtitle: Text(subtitle),
     );
   }
 }

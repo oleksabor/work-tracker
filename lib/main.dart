@@ -1,4 +1,4 @@
-import 'package:fl_starter/views/kind_view.dart';
+import 'package:work_tracker/views/kind_view.dart';
 import 'package:flutter/material.dart';
 
 void main() async {

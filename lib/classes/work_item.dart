@@ -1,4 +1,4 @@
-import 'package:fl_starter/classes/hive_type_vales.dart';
+import 'package:work_tracker/classes/hive_type_vales.dart';
 import 'package:hive/hive.dart';
 import 'hive_type_vales.dart';
 
