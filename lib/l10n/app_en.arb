@@ -1,0 +1,7 @@
+{
+    "helloWorld": "Hello World!",
+    "incrementLabel": "You have pushed the button this many times:",
+    "@helloWorld": {
+      "description": "The conventional newborn programmer greeting"
+    }
+}
