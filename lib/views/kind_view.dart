@@ -1,11 +1,16 @@
+import 'dart:io';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:work_tracker/views/work_item_page.dart';
+import 'package:work_tracker/classes/date_extension.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 class KindPage extends StatefulWidget {
-  const KindPage({Key? key, required this.title}) : super(key: key);
+  final String defaultLocale;
+  const KindPage({Key? key, required this.title, this.defaultLocale = "en-US"})
+      : super(key: key);
 
   final String title;
 
@@ -13,7 +18,7 @@ class KindPage extends StatefulWidget {
   _KindPageState createState() => _KindPageState();
 }
 
-class _KindPageState extends State<KindPage> {
+class _KindPageState extends State<KindPage> with WidgetsBindingObserver {
   final WorkViewModel _model = WorkViewModel();
 
   void workItemEdit(BuildContext context, WorkKindToday kToday) async {
@@ -29,6 +34,24 @@ class _KindPageState extends State<KindPage> {
         kToday.todayWork?.add(item);
       });
     }
+  }
+
+  late String systemLocale;
+  late List<Locale> currentSystemLocales;
+
+  // Here we read the current locale values
+  void setCurrentLocale() {
+    currentSystemLocales = WidgetsBinding.instance!.window.locales;
+    systemLocale = Platform.localeName;
+    initializeDateFormatting(systemLocale, null);
+  }
+
+  @override
+  void initState() {
+    // This is run when the widget is first time initialized
+    WidgetsBinding.instance!.addObserver(this); // Subscribe to changes
+    setCurrentLocale();
+    super.initState();
   }
 
   Future<List<WorkKindToday>> loadWorkFor(DateTime when) async {
@@ -70,11 +93,20 @@ class _KindPageState extends State<KindPage> {
     );
   }
 
+  String dateAsString(DateTime? value) {
+    if (value == null) {
+      return "-";
+    }
+    return value.smartString();
+  }
+
   Widget _buildRow(WorkKindToday i) {
     var tw = i.todayWork;
     var last = tw != null && tw.isNotEmpty ? tw.last : null;
 
-    var subtitle = last == null ? "not now" : '${last.created} [${last.qty}]';
+    var dateStr = dateAsString(last?.created);
+
+    var subtitle = '$dateStr [${last?.qty ?? 0}]';
 
     return ListTile(
       title: Text(i.kind.title),

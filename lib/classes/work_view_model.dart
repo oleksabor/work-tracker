@@ -2,7 +2,7 @@ import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:dart_date/dart_date.dart';
+import 'package:work_tracker/classes/date_extension.dart';
 
 class WorkViewModel {
   final boxName = "workData";
