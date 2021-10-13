@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 
 // https://stackoverflow.com/a/65271573/940182
 class NumericStepButton extends StatefulWidget {
-  final int minValue;
-  final int maxValue;
+  int? minValue;
+  int? maxValue;
+  int? value;
 
   final ValueChanged<int> onChanged;
 
   NumericStepButton(
       {Key? key,
-      this.minValue = 0,
-      this.maxValue = 10,
+      this.value,
+      this.minValue,
+      this.maxValue,
       required this.onChanged})
       : super(key: key);
 
@@ -25,6 +27,8 @@ class _NumericStepButtonState extends State<NumericStepButton> {
 
   @override
   Widget build(BuildContext context) {
+    counter = widget.value ?? counter;
+    widget.value = null; // reset after first use
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -38,10 +42,12 @@ class _NumericStepButtonState extends State<NumericStepButton> {
           color: Theme.of(context).primaryColor,
           onPressed: () {
             setState(() {
-              if (counter > widget.minValue) {
+              var minValue = widget.minValue ?? (counter - 1);
+              if (counter > minValue) {
                 counter--;
               }
               widget.onChanged(counter);
+              setState(() {});
             });
           },
         ),
@@ -64,7 +70,8 @@ class _NumericStepButtonState extends State<NumericStepButton> {
           color: Theme.of(context).primaryColor,
           onPressed: () {
             setState(() {
-              if (counter < widget.maxValue) {
+              var maxValue = widget.maxValue ?? (counter + 1);
+              if (counter < maxValue) {
                 counter++;
               }
               widget.onChanged(counter);

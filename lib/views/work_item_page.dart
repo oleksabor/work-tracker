@@ -31,23 +31,24 @@ class WorkItemPage extends StatelessWidget {
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center,
-            children: [
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               const Text("Quantity"),
               NumericStepButton(
                 minValue: 0,
                 onChanged: changedQty,
+                value: item.qty,
               )
             ]),
           ),
           Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Row(mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              child:
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 const Text("Weight"),
                 NumericStepButton(
                   minValue: 0,
                   onChanged: changedWeight,
+                  value: item.weight.toInt(),
                 ),
               ])),
           Padding(
