@@ -74,6 +74,7 @@ class WorkViewModel {
     return kinds.toList();
   }
 
+  ///appends item to the openedBox
   WorkItem store(WorkItem item) {
     if (openedBox != null) {
       openedBox?.add(item);

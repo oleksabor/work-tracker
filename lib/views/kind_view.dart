@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
@@ -6,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:work_tracker/views/work_item_page.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:intl/date_symbol_data_local.dart';
+
+import 'lifecycle_watcher_state.dart';
 
 class KindPage extends StatefulWidget {
   final String defaultLocale;
@@ -18,14 +21,20 @@ class KindPage extends StatefulWidget {
   _KindPageState createState() => _KindPageState();
 }
 
-class _KindPageState extends State<KindPage> with WidgetsBindingObserver {
+class _KindPageState extends LifecycleWatcherState<KindPage> {
   final WorkViewModel _model = WorkViewModel();
+  Timer? timer;
 
   void workItemEdit(BuildContext context, WorkKindToday kToday) async {
+    var wi = WorkItem.k(kToday.kind.title);
+    var todayWork = kToday.todayWork;
+    if (todayWork != null && todayWork.isNotEmpty) {
+      wi.qty = todayWork.last.qty;
+      wi.weight = todayWork.last.weight;
+    }
     var res = await Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (ctx) => WorkItemPage(item: WorkItem.k(kToday.kind.title))),
+      MaterialPageRoute(builder: (ctx) => WorkItemPage(item: wi)),
     );
     if (res != null) {
       var item = _model.store(res);
@@ -48,10 +57,21 @@ class _KindPageState extends State<KindPage> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    // This is run when the widget is first time initialized
-    WidgetsBinding.instance!.addObserver(this); // Subscribe to changes
     setCurrentLocale();
+    timer = Timer.periodic(
+        const Duration(seconds: 30), (Timer t) => setState(() {}));
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    if (timer != null) timer!.cancel();
+    super.dispose();
+  }
+
+  @override
+  void onResumed() {
+    loadWorkFor(DateTime.now());
   }
 
   Future<List<WorkKindToday>> loadWorkFor(DateTime when) async {
@@ -112,5 +132,20 @@ class _KindPageState extends State<KindPage> with WidgetsBindingObserver {
       title: Text(i.kind.title),
       subtitle: Text(subtitle),
     );
+  }
+
+  @override
+  void onDetached() {
+    // TODO: implement onDetached
+  }
+
+  @override
+  void onInactive() {
+    // TODO: implement onInactive
+  }
+
+  @override
+  void onPaused() {
+    // TODO: implement onPaused
   }
 }
