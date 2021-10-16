@@ -13,6 +13,7 @@ class WorkKind {
   WorkKind();
   WorkKind.m(this.title);
 
+  @override
   int get hashCode => title.hashCode;
 
   static List<WorkKind> kinds = [
@@ -23,6 +24,6 @@ class WorkKind {
 
   @override
   bool operator ==(Object other) {
-    return this.hashCode == other.hashCode;
+    return hashCode == other.hashCode;
   }
 }
