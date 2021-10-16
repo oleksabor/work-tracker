@@ -18,6 +18,8 @@ class WorkItemPage extends StatelessWidget {
   }
 
   String get okCaption => "Ok";
+  String get qtyCaption => "Quantity";
+  String get weightCaption => "Weight";
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +34,7 @@ class WorkItemPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Text("Quantity"),
+              Text(qtyCaption),
               NumericStepButton(
                 minValue: 0,
                 onChanged: changedQty,
@@ -44,7 +46,7 @@ class WorkItemPage extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child:
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                const Text("Weight"),
+                Text(weightCaption),
                 NumericStepButton(
                   minValue: 0,
                   onChanged: changedWeight,

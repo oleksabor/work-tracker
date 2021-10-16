@@ -69,11 +69,6 @@ class _KindPageState extends LifecycleWatcherState<KindPage> {
     super.dispose();
   }
 
-  @override
-  void onResumed() {
-    loadWorkFor(DateTime.now());
-  }
-
   Future<List<WorkKindToday>> loadWorkFor(DateTime when) async {
     return _model.loadWork(when);
   }
@@ -147,5 +142,12 @@ class _KindPageState extends LifecycleWatcherState<KindPage> {
   @override
   void onPaused() {
     // TODO: implement onPaused
+  }
+
+  @override
+  void onResumed() {
+    setState(() {
+      loadWorkFor(DateTime.now());
+    });
   }
 }

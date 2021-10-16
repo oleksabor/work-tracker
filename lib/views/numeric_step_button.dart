@@ -25,6 +25,43 @@ class NumericStepButton extends StatefulWidget {
 class _NumericStepButtonState extends State<NumericStepButton> {
   int counter = 0;
 
+  void increment(int delta) {
+    setState(() {
+      var maxValue = widget.maxValue ?? (counter + delta);
+      if (counter < maxValue) {
+        counter += delta;
+      }
+      widget.onChanged(counter);
+    });
+  }
+
+  void decrement(int delta) {
+    setState(() {
+      var minValue = widget.minValue ?? (counter - delta);
+      if (counter > minValue) {
+        counter -= delta;
+      }
+      widget.onChanged(counter);
+      setState(() {});
+    });
+  }
+
+  void cancelPress() {
+    setState(() {
+      isPressed = false;
+    });
+  }
+
+  void startPressing(Function() fu) async {
+    isPressed = true;
+    do {
+      fu();
+      await Future.delayed(const Duration(milliseconds: 600));
+    } while (isPressed);
+  }
+
+  late bool isPressed;
+
   @override
   Widget build(BuildContext context) {
     counter = widget.value ?? counter;
@@ -32,23 +69,26 @@ class _NumericStepButtonState extends State<NumericStepButton> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        IconButton(
-          icon: Icon(
-            Icons.remove,
-            // color: Theme.of(context).secondaryHeaderColor,
+        GestureDetector(
+          child: Container(
+            child: Icon(
+              Icons.remove,
+              // color: Theme.of(context).secondaryHeaderColor,
+            ),
+            padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 18.0),
+            // color: Theme.of(context).primaryColor,
           ),
-          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 18.0),
-          iconSize: 32.0,
-          color: Theme.of(context).primaryColor,
-          onPressed: () {
-            setState(() {
-              var minValue = widget.minValue ?? (counter - 1);
-              if (counter > minValue) {
-                counter--;
-              }
-              widget.onChanged(counter);
-              setState(() {});
-            });
+          onTap: () {
+            decrement(1);
+          },
+          onLongPressStart: (_) async {
+            startPressing(() => decrement(10));
+          },
+          onLongPressCancel: () {
+            cancelPress();
+          },
+          onLongPressEnd: (_) {
+            cancelPress();
           },
         ),
         Text(
@@ -60,22 +100,25 @@ class _NumericStepButtonState extends State<NumericStepButton> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        IconButton(
-          icon: Icon(
-            Icons.add,
-            //color: Theme.of(context).secondaryHeaderColor,
+        GestureDetector(
+          child: Container(
+            child: const Icon(
+              Icons.add,
+              //color: Theme.of(context).secondaryHeaderColor,
+            ),
+            padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 18.0),
           ),
-          padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 18.0),
-          iconSize: 32.0,
-          color: Theme.of(context).primaryColor,
-          onPressed: () {
-            setState(() {
-              var maxValue = widget.maxValue ?? (counter + 1);
-              if (counter < maxValue) {
-                counter++;
-              }
-              widget.onChanged(counter);
-            });
+          onTap: () {
+            increment(1);
+          },
+          onLongPressStart: (_) async {
+            startPressing(() => increment(10));
+          },
+          onLongPressCancel: () {
+            cancelPress();
+          },
+          onLongPressEnd: (_) {
+            cancelPress();
           },
         ),
       ],
