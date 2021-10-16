@@ -62,6 +62,8 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
   late String systemLocale;
   late List<Locale> currentSystemLocales;
 
+  late Future<List<WorkKindToday>> todayWork;
+
   // Here we read the current locale values
   void setCurrentLocale() {
     currentSystemLocales = WidgetsBinding.instance!.window.locales;
@@ -74,6 +76,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     setCurrentLocale();
     timer = Timer.periodic(
         const Duration(seconds: 30), (Timer t) => setState(() {}));
+    todayWork = loadWorkFor(DateTime.now());
     super.initState();
   }
 
@@ -109,23 +112,12 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
               Expanded(
                   flex: 10,
                   child: FutureBuilder<List>(
-                    future: loadWorkFor(DateTime.now()),
+                    future: todayWork,
                     initialData: [],
                     builder: (context, snapshot) {
                       return snapshot.hasData
-                          ? ListView.builder(
-                              padding: const EdgeInsets.all(10.0),
-                              itemCount: snapshot.data!.length,
-                              itemBuilder: (ctx, i) {
-                                return GestureDetector(
-                                    onLongPress: () =>
-                                        workItemAdd(ctx, snapshot.data![i]),
-                                    onTap: () =>
-                                        workItemsView(ctx, snapshot.data![i]),
-                                    child: _buildRow(ctx, snapshot.data![i]));
-                              },
-                            )
-                          : Center(
+                          ? getItemsListView(snapshot.data)
+                          : const Center(
                               child: CircularProgressIndicator(),
                             );
                     },
@@ -138,6 +130,19 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
         //   child: Icon(Icons.add),
         // ), // This trailing comma makes auto-formatting nicer for build methods.
         );
+  }
+
+  ListView getItemsListView(List<dynamic>? items) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(10.0),
+      itemCount: items!.length,
+      itemBuilder: (ctx, i) {
+        return GestureDetector(
+            onLongPress: () => workItemAdd(ctx, items[i]),
+            onTap: () => workItemsView(ctx, items[i]),
+            child: _buildRow(ctx, items[i]));
+      },
+    );
   }
 
   FutureBuilder<String> getVersionText() {
