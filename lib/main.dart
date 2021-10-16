@@ -1,4 +1,4 @@
-import 'package:work_tracker/views/kind_view.dart';
+import 'package:work_tracker/views/main_items_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'dart:io';
@@ -30,7 +30,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       onGenerateTitle: (BuildContext ctx) => "helloWorld",
-      home: KindPage(title: title, defaultLocale: initialDefaultSystemLocale),
+      home: MainItemsPage(
+          title: title, defaultLocale: initialDefaultSystemLocale),
     );
   }
 }

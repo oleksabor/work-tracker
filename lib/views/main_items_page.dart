@@ -10,18 +10,19 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import 'lifecycle_watcher_state.dart';
 
-class KindPage extends StatefulWidget {
+class MainItemsPage extends StatefulWidget {
   final String defaultLocale;
-  const KindPage({Key? key, required this.title, this.defaultLocale = "en-US"})
+  const MainItemsPage(
+      {Key? key, required this.title, this.defaultLocale = "en-US"})
       : super(key: key);
 
   final String title;
 
   @override
-  _KindPageState createState() => _KindPageState();
+  _MainItemsPageState createState() => _MainItemsPageState();
 }
 
-class _KindPageState extends LifecycleWatcherState<KindPage> {
+class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
   final WorkViewModel _model = WorkViewModel();
   Timer? timer;
 
