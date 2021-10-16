@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:work_tracker/views/work_item_page.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:work_tracker/views/work_items_view.dart';
 
 import 'lifecycle_watcher_state.dart';
 
@@ -44,6 +45,17 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
         kToday.todayWork?.add(item);
       });
     }
+  }
+
+  void workItemsView(BuildContext context, WorkKindToday kind) async {
+    var d = DateTime.now();
+    var items = _model.loadItemByKind(kind.kind.title, d);
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (ctx) =>
+              WorkItemsView(date: d, kind: kind.kind.title, items: items)),
+    );
   }
 
   late String systemLocale;
@@ -92,7 +104,8 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
                   itemCount: snapshot.data!.length,
                   itemBuilder: (ctx, i) {
                     return GestureDetector(
-                        onTap: () => workItemEdit(ctx, snapshot.data![i]),
+                        onLongPress: () => workItemEdit(ctx, snapshot.data![i]),
+                        onTap: () => workItemsView(ctx, snapshot.data![i]),
                         child: _buildRow(snapshot.data![i]));
                   },
                 )

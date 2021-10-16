@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:work_tracker/views/numeric_step_button.dart';
 
 class WorkItemPage extends StatelessWidget {
-  // In the constructor, require a Todo.
   const WorkItemPage({Key? key, required this.item}) : super(key: key);
 
-  // Declare a field that holds the Todo.
+  // Declare a field that holds the Item.
   final WorkItem item;
 
   void changedQty(int value) {
