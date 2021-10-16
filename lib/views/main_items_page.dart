@@ -8,6 +8,7 @@ import 'package:work_tracker/views/work_item_page.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:work_tracker/views/work_items_view.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'lifecycle_watcher_state.dart';
 
@@ -27,7 +28,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
   final WorkViewModel _model = WorkViewModel();
   Timer? timer;
 
-  void workItemEdit(BuildContext context, WorkKindToday kToday) async {
+  void workItemAdd(BuildContext context, WorkKindToday kToday) async {
     var wi = WorkItem.k(kToday.kind.title);
     var todayWork = kToday.todayWork;
     if (todayWork != null && todayWork.isNotEmpty) {
@@ -86,40 +87,68 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     return _model.loadWork(when);
   }
 
+  Future<String> getAppVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String version = packageInfo.version;
+    String buildNumber = packageInfo.buildNumber;
+
+    return version + "+" + buildNumber;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: FutureBuilder<List>(
-        future: loadWorkFor(DateTime.now()),
-        initialData: [],
+        appBar: AppBar(
+          // Here we take the value from the MyHomePage object that was created by
+          // the App.build method, and use it to set our appbar title.
+          title: Text(widget.title),
+        ),
+        body: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: <Widget>[
+              Expanded(
+                  flex: 10,
+                  child: FutureBuilder<List>(
+                    future: loadWorkFor(DateTime.now()),
+                    initialData: [],
+                    builder: (context, snapshot) {
+                      return snapshot.hasData
+                          ? ListView.builder(
+                              padding: const EdgeInsets.all(10.0),
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (ctx, i) {
+                                return GestureDetector(
+                                    onLongPress: () =>
+                                        workItemAdd(ctx, snapshot.data![i]),
+                                    onTap: () =>
+                                        workItemsView(ctx, snapshot.data![i]),
+                                    child: _buildRow(ctx, snapshot.data![i]));
+                              },
+                            )
+                          : Center(
+                              child: CircularProgressIndicator(),
+                            );
+                    },
+                  )),
+              Expanded(flex: 1, child: getVersionText())
+            ])
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: _incrementCounter,
+        //   tooltip: 'add',
+        //   child: Icon(Icons.add),
+        // ), // This trailing comma makes auto-formatting nicer for build methods.
+        );
+  }
+
+  FutureBuilder<String> getVersionText() {
+    return FutureBuilder<String>(
+        future: getAppVersion(),
+        initialData: "version",
         builder: (context, snapshot) {
           return snapshot.hasData
-              ? ListView.builder(
-                  padding: const EdgeInsets.all(10.0),
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (ctx, i) {
-                    return GestureDetector(
-                        onLongPress: () => workItemEdit(ctx, snapshot.data![i]),
-                        onTap: () => workItemsView(ctx, snapshot.data![i]),
-                        child: _buildRow(snapshot.data![i]));
-                  },
-                )
-              : Center(
-                  child: CircularProgressIndicator(),
-                );
-        },
-      ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   tooltip: 'add',
-      //   child: Icon(Icons.add),
-      // ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+              ? Text(snapshot.data!)
+              : const Center(child: CircularProgressIndicator());
+        });
   }
 
   String dateAsString(DateTime? value) {
@@ -129,7 +158,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     return value.smartString();
   }
 
-  Widget _buildRow(WorkKindToday i) {
+  Widget _buildRow(BuildContext ctx, WorkKindToday i) {
     var tw = i.todayWork;
     var last = tw != null && tw.isNotEmpty ? tw.last : null;
 
@@ -138,9 +167,15 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     var subtitle = '$dateStr [${last?.qty ?? 0}]';
 
     return ListTile(
-      title: Text(i.kind.title),
-      subtitle: Text(subtitle),
-    );
+        title: Text(i.kind.title),
+        subtitle: Text(subtitle),
+        trailing: IconButton(
+          onPressed: () {
+            workItemAdd(ctx, i);
+          },
+          color: Theme.of(context).primaryColor,
+          icon: const Icon(Icons.add),
+        ));
   }
 
   @override
