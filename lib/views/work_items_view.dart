@@ -51,7 +51,7 @@ class WorkItemsView extends StatelessWidget {
                       return _buildRow(snapshot.data![i]);
                     },
                   )
-                : Center(
+                : const Center(
                     child: CircularProgressIndicator(),
                   );
           },

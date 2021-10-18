@@ -37,11 +37,11 @@ class WorkViewModel {
     return res;
   }
 
-  Future<List<WorkItem>> loadItemByKind(String kind, DateTime when) async {
-    var res = await loadItems();
+  Future<List<WorkItem>> filterItemsByKind(
+      List<WorkItem> res, String kind, DateTime? when) async {
     if (res != null && res.isNotEmpty) {
-      var filtered =
-          res.where(($i) => $i.kind == kind && when.isSameDay($i.created));
+      var filtered = res.where(($i) =>
+          $i.kind == kind && (when == null || when.isSameDay($i.created)));
       return filtered.toList();
     }
     return [];
@@ -67,8 +67,13 @@ class WorkViewModel {
   Future<List<WorkKindToday>> createWork(
       List<WorkKindToday> kinds, DateTime when) async {
     var work2return = kinds.toList();
+    var items = await loadItems();
     for (WorkKindToday k in work2return) {
-      var work = await loadItemByKind(k.kind.title, when);
+      var work = await filterItemsByKind(items, k.kind.title, when);
+      if (work.isEmpty) {
+        // no work was found for today, lets try to find a previous day work
+        work = await filterItemsByKind(items, k.kind.title, null);
+      }
       k.todayWork = work;
     }
     return kinds.toList();

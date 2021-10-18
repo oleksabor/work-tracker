@@ -50,7 +50,8 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
 
   void workItemsView(BuildContext context, WorkKindToday kind) async {
     var d = DateTime.now();
-    var items = _model.loadItemByKind(kind.kind.title, d);
+    var allItems = await _model.loadItems();
+    var items = _model.filterItemsByKind(allItems, kind.kind.title, d);
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -169,7 +170,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
 
     var dateStr = dateAsString(last?.created);
 
-    var subtitle = '$dateStr [${last?.qty ?? 0}]';
+    var subtitle = last == null ? "-" : '$dateStr [${last.qty}]';
 
     return ListTile(
         title: Text(i.kind.title),
