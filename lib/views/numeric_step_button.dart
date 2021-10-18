@@ -28,7 +28,7 @@ class _NumericStepButtonState extends State<NumericStepButton> {
   void increment(int delta) {
     setState(() {
       var maxValue = widget.maxValue ?? (counter + delta);
-      if (counter < maxValue) {
+      if (counter < maxValue && counter + delta <= maxValue) {
         counter += delta;
       }
       widget.onChanged(counter);
@@ -38,7 +38,7 @@ class _NumericStepButtonState extends State<NumericStepButton> {
   void decrement(int delta) {
     setState(() {
       var minValue = widget.minValue ?? (counter - delta);
-      if (counter > minValue) {
+      if (counter > minValue && counter - delta >= minValue) {
         counter -= delta;
       }
       widget.onChanged(counter);
@@ -70,17 +70,15 @@ class _NumericStepButtonState extends State<NumericStepButton> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         GestureDetector(
-          child: Container(
-            child: const Icon(
+          child: IconButton(
+            onPressed: () => decrement(1),
+            icon: const Icon(
               Icons.remove,
               // color: Theme.of(context).secondaryHeaderColor,
             ),
-            padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 18.0),
-            // color: Theme.of(context).primaryColor,
+            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 18.0),
+            color: Theme.of(context).primaryColor,
           ),
-          onTap: () {
-            decrement(1);
-          },
           onLongPressStart: (_) async {
             startPressing(() => decrement(10));
           },
@@ -101,16 +99,15 @@ class _NumericStepButtonState extends State<NumericStepButton> {
           ),
         ),
         GestureDetector(
-          child: Container(
-            child: const Icon(
+          child: IconButton(
+            onPressed: () => increment(1),
+            icon: const Icon(
               Icons.add,
               //color: Theme.of(context).secondaryHeaderColor,
             ),
-            padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 18.0),
+            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 18.0),
+            color: Theme.of(context).primaryColor,
           ),
-          onTap: () {
-            increment(1);
-          },
           onLongPressStart: (_) async {
             startPressing(() => increment(10));
           },
