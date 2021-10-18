@@ -71,11 +71,11 @@ class _NumericStepButtonState extends State<NumericStepButton> {
       children: [
         GestureDetector(
           child: Container(
-            child: Icon(
+            child: const Icon(
               Icons.remove,
               // color: Theme.of(context).secondaryHeaderColor,
             ),
-            padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 18.0),
+            padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 18.0),
             // color: Theme.of(context).primaryColor,
           ),
           onTap: () {
@@ -94,7 +94,7 @@ class _NumericStepButtonState extends State<NumericStepButton> {
         Text(
           '$counter',
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.black87,
             fontSize: 18.0,
             fontWeight: FontWeight.w500,
@@ -106,7 +106,7 @@ class _NumericStepButtonState extends State<NumericStepButton> {
               Icons.add,
               //color: Theme.of(context).secondaryHeaderColor,
             ),
-            padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 18.0),
+            padding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 18.0),
           ),
           onTap: () {
             increment(1);
