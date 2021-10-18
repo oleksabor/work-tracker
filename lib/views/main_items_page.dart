@@ -123,7 +123,10 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
                             );
                     },
                   )),
-              Expanded(flex: 1, child: getVersionText())
+              Row(
+                children: [getVersionText()],
+                mainAxisAlignment: MainAxisAlignment.end,
+              )
             ])
         // floatingActionButton: FloatingActionButton(
         //   onPressed: _incrementCounter,
@@ -152,7 +155,9 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
         initialData: "version",
         builder: (context, snapshot) {
           return snapshot.hasData
-              ? Text(snapshot.data!)
+              ? Text(snapshot.data!,
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.primary))
               : const Center(child: CircularProgressIndicator());
         });
   }
