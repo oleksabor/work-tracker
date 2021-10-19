@@ -3,6 +3,7 @@ import 'package:work_tracker/classes/work_kind.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:work_tracker/classes/date_extension.dart';
+import 'package:flutter/foundation.dart';
 
 class WorkViewModel {
   final boxName = "workData";
@@ -26,19 +27,15 @@ class WorkViewModel {
 
   Box<WorkItem>? openedBox;
 
-  Future<List<WorkItem>> loadItems() async {
+  Future<List<WorkItem>?> loadItems() async {
     openedBox = await openBox<WorkItem>(itemsName);
     if (openedBox == null) throw Exception("failed to open the work item box");
     var res = openedBox?.values.toList();
-    if (res == null || res.isEmpty) {
-      var kinds = await loadKinds();
-      res = kinds.map(($k) => WorkItem.k($k.title)).toList();
-    }
     return res;
   }
 
   Future<List<WorkItem>> filterItemsByKind(
-      List<WorkItem> res, String kind, DateTime? when) async {
+      List<WorkItem>? res, String kind, DateTime? when) async {
     if (res != null && res.isNotEmpty) {
       var filtered = res.where(($i) =>
           $i.kind == kind && (when == null || when.isSameDay($i.created)));
@@ -85,6 +82,12 @@ class WorkViewModel {
       openedBox?.add(item);
     }
     return item;
+  }
+
+  void dispose() {
+    if (openedBox != null) {
+      openedBox?.close();
+    }
   }
 }
 

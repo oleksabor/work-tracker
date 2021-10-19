@@ -83,6 +83,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
 
   @override
   void dispose() {
+    _model.dispose();
     if (timer != null) timer!.cancel();
     super.dispose();
   }
