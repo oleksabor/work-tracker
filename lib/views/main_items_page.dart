@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
@@ -10,6 +11,7 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:work_tracker/views/work_items_view.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import 'debug_page.dart';
 import 'lifecycle_watcher_state.dart';
 
 class MainItemsPage extends StatefulWidget {
@@ -100,6 +102,23 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     return version + "+" + buildNumber;
   }
 
+  final menuTags = [tagDebug];
+  static const tagDebug = "Debug";
+
+  void handleClick(String tag) async {
+    if (kDebugMode) {
+      print("menu " + tag);
+    }
+    switch (tag) {
+      case "Debug":
+        var res = await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (ctx) => DebugPage(pageTitle: tag)),
+        );
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,6 +126,19 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
           title: Text(widget.title),
+          actions: <Widget>[
+            PopupMenuButton<String>(
+              onSelected: handleClick,
+              itemBuilder: (BuildContext context) {
+                return menuTags.map((String choice) {
+                  return PopupMenuItem<String>(
+                    value: choice,
+                    child: Text(choice),
+                  );
+                }).toList();
+              },
+            ),
+          ],
         ),
         body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

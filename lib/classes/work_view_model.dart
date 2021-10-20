@@ -17,6 +17,9 @@ class WorkViewModel {
       var appDir = await getApplicationDocumentsDirectory();
       var hiveDir = appDir.path + '/' + "fl_db";
       Hive.init(hiveDir);
+      if (kDebugMode) {
+        print("data storage dir is " + hiveDir);
+      }
       Hive.registerAdapter(WorkItemAdapter());
       Hive.registerAdapter(WorkKindAdapter());
       initialized = true;
