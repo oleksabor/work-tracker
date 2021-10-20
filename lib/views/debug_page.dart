@@ -1,38 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-
-class DirData {
-  final String appDocuments;
-  final String appLibrary;
-  String? extStorage;
-
-  DirData(
-      {required this.appDocuments,
-      required this.extStorage,
-      required this.appLibrary});
-}
+import 'package:work_tracker/classes/doc_dir.dart';
 
 class DebugPage extends StatelessWidget {
   const DebugPage({Key? key, required this.pageTitle}) : super(key: key);
   final String pageTitle;
 
-  Future<DirData> loadDirectories() async {
-    var docDir = await getApplicationDocumentsDirectory();
-    var libDir;
+  Widget createColumnDir(DirData data) {
+    var items = data.toList();
+    var res = ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (c, i) {
+          return ListTile(
+            title: Text(items[i].title),
+            subtitle: Text(
+              items[i].path ?? "-",
+              overflow: TextOverflow.clip,
+            ),
+            isThreeLine: true,
+          );
+        });
 
-    var es = await getExternalStorageDirectory();
-    return DirData(
-        appDocuments: docDir.path,
-        extStorage: es?.path,
-        appLibrary: libDir == null ? "unsuppored" : libDir.path);
-  }
-
-  Column createColumnDir(DirData data) {
-    return Column(children: [
-      asRow("appDocuments", data.appDocuments),
-      asRow("appLibrary", data.appLibrary),
-      asRow("extDir", data.extStorage ?? "-"),
-    ]);
+    return res;
   }
 
   Widget asRow(String title, String value) {
@@ -41,7 +29,7 @@ class DebugPage extends StatelessWidget {
 
   Widget asText(String value) {
     return Expanded(
-      child: Text(value, overflow: TextOverflow.clip),
+      child: Text(value, overflow: TextOverflow.fade),
     );
   }
 
@@ -53,7 +41,7 @@ class DebugPage extends StatelessWidget {
       ),
       body: Center(
           child: FutureBuilder<DirData>(
-        future: loadDirectories(),
+        future: DirData.loadDirectories(),
         builder: (c, s) => s.hasData
             ? createColumnDir(s.data!)
             : const Center(
