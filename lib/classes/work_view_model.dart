@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
 import 'package:hive/hive.dart';
@@ -12,14 +13,65 @@ class WorkViewModel {
 
   static bool initialized = false;
 
+  Stream<String> getDbFolders() async* {
+    var d1 = await getApplicationDocumentsDirectory();
+    yield d1.path;
+    var d2 = await getExternalDir();
+    if (d2 != null) yield d2.path;
+  }
+
+  Future<Directory?> getExternalDir() async {
+    return await getExternalStorageDirectory();
+  }
+
+  Future<String> findDbFile(Stream<String> directories) async {
+    String? hiveDb;
+    await for (var dir in directories) {
+      hiveDb = dir + '/' + "fl_db";
+
+      if (await checkHive(hiveDb)) {
+        break;
+      }
+    }
+    if (hiveDb == null) {
+      throw Exception("failed to find a place for hive db");
+    }
+    return hiveDb;
+  }
+
+  Future<bool> checkHive(String path) async {
+    var exists = await Directory(path).exists();
+    return exists;
+  }
+
+  Future moveDb2Dir(String newPath) async {
+    openedBox?.close();
+    var hiveDb = await findDbFile(getDbFolders());
+    var dbFile = Directory(hiveDb);
+    if (dbFile.path == newPath) {
+      throw Exception("can't move hive $hiveDb to the same path");
+    }
+
+    var newDir = Directory(newPath + '/' + "fl_db");
+    if (await newDir.exists()) {
+      await newDir.delete(recursive: true);
+    }
+    await newDir.create();
+    await for (var file in dbFile.list()) {
+      await File(file.path).copy(newPath);
+    }
+
+    initialized = false;
+  }
+
   Future<Box<T>> openBox<T>(dynamic name) async {
     if (!initialized) {
-      var appDir = await getApplicationDocumentsDirectory();
-      var hiveDir = appDir.path + '/' + "fl_db";
-      Hive.init(hiveDir);
+      var hiveDb = await findDbFile(getDbFolders());
+      Hive.init(hiveDb);
       if (kDebugMode) {
-        print("data storage dir is " + hiveDir);
+        print("data storage dir is " + hiveDb);
       }
+
       Hive.registerAdapter(WorkItemAdapter());
       Hive.registerAdapter(WorkKindAdapter());
       initialized = true;

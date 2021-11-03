@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:work_tracker/classes/doc_dir.dart';
+import 'package:work_tracker/classes/work_view_model.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class DebugPage extends StatelessWidget {
   const DebugPage({Key? key, required this.pageTitle}) : super(key: key);
@@ -33,21 +35,38 @@ class DebugPage extends StatelessWidget {
     );
   }
 
+  String get move2SDCaption => "move db to External storage";
+
+  Future moveDb() async {
+    var vm = WorkViewModel();
+    if (await Permission.storage.request().isGranted) {
+      var externalDir = await vm.getExternalDir();
+
+      if (externalDir != null) await vm.moveDb2Dir(externalDir.path);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(pageTitle),
       ),
-      body: Center(
-          child: FutureBuilder<DirData>(
-        future: DirData.loadDirectories(),
-        builder: (c, s) => s.hasData
-            ? createColumnDir(s.data!)
-            : const Center(
-                child: CircularProgressIndicator(),
-              ),
-      )),
+      body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            Expanded(
+                child: FutureBuilder<DirData>(
+              future: DirData.loadDirectories(),
+              builder: (c, s) => s.hasData
+                  ? createColumnDir(s.data!)
+                  : const CircularProgressIndicator(),
+            )),
+            TextButton(
+              onPressed: moveDb,
+              child: Text(move2SDCaption),
+            )
+          ]),
     );
   }
 }
