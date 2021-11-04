@@ -5,6 +5,7 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:flutter/foundation.dart';
+import 'package:path/path.dart' as Path;
 
 class WorkViewModel {
   final boxName = "workData";
@@ -21,7 +22,11 @@ class WorkViewModel {
   }
 
   Future<Directory?> getExternalDir() async {
-    return await getExternalStorageDirectory();
+    try {
+      return await getExternalStorageDirectory();
+    } on UnimplementedError {
+      return null;
+    }
   }
 
   Future<String> findDbFile(Stream<String> directories) async {
@@ -57,11 +62,26 @@ class WorkViewModel {
       await newDir.delete(recursive: true);
     }
     await newDir.create();
-    await for (var file in dbFile.list()) {
-      await File(file.path).copy(newPath);
-    }
+    await copyPath(dbFile.path, newDir.path);
+    await dbFile.delete(recursive: true);
 
     initialized = false;
+  }
+
+  ///should be from io but failed to find
+  ///https://pub.dev/documentation/io/latest/io/copyPath.html
+  Future<void> copyPath(String from, String to) async {
+    await Directory(to).create(recursive: true);
+    await for (final file in Directory(from).list(recursive: true)) {
+      final copyTo = Path.join(to, Path.relative(file.path, from: from));
+      if (file is Directory) {
+        await Directory(copyTo).create(recursive: true);
+      } else if (file is File) {
+        await File(file.path).copy(copyTo);
+      } else if (file is Link) {
+        await Link(copyTo).create(await file.target(), recursive: true);
+      }
+    }
   }
 
   Future<Box<T>> openBox<T>(dynamic name) async {
