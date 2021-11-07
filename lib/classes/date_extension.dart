@@ -5,17 +5,17 @@ extension DateMethods on DateTime {
     return day == value.day && month == value.month && year == value.year;
   }
 
-  String smartString() {
-    var now = DateTime.now();
+  String smartString({DateTime? from}) {
+    var now = from ?? DateTime.now();
     var diff = now.difference(this);
-    if (now.isSameDay(this)) {
+    if (diff.inHours < 24) {
       if (diff.inMinutes > 59) {
         return diff.inHours.toString() + ' hours ago';
       } else {
         return diff.inMinutes.toString() + ' minutes ago';
       }
     }
-    if (diff.inDays == 1) {
+    if (now.day - day == 1) {
       var format = DateFormat.jm();
       return 'Yesterday at ' + format.format(this);
     }
