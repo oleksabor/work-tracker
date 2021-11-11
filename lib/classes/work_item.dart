@@ -5,7 +5,7 @@ import 'hive_type_vales.dart';
 part 'work_item.g.dart';
 
 @HiveType(typeId: HiveTypesEnum.workItem)
-class WorkItem {
+class WorkItem extends HiveObject {
   @HiveField(0)
   String kind = '';
 
@@ -20,4 +20,11 @@ class WorkItem {
 
   WorkItem.k(this.kind);
   WorkItem();
+  factory WorkItem.from(WorkItem src) {
+    var res = WorkItem.k(src.kind);
+    res.created = src.created;
+    res.qty = src.qty;
+    res.weight = src.weight;
+    return res;
+  }
 }

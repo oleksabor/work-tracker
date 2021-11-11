@@ -109,6 +109,16 @@ class WorkViewModel {
     return res;
   }
 
+  Future<List<WorkItem>> loadItemsByDate(String kind, DateTime? when) async {
+    var all = await loadItems();
+    var ondate = await filterItemsByKind(all, kind, when);
+    if (all != null && ondate.isEmpty) {
+      var latest = all.where(($_) => $_.kind == kind).last;
+      ondate = await filterItemsByKind(all, kind, latest.created);
+    }
+    return ondate.toList();
+  }
+
   Future<List<WorkItem>> filterItemsByKind(
       List<WorkItem>? res, String kind, DateTime? when) async {
     if (res != null && res.isNotEmpty) {
@@ -151,12 +161,24 @@ class WorkViewModel {
     return kinds.toList();
   }
 
-  ///appends item to the openedBox
+  ///appends [item] to the [openedBox]
   WorkItem store(WorkItem item) {
     if (openedBox != null) {
       openedBox?.add(item);
     }
     return item;
+  }
+
+  void updateItem(WorkItem item) {
+    if (openedBox != null) {
+      item.save();
+    }
+  }
+
+  void removeItem(WorkItem item) {
+    if (openedBox != null) {
+      item.delete();
+    }
   }
 
   void dispose() {
