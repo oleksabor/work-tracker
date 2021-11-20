@@ -54,8 +54,8 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
 
   void workItemsView(BuildContext context, WorkKindToday kind) async {
     var d = DateTime.now();
-    if (kind.todayWork?.first != null) {
-      d = kind.todayWork!.first.created;
+    if (kind.todayWork?.last != null) {
+      d = kind.todayWork!.last.created;
     }
     var items = _model.loadItemsByDate(kind.kind.title, d);
     await Navigator.push(
