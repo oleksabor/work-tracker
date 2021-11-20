@@ -1,8 +1,11 @@
+import 'package:work_tracker/classes/date_extension.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:flutter/material.dart';
 import 'package:work_tracker/views/numeric_step_button.dart';
 
+/// [item] edit view
 class WorkItemPage extends StatelessWidget {
+  /// [item] edit view
   const WorkItemPage({Key? key, required this.item}) : super(key: key);
 
   // Declare a field that holds the Item.
@@ -19,40 +22,17 @@ class WorkItemPage extends StatelessWidget {
   String get okCaption => "Ok";
   String get qtyCaption => "Quantity";
   String get weightCaption => "Weight";
+  String get createdCaption => "Created";
 
   @override
   Widget build(BuildContext context) {
-    // Use the Todo to create the UI.
     return Scaffold(
         appBar: AppBar(
           title: Text(item.kind),
         ),
-        body: Center(
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Text(qtyCaption),
-              NumericStepButton(
-                minValue: 0,
-                onChanged: changedQty,
-                value: item.qty,
-              )
-            ]),
-          ),
-          Padding(
-              padding: const EdgeInsets.all(16.0),
-              child:
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                Text(weightCaption),
-                NumericStepButton(
-                  minValue: 0,
-                  onChanged: changedWeight,
-                  value: item.weight.toInt(),
-                ),
-              ])),
-          Padding(
+        body: Builder(builder: (context) {
+          var rows = buildRows(item);
+          rows.add(Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               onPressed: () {
@@ -60,7 +40,51 @@ class WorkItemPage extends StatelessWidget {
               },
               child: Text(okCaption),
             ),
+          ));
+          var res = Center(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center, children: rows));
+          return res;
+        }));
+  }
+
+  List<Widget> buildRows(WorkItem item) {
+    var res = [
+      buildNumericRow(qtyCaption, changedQty, item.qty),
+      buildNumericRow(weightCaption, changedWeight, item.weight.toInt()),
+    ];
+    if (!item.created.isSameDay(DateTime.now())) {
+      res.add(Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Spacer(
+            flex: 5,
           ),
-        ])));
+          Text(createdCaption),
+          Spacer(
+            flex: 1,
+          ),
+          Text(item.created.smartString()),
+          Spacer(
+            flex: 5,
+          ),
+        ]),
+      ));
+    }
+    return res;
+  }
+
+  Widget buildNumericRow(String caption, Function(int) diff, int value) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text(caption),
+        NumericStepButton(
+          minValue: 0,
+          onChanged: diff,
+          value: value,
+        )
+      ]),
+    );
   }
 }

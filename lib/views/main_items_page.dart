@@ -14,6 +14,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'debug_page.dart';
 import 'lifecycle_watcher_state.dart';
 
+/// main app page
 class MainItemsPage extends StatefulWidget {
   final String defaultLocale;
   const MainItemsPage(
@@ -26,6 +27,7 @@ class MainItemsPage extends StatefulWidget {
   _MainItemsPageState createState() => _MainItemsPageState();
 }
 
+/// main app page state
 class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
   final WorkViewModel _model = WorkViewModel();
   Timer? timer;
@@ -52,13 +54,15 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
 
   void workItemsView(BuildContext context, WorkKindToday kind) async {
     var d = DateTime.now();
-    var allItems = await _model.loadItems();
-    var items = _model.filterItemsByKind(allItems, kind.kind.title, d);
+    if (kind.todayWork?.last != null) {
+      d = kind.todayWork!.last.created;
+    }
+    var items = _model.loadItemsByDate(kind.kind.title, d);
     await Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (ctx) =>
-              WorkItemsView(date: d, kind: kind.kind.title, items: items)),
+          builder: (ctx) => WorkItemsView(
+              date: d, kind: kind.kind.title, items: items, model: _model)),
     );
   }
 
@@ -121,6 +125,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
 
   @override
   Widget build(BuildContext context) {
+    //DateMethods.locale = Localizations.localeOf(context);
     return Scaffold(
         appBar: AppBar(
           // Here we take the value from the MyHomePage object that was created by
