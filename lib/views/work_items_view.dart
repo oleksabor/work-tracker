@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:work_tracker/views/work_item_page.dart';
 
+/// items list on day
 class WorkItemsView extends StatefulWidget {
   final Future<List<WorkItem>> items;
   final DateTime date;
@@ -26,8 +27,18 @@ class WorkItemsView extends StatefulWidget {
 
 ///[items] list view  per day
 class WorkItemsViewState extends State<WorkItemsView> {
-  Future<List<WorkItem>> get items => widget.items;
-  DateTime get date => widget.date;
+  Future<List<WorkItem>>? localItems;
+  Future<List<WorkItem>> get items => localItems ?? widget.items;
+  set items(Future<List<WorkItem>> v) {
+    localItems = v;
+  }
+
+  DateTime? localDate;
+  DateTime get date => localDate ?? widget.date;
+  set date(DateTime v) {
+    localDate = v;
+  }
+
   String get kind => widget.kind;
 
   WorkViewModel get model => widget.model;
@@ -48,6 +59,40 @@ class WorkItemsViewState extends State<WorkItemsView> {
     return DateFormat.MMMMd(DateMethods.localeStr).format(value);
   }
 
+  Future<List<WorkItem>> getItems(bool Function(WorkItem wi) filter) async {
+    var all = await model.loadItems();
+    if (all == null) return [];
+
+    var itemsPrev = all.where((i) => i.kind == kind && filter(i));
+    if (itemsPrev.isNotEmpty) {
+      itemsPrev = itemsPrev;
+      return itemsPrev.toList();
+    }
+    return [];
+  }
+
+  void getItemsBefore(DateTime adate) async {
+    adate = DateTime(adate.year, adate.month, adate.day);
+    var prevItems = await getItems((wi) => wi.created.isBefore(adate));
+    if (prevItems.isNotEmpty) {
+      date = prevItems.last.created;
+      prevItems = prevItems.where((i) => i.created.isSameDay(date)).toList();
+      items = Future.value(prevItems);
+    }
+  }
+
+  void getItemsAfter(DateTime adate) async {
+    adate = DateTime(adate.year, adate.month, adate.day).add(Duration(days: 1));
+    var prevItems = await getItems((wi) => wi.created.isAfter(adate));
+    if (prevItems.isNotEmpty) {
+      date = prevItems.first.created;
+      prevItems = prevItems
+          .where((i) => i.created.isSameDay(prevItems.last.created))
+          .toList();
+      items = Future.value(prevItems);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,23 +101,46 @@ class WorkItemsViewState extends State<WorkItemsView> {
           // the App.build method, and use it to set our appbar title.
           title: Text(widgetTitle),
         ),
-        body: FutureBuilder<List>(
-          future: items,
-          initialData: [],
-          builder: (context, snapshot) {
-            return snapshot.hasData
-                ? ListView.builder(
-                    padding: const EdgeInsets.all(10.0),
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (ctx, i) {
-                      return _buildRow(ctx, snapshot.data![i]);
-                    },
-                  )
-                : const Center(
-                    child: CircularProgressIndicator(),
-                  );
-          },
-        ));
+        body: Column(children: <Widget>[
+          Flexible(
+              child: FutureBuilder<List>(
+            future: items,
+            initialData: [],
+            builder: (context, snapshot) {
+              return snapshot.hasData
+                  ? ListView.builder(
+                      padding: const EdgeInsets.all(10.0),
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (ctx, i) {
+                        return _buildRow(ctx, snapshot.data![i]);
+                      },
+                    )
+                  : const Center(
+                      child: CircularProgressIndicator(),
+                    );
+            },
+          )),
+          Row(children: [
+            IconButton(
+              onPressed: () {
+                getItemsBefore(date);
+
+                setState(() {});
+              },
+              color: Theme.of(context).primaryColor,
+              icon: const Icon(Icons.arrow_back),
+            ),
+            IconButton(
+              onPressed: () {
+                getItemsAfter(date);
+
+                setState(() {});
+              },
+              color: Theme.of(context).primaryColor,
+              icon: const Icon(Icons.arrow_forward),
+            )
+          ])
+        ]));
   }
 
   String get qtyCaption => "quantity";

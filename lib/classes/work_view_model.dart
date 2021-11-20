@@ -111,10 +111,19 @@ class WorkViewModel {
 
   Future<List<WorkItem>> loadItemsByDate(String kind, DateTime? when) async {
     var all = await loadItems();
+    return itemsByKindDate(all, kind, when);
+  }
+
+  Future<List<WorkItem>> itemsByKindDate(
+      List<WorkItem>? all, String kind, DateTime? when) async {
     var ondate = await filterItemsByKind(all, kind, when);
     if (all != null && ondate.isEmpty) {
-      var latest = all.where(($_) => $_.kind == kind).last;
-      ondate = await filterItemsByKind(all, kind, latest.created);
+      var latest = all.where(($_) =>
+          $_.kind == kind && (when == null || $_.created.isBefore(when)));
+      if (latest.isNotEmpty) {
+        var last = latest.last;
+        ondate = await filterItemsByKind(all, kind, last.created);
+      }
     }
     return ondate.toList();
   }
