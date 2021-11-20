@@ -125,7 +125,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
 
   @override
   Widget build(BuildContext context) {
-    //DateMethods.locale = Localizations.localeOf(context);
+    DateMethods.locale = Localizations.localeOf(context);
     return Scaffold(
         appBar: AppBar(
           // Here we take the value from the MyHomePage object that was created by
