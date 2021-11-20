@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 extension DateMethods on DateTime {
@@ -16,13 +17,19 @@ extension DateMethods on DateTime {
       }
     }
     if (now.day - day == 1) {
-      var format = DateFormat.jm();
+      var format = DateFormat.jm(localeStr);
       return 'Yesterday at ' + format.format(this);
     }
-    var format = now.year != year ? DateFormat.yMd() : DateFormat.MMMMd();
+
+    var format = now.year != year
+        ? DateFormat.yMd(localeStr)
+        : DateFormat.MMMMd(localeStr);
 
     format = format.add_jm();
 
     return format.format(this);
   }
+
+  static Locale? locale;
+  static String get localeStr => locale?.toString() ?? "uk_UA";
 }

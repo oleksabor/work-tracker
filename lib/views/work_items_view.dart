@@ -36,7 +36,6 @@ class WorkItemsViewState extends State<WorkItemsView> {
   String get yesterdayCaption => "yesterday";
 
   String get widgetTitle => kind + " on " + asDate(date);
-  String defaultLocale = Platform.localeName;
 
   String asDate(DateTime value) {
     var diff = value.difference(DateTime.now());
@@ -46,7 +45,7 @@ class WorkItemsViewState extends State<WorkItemsView> {
     if (diff.inDays == -1) {
       return yesterdayCaption;
     }
-    return DateFormat.MMMMd(defaultLocale).format(value);
+    return DateFormat.MMMMd(DateMethods.localeStr).format(value);
   }
 
   @override
