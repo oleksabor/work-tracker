@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:work_tracker/classes/date_extension.dart';
 import 'package:work_tracker/classes/doc_dir.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -62,6 +64,14 @@ class DebugPage extends StatelessWidget {
                   ? createColumnDir(s.data!)
                   : const CircularProgressIndicator(),
             )),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text("test time format "),
+              Text(DateMethods.timeFormat.format(DateTime.now()))
+            ]),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Text("test date format "),
+              Text(DateTime.now().asStringTime())
+            ]),
             TextButton(
               onPressed: moveDb,
               child: Text(move2SDCaption),

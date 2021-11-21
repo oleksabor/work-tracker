@@ -25,11 +25,23 @@ extension DateMethods on DateTime {
         ? DateFormat.yMd(localeStr)
         : DateFormat.MMMMd(localeStr);
 
-    format = format.add_jm();
+    return asStringTime(fmt: format);
+  }
 
-    return format.format(this);
+  String asStringTime({DateFormat? fmt}) {
+    return (fmt ?? DateFormat.yMd(localeStr)).format(this) +
+        " " +
+        timeFormat.format(this);
   }
 
   static Locale? locale;
   static String get localeStr => locale?.toString() ?? "uk_UA";
+
+  static DateFormat timeFormat = DateFormat("kk:mm", localeStr);
+
+  static set mediaQueryData(MediaQueryData mediaQueryData) {
+    timeFormat = mediaQueryData.alwaysUse24HourFormat
+        ? timeFormat = DateFormat("kk:mm", localeStr)
+        : timeFormat = DateFormat("KK:mm a", localeStr);
+  }
 }
