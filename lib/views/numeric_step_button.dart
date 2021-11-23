@@ -74,10 +74,10 @@ class _NumericStepButtonState extends State<NumericStepButton> {
             onPressed: () => decrement(1),
             icon: const Icon(
               Icons.remove,
-              // color: Theme.of(context).secondaryHeaderColor,
+              //color: Theme.of(context).secondaryHeaderColor,
             ),
             padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 18.0),
-            color: Theme.of(context).primaryColor,
+            color: Theme.of(context).iconTheme.color,
           ),
           onLongPressStart: (_) async {
             startPressing(() => decrement(10));
@@ -93,7 +93,7 @@ class _NumericStepButtonState extends State<NumericStepButton> {
           '$counter',
           textAlign: TextAlign.center,
           style: const TextStyle(
-            color: Colors.black87,
+            // color: Colors.black87,
             fontSize: 18.0,
             fontWeight: FontWeight.w500,
           ),
@@ -106,7 +106,7 @@ class _NumericStepButtonState extends State<NumericStepButton> {
               //color: Theme.of(context).secondaryHeaderColor,
             ),
             padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 18.0),
-            color: Theme.of(context).primaryColor,
+            color: Theme.of(context).iconTheme.color,
           ),
           onLongPressStart: (_) async {
             startPressing(() => increment(10));
