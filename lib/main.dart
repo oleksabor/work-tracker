@@ -26,6 +26,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: titleApp,
+      //  theme: ThemeData(),
+      darkTheme: ThemeData.dark(), // standard dark theme
+      themeMode: ThemeMode.system, // device controls theme
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

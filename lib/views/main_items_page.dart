@@ -223,7 +223,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
           onPressed: () {
             workItemAdd(ctx, i);
           },
-          color: Theme.of(context).primaryColor,
+          color: Theme.of(context).iconTheme.color,
           icon: const Icon(Icons.add),
         ));
   }
