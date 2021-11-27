@@ -2,15 +2,14 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:work_tracker/classes/work_item.dart';
-import 'package:work_tracker/classes/work_kind.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:work_tracker/views/charts_page.dart';
 import 'package:work_tracker/views/work_item_page.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:work_tracker/views/work_items_view.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-
 import 'debug_page.dart';
 import 'lifecycle_watcher_state.dart';
 
@@ -106,8 +105,9 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     return version + "+" + buildNumber;
   }
 
-  final menuTags = [tagDebug];
+  final menuTags = [tagChart, tagDebug];
   static const tagDebug = "Debug";
+  static const tagChart = "Charts";
 
   void handleClick(String tag) async {
     if (kDebugMode) {
@@ -115,9 +115,15 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     }
     switch (tag) {
       case "Debug":
-        var res = await Navigator.push(
+        await Navigator.push(
           context,
           MaterialPageRoute(builder: (ctx) => DebugPage(pageTitle: tag)),
+        );
+        break;
+      case tagChart:
+        await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (ctx) => ChartItemsView(model: _model)),
         );
         break;
     }

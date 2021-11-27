@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:async/async.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
 import 'package:hive/hive.dart';
@@ -84,16 +85,20 @@ class WorkViewModel {
     }
   }
 
+  final _initDBMemoizer = AsyncMemoizer();
+
   Future<Box<T>> openBox<T>(dynamic name) async {
     if (!initialized) {
       var hiveDb = await findDbFile(getDbFolders());
-      Hive.init(hiveDb);
-      if (kDebugMode) {
-        print("data storage dir is " + hiveDb);
-      }
+      _initDBMemoizer.runOnce(() {
+        Hive.init(hiveDb);
+        if (kDebugMode) {
+          print("data storage dir is " + hiveDb);
+        }
 
-      Hive.registerAdapter(WorkItemAdapter());
-      Hive.registerAdapter(WorkKindAdapter());
+        Hive.registerAdapter(WorkItemAdapter());
+        Hive.registerAdapter(WorkKindAdapter());
+      });
       initialized = true;
     }
     var box2 = await Hive.openBox<T>(name);
