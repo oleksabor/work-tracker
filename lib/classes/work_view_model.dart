@@ -7,7 +7,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as Path;
-import 'package:work_tracker/classes/iterable_extension.dart';
 
 class WorkViewModel {
   final boxName = "workData";

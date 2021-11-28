@@ -4,11 +4,9 @@ import 'package:work_tracker/classes/iterable_extension.dart';
 import 'package:work_tracker/classes/work_item.dart';
 
 class ChartViewModel {
-  Future<List<WorkItem>> loadItemsFor(int days, Future<List<WorkItem>> src,
-      {DateTime? now}) async {
+  List<WorkItem> loadItemsFor(int days, List<WorkItem> items, {DateTime? now}) {
     now = now ?? DateTime.now();
     var startDate = now.subtract(Duration(days: days));
-    var items = await src;
     var itemsData = items
         .where((_) => _.created.isAfter(startDate))
         .toList(growable: false);

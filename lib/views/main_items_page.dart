@@ -123,7 +123,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
       case tagChart:
         await Navigator.push(
           context,
-          MaterialPageRoute(builder: (ctx) => ChartItemsView(data: _model)),
+          MaterialPageRoute(builder: (ctx) => ChartItemsView(_model)),
         );
         break;
     }
