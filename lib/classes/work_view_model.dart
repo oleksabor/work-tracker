@@ -7,7 +7,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as Path;
-import 'package:work_tracker/classes/iterable_extension.dart';
 
 class WorkViewModel {
   final boxName = "workData";
@@ -201,32 +200,6 @@ class WorkViewModel {
     if (openedBox != null) {
       openedBox?.close();
     }
-  }
-
-  Future<List<WorkItem>> loadItemsFor(int days, Future<List<WorkItem>> src,
-      {DateTime? now}) async {
-    now = now ?? DateTime.now();
-    var startDate = now.subtract(Duration(days: days));
-    var items = await src;
-    var itemsData = items
-        .where((_) => _.created.isAfter(startDate))
-        .toList(growable: false);
-    return itemsData;
-  }
-
-  List<WorkItem> sumByDate(Iterable<WorkItem> items) {
-    var dateData = items.groupBy(
-        (p0) => DateTime(p0.created.year, p0.created.month, p0.created.day));
-
-    var res = <WorkItem>[];
-    for (var k in dateData.entries) {
-      var wi = WorkItem();
-      wi.created = k.key;
-      wi.qty = k.value.fold(0, (p, e) => p + e.qty);
-      wi.weight = k.value.fold(0, (p, e) => p + e.weight);
-      res.add(wi);
-    }
-    return res;
   }
 }
 
