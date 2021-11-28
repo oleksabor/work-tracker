@@ -1,13 +1,16 @@
-import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:charts_flutter/flutter.dart' as flcharts;
 import 'package:flutter/material.dart';
+import 'package:work_tracker/classes/chart_view_model.dart';
 import 'package:work_tracker/classes/iterable_extension.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 
 /// items list on day
 class ChartItemsView extends StatelessWidget {
-  final WorkViewModel model;
-  const ChartItemsView({Key? key, required this.model}) : super(key: key);
+  final WorkViewModel data;
+  final ChartViewModel charts = ChartViewModel();
+
+  ChartItemsView({Key? key, required this.data}) : super(key: key);
 
   String get pageTitle => "Charts";
 
@@ -21,10 +24,10 @@ class ChartItemsView extends StatelessWidget {
   }
 
   Widget getChartFuture() {
-    return FutureBuilder<List<charts.Series<WorkItem, num>>>(
+    return FutureBuilder<List<flcharts.Series<WorkItem, num>>>(
         future: getChartData(),
-        builder:
-            (ctx, AsyncSnapshot<List<charts.Series<WorkItem, num>>> snapshot) {
+        builder: (ctx,
+            AsyncSnapshot<List<flcharts.Series<WorkItem, num>>> snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
             return getChart(snapshot.data!);
           } else {
@@ -33,24 +36,24 @@ class ChartItemsView extends StatelessWidget {
         });
   }
 
-  Widget getChart(List<charts.Series<WorkItem, num>> data) {
-    return charts.LineChart(
+  Widget getChart(List<flcharts.Series<WorkItem, num>> data) {
+    return flcharts.LineChart(
       data,
       animate: true,
-      behaviors: [charts.SeriesLegend()],
-      defaultRenderer: charts.LineRendererConfig(includeArea: true),
+      behaviors: [flcharts.SeriesLegend()],
+      defaultRenderer: flcharts.LineRendererConfig(includeArea: true),
     );
   }
 
-  Future<List<charts.Series<WorkItem, num>>> getChartData() async {
-    var items = model.loadItems();
-    var itemsData = await model.loadItemsFor(180, items);
+  Future<List<flcharts.Series<WorkItem, num>>> getChartData() async {
+    var items = data.loadItems();
+    var itemsData = await charts.loadItemsFor(180, items);
 
     var kindsData = itemsData.groupBy((i) => i.kind).entries;
     var res = kindsData
-        .map((i) => charts.Series<WorkItem, int>(
+        .map((i) => flcharts.Series<WorkItem, int>(
             id: i.key,
-            data: model.sumByDate(i.value),
+            data: charts.maxByDate(i.value),
             displayName: i.key,
             domainFn: (WorkItem wi, _) =>
                 wi.created.difference(DateTime.now()).inDays,
