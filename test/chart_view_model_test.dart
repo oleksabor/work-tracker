@@ -45,13 +45,13 @@ var itemsByPeriod = [
 ];
 
 void main() async {
-  test('items by period', () async {
+  test('items by period', () {
     var sut = ChartViewModel();
-    var bd = await sut.loadItemsFor(180, Future.value(itemsByPeriod),
-        now: itemsByPeriod.first.created);
+    var bd =
+        sut.loadItemsFor(180, itemsByPeriod, now: itemsByPeriod.first.created);
     expect(bd.length, 14);
   });
-  test('items by date', () async {
+  test('items by date', () {
     var md = ChartViewModel();
     var sum = md.sumByDate(itemsByPeriod);
     expect(sum.length, 7);
