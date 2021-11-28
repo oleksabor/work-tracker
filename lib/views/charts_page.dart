@@ -17,26 +17,29 @@ class ChartItemsView extends StatelessWidget {
         appBar: AppBar(
           title: Text(pageTitle),
         ),
-        body: getChart());
+        body: getChartFuture());
   }
 
-  Widget getChart() {
+  Widget getChartFuture() {
     return FutureBuilder<List<charts.Series<WorkItem, num>>>(
         future: getChartData(),
         builder:
             (ctx, AsyncSnapshot<List<charts.Series<WorkItem, num>>> snapshot) {
           if (snapshot.hasData && snapshot.data != null) {
-            return charts.LineChart(
-              snapshot.data as List<charts.Series<dynamic, num>>,
-              defaultRenderer:
-                  charts.LineRendererConfig(includeArea: true, stacked: true),
-              animate: true,
-              behaviors: [charts.SeriesLegend()],
-            );
+            return getChart(snapshot.data!);
           } else {
             return const CircularProgressIndicator();
           }
         });
+  }
+
+  Widget getChart(List<charts.Series<WorkItem, num>> data) {
+    return charts.LineChart(
+      data,
+      animate: true,
+      behaviors: [charts.SeriesLegend()],
+      defaultRenderer: charts.LineRendererConfig(includeArea: true),
+    );
   }
 
   Future<List<charts.Series<WorkItem, num>>> getChartData() async {
@@ -44,18 +47,15 @@ class ChartItemsView extends StatelessWidget {
     var itemsData = await model.loadItemsFor(180, items);
 
     var kindsData = itemsData.groupBy((i) => i.kind).entries;
-    if (kindsData != null) {
-      var res = kindsData
-          .map((i) => charts.Series<WorkItem, int>(
-              id: i.key,
-              data: model.sumByDate(i.value),
-              displayName: i.key,
-              domainFn: (WorkItem wi, _) =>
-                  wi.created.difference(DateTime.now()).inDays,
-              measureFn: (WorkItem wi, _) => wi.qty))
-          .toList();
-      return res;
-    }
-    return <charts.Series<WorkItem, int>>[];
+    var res = kindsData
+        .map((i) => charts.Series<WorkItem, int>(
+            id: i.key,
+            data: model.sumByDate(i.value),
+            displayName: i.key,
+            domainFn: (WorkItem wi, _) =>
+                wi.created.difference(DateTime.now()).inDays,
+            measureFn: (WorkItem wi, _) => wi.qty))
+        .toList();
+    return res;
   }
 }

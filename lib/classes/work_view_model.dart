@@ -203,12 +203,14 @@ class WorkViewModel {
     }
   }
 
-  Future<List<WorkItem>> loadItemsFor(
-      int days, Future<List<WorkItem>> src) async {
-    var now = DateTime.now();
+  Future<List<WorkItem>> loadItemsFor(int days, Future<List<WorkItem>> src,
+      {DateTime? now}) async {
+    now = now ?? DateTime.now();
     var startDate = now.subtract(Duration(days: days));
     var items = await src;
-    var itemsData = items.where((_) => _.created.isAfter(startDate)).toList();
+    var itemsData = items
+        .where((_) => _.created.isAfter(startDate))
+        .toList(growable: false);
     return itemsData;
   }
 
