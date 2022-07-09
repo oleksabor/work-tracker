@@ -72,7 +72,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
 
   // Here we read the current locale values
   void setCurrentLocale() {
-    currentSystemLocales = WidgetsBinding.instance!.window.locales;
+    currentSystemLocales = WidgetsBinding.instance.window.locales;
     systemLocale = Platform.localeName;
     initializeDateFormatting(systemLocale, null);
   }
