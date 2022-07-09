@@ -8,7 +8,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //https://stackoverflow.com/a/62825776/940182
   final String defaultSystemLocale = Platform.localeName;
-  final List<Locale> systemLocales = WidgetsBinding.instance!.window.locales;
+  final List<Locale> systemLocales = WidgetsBinding.instance.window.locales;
   //https://stackoverflow.com/a/63090616/940182
   initializeDateFormatting(defaultSystemLocale, null);
   runApp(MyApp(defaultSystemLocale, systemLocales));
