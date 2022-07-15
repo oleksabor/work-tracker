@@ -17,9 +17,9 @@ class WorkKind {
   int get hashCode => title.hashCode;
 
   static List<WorkKind> kinds = [
-    WorkKind.m("віджимання"),
-    WorkKind.m("підтягування"),
-    WorkKind.m("присідання"),
+    WorkKind.m("Push-ups"),
+    WorkKind.m("Pull-ups"),
+    WorkKind.m("Crouch"),
   ];
 
   @override
