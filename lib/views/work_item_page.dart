@@ -20,11 +20,6 @@ class WorkItemPage extends StatelessWidget {
     item.weight = value.toDouble();
   }
 
-  // String get okCaption => "Ok";
-  // String get qtyCaption => "Quantity";
-  // String get weightCaption => "Weight";
-  // String get createdCaption => "Created";
-
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);

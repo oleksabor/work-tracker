@@ -6,18 +6,13 @@ import 'package:intl/intl_standalone.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //https://stackoverflow.com/a/62825776/940182
-  final String defaultSystemLocale = Platform.localeName;
-  final List<Locale> systemLocales = WidgetsBinding.instance.window.locales;
-  await findSystemLocale(); //https://stackoverflow.com/a/68911879/940182
-  runApp(MyApp(defaultSystemLocale, systemLocales));
+
+  //https://stackoverflow.com/a/68911879/940182
+  var locale = await findSystemLocale();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final String initialDefaultSystemLocale;
-  final List<Locale> initialSystemLocales;
-
-  const MyApp(this.initialDefaultSystemLocale, this.initialSystemLocales);
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

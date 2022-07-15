@@ -42,9 +42,6 @@ class WorkItemsViewState extends State<WorkItemsView> {
 
   WorkViewModel get model => widget.model;
 
-  // String get todayCaption => "today";
-  // String get yesterdayCaption => "yesterday";
-
   String getWidgetTitle(String kind, DateTime date, AppLocalizations? t) {
     return "$kind ${t!.onCap} ${asDate(date, t)}";
   }
