@@ -4,6 +4,7 @@ import 'package:work_tracker/classes/chart_view_model.dart';
 import 'package:work_tracker/classes/iterable_extension.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// items list on day
 class ChartItemsView extends StatefulWidget {
@@ -21,14 +22,14 @@ enum GroupChart { avg, max, sum }
 
 class ChartItemsViewState extends State<ChartItemsView> {
   final ChartViewModel charts = ChartViewModel();
-  String get pageTitle => "Charts";
   GroupChart? groupChart = GroupChart.max;
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context);
     return Scaffold(
         appBar: AppBar(
-          title: Text(pageTitle),
+          title: Text(t!.titleWinChart),
         ),
         body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

@@ -2,6 +2,7 @@ import 'package:work_tracker/classes/date_extension.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:flutter/material.dart';
 import 'package:work_tracker/views/numeric_step_button.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// [item] edit view
 class WorkItemPage extends StatelessWidget {
@@ -19,26 +20,27 @@ class WorkItemPage extends StatelessWidget {
     item.weight = value.toDouble();
   }
 
-  String get okCaption => "Ok";
-  String get qtyCaption => "Quantity";
-  String get weightCaption => "Weight";
-  String get createdCaption => "Created";
+  // String get okCaption => "Ok";
+  // String get qtyCaption => "Quantity";
+  // String get weightCaption => "Weight";
+  // String get createdCaption => "Created";
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context);
     return Scaffold(
         appBar: AppBar(
           title: Text(item.kind),
         ),
         body: Builder(builder: (context) {
-          var rows = buildRows(item);
+          var rows = buildRows(item, t);
           rows.add(Padding(
             padding: const EdgeInsets.all(8.0),
             child: ElevatedButton(
               onPressed: () {
                 Navigator.pop(context, item);
               },
-              child: Text(okCaption),
+              child: Text(t!.okCap),
             ),
           ));
           var res = Center(
@@ -48,10 +50,10 @@ class WorkItemPage extends StatelessWidget {
         }));
   }
 
-  List<Widget> buildRows(WorkItem item) {
+  List<Widget> buildRows(WorkItem item, AppLocalizations? t) {
     var res = [
-      buildNumericRow(qtyCaption, changedQty, item.qty),
-      buildNumericRow(weightCaption, changedWeight, item.weight.toInt()),
+      buildNumericRow(t!.qtyCap, changedQty, item.qty),
+      buildNumericRow(t.weightCap, changedWeight, item.weight.toInt()),
     ];
     if (!item.created.isSameDay(DateTime.now())) {
       res.add(Padding(
@@ -60,7 +62,7 @@ class WorkItemPage extends StatelessWidget {
           Spacer(
             flex: 5,
           ),
-          Text(createdCaption),
+          Text(t.createdCap),
           Spacer(
             flex: 1,
           ),

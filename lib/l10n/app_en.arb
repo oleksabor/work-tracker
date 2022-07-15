@@ -3,5 +3,19 @@
     "incrementLabel": "You have pushed the button this many times:",
     "@helloWorld": {
       "description": "The conventional newborn programmer greeting"
-    }
+    },
+    "titleWin": "Work tracker",
+    "titleApp": "Work tracker application",
+    "titleWinDebug": "Debug",
+    "titleWinChart": "Chart",
+    "moveDb2ExtCap" : "move db to External storage",
+    "timeFormatCap": "time format",
+    "dateFormatCap": "date format",
+    "okCap": "Ok",
+    "qtyCap": "Quantity",
+    "weightCap": "Weight",
+    "createdCap": "Created",
+    "todayCap": "today",
+    "yesterdayCap": "yesterday",
+    "onCap": "on"
 }

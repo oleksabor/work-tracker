@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:work_tracker/classes/doc_dir.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DebugPage extends StatelessWidget {
-  const DebugPage({Key? key, required this.pageTitle}) : super(key: key);
-  final String pageTitle;
+  const DebugPage({Key? key}) : super(key: key);
 
   Widget createColumnDir(DirData data) {
     var items = data.toList();
@@ -28,7 +27,8 @@ class DebugPage extends StatelessWidget {
   }
 
   Widget asRow(String title, String value) {
-    return Row(children: [Text(title), SizedBox(width: 50), asText(value)]);
+    return Row(
+        children: [Text(title), const SizedBox(width: 50), asText(value)]);
   }
 
   Widget asText(String value) {
@@ -36,8 +36,6 @@ class DebugPage extends StatelessWidget {
       child: Text(value, overflow: TextOverflow.fade),
     );
   }
-
-  String get move2SDCaption => "move db to External storage";
 
   Future moveDb() async {
     var vm = WorkViewModel();
@@ -50,9 +48,11 @@ class DebugPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(pageTitle),
+        title: Text(t!.titleWinDebug),
       ),
       body: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -64,17 +64,19 @@ class DebugPage extends StatelessWidget {
                   ? createColumnDir(s.data!)
                   : const CircularProgressIndicator(),
             )),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Text("test time format "),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+              Text(t.timeFormatCap),
+              const SizedBox(width: 50),
               Text(DateMethods.timeFormat.format(DateTime.now()))
             ]),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Text("test date format "),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+              Text(t.dateFormatCap),
+              const SizedBox(width: 50),
               Text(DateTime.now().asStringTime())
             ]),
             TextButton(
               onPressed: moveDb,
-              child: Text(move2SDCaption),
+              child: Text(t.moveDb2ExtCap),
             )
           ]),
     );
