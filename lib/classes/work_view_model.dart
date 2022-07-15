@@ -33,7 +33,7 @@ class WorkViewModel {
   Future<String> findDbFile(Stream<String> directories) async {
     String? hiveDb;
     await for (var dir in directories) {
-      hiveDb = dir + '/' + "fl_db";
+      hiveDb = "$dir/fl_db";
 
       if (await checkHive(hiveDb)) {
         break;
@@ -58,7 +58,7 @@ class WorkViewModel {
       throw Exception("can't move hive $hiveDb to the same path");
     }
 
-    var newDir = Directory(newPath + '/' + "fl_db");
+    var newDir = Directory("$newPath/fl_db");
     if (await newDir.exists()) {
       await newDir.delete(recursive: true);
     }
@@ -93,7 +93,7 @@ class WorkViewModel {
       _initDBMemoizer.runOnce(() {
         Hive.init(hiveDb);
         if (kDebugMode) {
-          print("data storage dir is " + hiveDb);
+          print("data storage dir is $hiveDb");
         }
 
         Hive.registerAdapter(WorkItemAdapter());

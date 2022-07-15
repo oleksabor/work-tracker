@@ -147,13 +147,13 @@ class WorkItemsViewState extends State<WorkItemsView> {
   String get weightCaption => "weight";
 
   Widget _buildRow(BuildContext context, WorkItem i) {
-    var st = qtyCaption + ": " + i.qty.toString();
+    var st = "$qtyCaption: ${i.qty}";
     var stw = "";
     if (i.weight > 0) {
-      stw = weightCaption + ": " + i.weight.toInt().toString();
+      stw = "$weightCaption: ${i.weight.toInt()}";
     }
     return ListTile(
-        title: Text(st + " " + stw),
+        title: Text("$st $stw"),
         subtitle: Text(i.created.smartString()),
         onTap: () {
           editItem(context, i);
