@@ -28,7 +28,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
   Timer? timer;
 
   void workItemAdd(BuildContext context, WorkKindToday kToday) async {
-    var wi = WorkItem.k(kToday.kind.title);
+    var wi = WorkItem.i(kToday.kind.key);
     var todayWork = kToday.todayWork;
     if (todayWork != null && todayWork.isNotEmpty) {
       wi.qty = todayWork.last.qty;
@@ -52,7 +52,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     if (kind.todayWork != null && kind.todayWork!.isNotEmpty) {
       d = kind.todayWork!.last.created;
     }
-    var items = _model.loadItemsByDate(kind.kind.title, d);
+    var items = _model.loadItemsByDate(kind.kind, d);
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -113,7 +113,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
       case tagDebug:
         await Navigator.push(
           context,
-          MaterialPageRoute(builder: (ctx) => const DebugPage()),
+          MaterialPageRoute(builder: (ctx) => DebugPage.m(model: _model)),
         );
         break;
       case tagChart:

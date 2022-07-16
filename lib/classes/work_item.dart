@@ -18,10 +18,15 @@ class WorkItem extends HiveObject {
   @HiveField(3)
   double weight = 0;
 
+  // reference to the work kind key value
+  @HiveField(4, defaultValue: -1)
+  int kindId = 0;
+
   WorkItem.k(this.kind);
+  WorkItem.i(this.kindId);
   WorkItem();
   factory WorkItem.from(WorkItem src) {
-    var res = WorkItem.k(src.kind);
+    var res = WorkItem.i(src.kindId);
     res.created = src.created;
     res.qty = src.qty;
     res.weight = src.weight;

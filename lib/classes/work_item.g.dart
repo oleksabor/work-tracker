@@ -16,17 +16,25 @@ class WorkItemAdapter extends TypeAdapter<WorkItem> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return WorkItem()
+    var res = WorkItem()
       ..kind = fields[0] as String
       ..created = fields[1] as DateTime
       ..qty = fields[2] as int
       ..weight = fields[3] as double;
+    if (numOfFields < 5) {
+      // old structure and no kindId in the file
+      res.kindId = -1;
+    } else {
+      res.kindId = fields[4] as int;
+    }
+
+    return res;
   }
 
   @override
   void write(BinaryWriter writer, WorkItem obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.kind)
       ..writeByte(1)
@@ -34,7 +42,9 @@ class WorkItemAdapter extends TypeAdapter<WorkItem> {
       ..writeByte(2)
       ..write(obj.qty)
       ..writeByte(3)
-      ..write(obj.weight);
+      ..write(obj.weight)
+      ..writeByte(4)
+      ..write(obj.kindId);
   }
 
   @override
