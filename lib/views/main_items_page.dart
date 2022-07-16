@@ -12,15 +12,11 @@ import 'package:work_tracker/views/work_items_view.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'debug_page.dart';
 import 'lifecycle_watcher_state.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// main app page
 class MainItemsPage extends StatefulWidget {
-  final String defaultLocale;
-  const MainItemsPage(
-      {Key? key, required this.title, this.defaultLocale = "en-US"})
-      : super(key: key);
-
-  final String title;
+  const MainItemsPage({Key? key}) : super(key: key);
 
   @override
   _MainItemsPageState createState() => _MainItemsPageState();
@@ -32,7 +28,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
   Timer? timer;
 
   void workItemAdd(BuildContext context, WorkKindToday kToday) async {
-    var wi = WorkItem.k(kToday.kind.title);
+    var wi = WorkItem.i(kToday.kind.key);
     var todayWork = kToday.todayWork;
     if (todayWork != null && todayWork.isNotEmpty) {
       wi.qty = todayWork.last.qty;
@@ -56,7 +52,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     if (kind.todayWork != null && kind.todayWork!.isNotEmpty) {
       d = kind.todayWork!.last.created;
     }
-    var items = _model.loadItemsByDate(kind.kind.title, d);
+    var items = _model.loadItemsByDate(kind.kind, d);
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -102,7 +98,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     String version = packageInfo.version;
     String buildNumber = packageInfo.buildNumber;
 
-    return version + "+" + buildNumber;
+    return "$version+$buildNumber";
   }
 
   final menuTags = [tagChart, tagDebug];
@@ -114,10 +110,10 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
       print("menu " + tag);
     }
     switch (tag) {
-      case "Debug":
+      case tagDebug:
         await Navigator.push(
           context,
-          MaterialPageRoute(builder: (ctx) => DebugPage(pageTitle: tag)),
+          MaterialPageRoute(builder: (ctx) => DebugPage.m(model: _model)),
         );
         break;
       case tagChart:
@@ -133,11 +129,10 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
   Widget build(BuildContext context) {
     DateMethods.locale = Localizations.localeOf(context);
     DateMethods.mediaQueryData = MediaQuery.of(context);
+    var t = AppLocalizations.of(context);
     return Scaffold(
         appBar: AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          title: Text(widget.title),
+          title: Text(t?.titleWin ?? "failed to localize"),
           actions: <Widget>[
             PopupMenuButton<String>(
               onSelected: handleClick,

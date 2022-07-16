@@ -33,7 +33,7 @@ class WorkViewModel {
   Future<String> findDbFile(Stream<String> directories) async {
     String? hiveDb;
     await for (var dir in directories) {
-      hiveDb = dir + '/' + "fl_db";
+      hiveDb = "$dir/fl_db";
 
       if (await checkHive(hiveDb)) {
         break;
@@ -58,7 +58,7 @@ class WorkViewModel {
       throw Exception("can't move hive $hiveDb to the same path");
     }
 
-    var newDir = Directory(newPath + '/' + "fl_db");
+    var newDir = Directory("$newPath/fl_db");
     if (await newDir.exists()) {
       await newDir.delete(recursive: true);
     }
@@ -93,7 +93,7 @@ class WorkViewModel {
       _initDBMemoizer.runOnce(() {
         Hive.init(hiveDb);
         if (kDebugMode) {
-          print("data storage dir is " + hiveDb);
+          print("data storage dir is $hiveDb");
         }
 
         Hive.registerAdapter(WorkItemAdapter());
@@ -115,17 +115,18 @@ class WorkViewModel {
     return <WorkItem>[];
   }
 
-  Future<List<WorkItem>> loadItemsByDate(String kind, DateTime? when) async {
+  Future<List<WorkItem>> loadItemsByDate(WorkKind kind, DateTime? when) async {
     var all = await loadItems();
-    return itemsByKindDate(all, kind, when);
+    return itemsByKindBeforeDate(all, kind, when);
   }
 
-  Future<List<WorkItem>> itemsByKindDate(
-      List<WorkItem>? all, String kind, DateTime? when) async {
+  Future<List<WorkItem>> itemsByKindBeforeDate(
+      List<WorkItem>? all, WorkKind kind, DateTime? when) async {
     var ondate = await filterItemsByKind(all, kind, when);
     if (all != null && ondate.isEmpty) {
       var latest = all.where(($_) =>
-          $_.kind == kind && (when == null || $_.created.isBefore(when)));
+          $_.kindId == kind.kindId &&
+          (when == null || $_.created.isBefore(when)));
       if (latest.isNotEmpty) {
         var last = latest.last;
         ondate = await filterItemsByKind(all, kind, last.created);
@@ -135,10 +136,18 @@ class WorkViewModel {
   }
 
   Future<List<WorkItem>> filterItemsByKind(
-      List<WorkItem>? res, String kind, DateTime? when) async {
+      List<WorkItem>? res, WorkKind kind, DateTime? when) async {
     if (res != null && res.isNotEmpty) {
+      var emptyIds = res.where((e) => e.kindId < 0);
+      for (var e in emptyIds.toList()) {
+        // set WorkItem.kindId for old records
+        if (e.kind == kind.title) {
+          e.kindId = kind.kindId;
+        }
+      }
       var filtered = res.where(($i) =>
-          $i.kind == kind && (when == null || when.isSameDay($i.created)));
+          $i.kindId == kind.kindId &&
+          (when == null || when.isSameDay($i.created)));
       return filtered.toList();
     }
     return [];
@@ -166,10 +175,10 @@ class WorkViewModel {
     var work2return = kinds.toList();
     var items = await loadItems();
     for (WorkKindToday k in work2return) {
-      var work = await filterItemsByKind(items, k.kind.title, when);
+      var work = await filterItemsByKind(items, k.kind, when);
       if (work.isEmpty) {
         // no work was found for today, lets try to find a previous day work
-        work = await filterItemsByKind(items, k.kind.title, null);
+        work = await filterItemsByKind(items, k.kind, null);
       }
       k.todayWork = work;
     }
@@ -199,6 +208,7 @@ class WorkViewModel {
   void dispose() {
     if (openedBox != null) {
       openedBox?.close();
+      openedBox = null;
     }
   }
 }

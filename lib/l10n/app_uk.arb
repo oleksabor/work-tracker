@@ -1,4 +1,18 @@
 {
     "helloWorld": "Привіт",
-    "incrementLabel": "Кількість натискань кнопки:"
-}
+    "incrementLabel": "Кількість натискань кнопки:",
+    "titleWin": "Нотатки качалки",
+    "titleApp": "Нотатки качалки application",
+    "titleWinDebug": "Debug",
+    "titleWinChart": "Графік",
+    "moveDb2ExtCap" : "перемістити базу до External storage",
+    "timeFormatCap": "формат часу",
+    "dateFormatCap": "формат дати",
+    "okCap": "Ok",
+    "qtyCap": "Кількість",
+    "weightCap": "Вага",
+    "createdCap": "Дата",
+    "todayCap": "сьогодні",
+    "yesterdayCap": "вчора",
+    "onCap": "від"
+    }

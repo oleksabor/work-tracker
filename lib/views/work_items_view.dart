@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:intl/intl.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:flutter/material.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:work_tracker/views/work_item_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// items list on day
 class WorkItemsView extends StatefulWidget {
@@ -43,18 +42,17 @@ class WorkItemsViewState extends State<WorkItemsView> {
 
   WorkViewModel get model => widget.model;
 
-  String get todayCaption => "today";
-  String get yesterdayCaption => "yesterday";
+  String getWidgetTitle(String kind, DateTime date, AppLocalizations? t) {
+    return "$kind ${t!.onCap} ${asDate(date, t)}";
+  }
 
-  String get widgetTitle => kind + " on " + asDate(date);
-
-  String asDate(DateTime value) {
+  String asDate(DateTime value, AppLocalizations? t) {
     var diff = value.difference(DateTime.now());
     if (diff.inDays == 0) {
-      return todayCaption;
+      return t!.todayCap;
     }
     if (diff.inDays == -1) {
-      return yesterdayCaption;
+      return t!.yesterdayCap;
     }
     return DateFormat.MMMMd(DateMethods.localeStr).format(value);
   }
@@ -95,11 +93,12 @@ class WorkItemsViewState extends State<WorkItemsView> {
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context);
     return Scaffold(
         appBar: AppBar(
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
-          title: Text(widgetTitle),
+          title: Text(getWidgetTitle(kind, date, t)),
         ),
         body: Column(children: <Widget>[
           Flexible(
@@ -112,7 +111,7 @@ class WorkItemsViewState extends State<WorkItemsView> {
                       padding: const EdgeInsets.all(10.0),
                       itemCount: snapshot.data!.length,
                       itemBuilder: (ctx, i) {
-                        return _buildRow(ctx, snapshot.data![i]);
+                        return _buildRow(ctx, snapshot.data![i], t);
                       },
                     )
                   : const Center(
@@ -143,17 +142,17 @@ class WorkItemsViewState extends State<WorkItemsView> {
         ]));
   }
 
-  String get qtyCaption => "quantity";
-  String get weightCaption => "weight";
+  // String get qtyCaption => "quantity";
+  // String get weightCaption => "weight";
 
-  Widget _buildRow(BuildContext context, WorkItem i) {
-    var st = qtyCaption + ": " + i.qty.toString();
+  Widget _buildRow(BuildContext context, WorkItem i, AppLocalizations? t) {
+    var st = "${t?.qtyCap}: ${i.qty}";
     var stw = "";
     if (i.weight > 0) {
-      stw = weightCaption + ": " + i.weight.toInt().toString();
+      stw = "${t?.weightCap}: ${i.weight.toInt()}";
     }
     return ListTile(
-        title: Text(st + " " + stw),
+        title: Text("$st $stw"),
         subtitle: Text(i.created.smartString()),
         onTap: () {
           editItem(context, i);

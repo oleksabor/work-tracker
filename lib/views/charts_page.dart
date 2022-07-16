@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:work_tracker/classes/chart_view_model.dart';
 import 'package:work_tracker/classes/iterable_extension.dart';
 import 'package:work_tracker/classes/work_item.dart';
+import 'package:work_tracker/classes/work_kind.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// items list on day
 class ChartItemsView extends StatefulWidget {
@@ -21,14 +23,14 @@ enum GroupChart { avg, max, sum }
 
 class ChartItemsViewState extends State<ChartItemsView> {
   final ChartViewModel charts = ChartViewModel();
-  String get pageTitle => "Charts";
   GroupChart? groupChart = GroupChart.max;
 
   @override
   Widget build(BuildContext context) {
+    var t = AppLocalizations.of(context);
     return Scaffold(
         appBar: AppBar(
-          title: Text(pageTitle),
+          title: Text(t!.titleWinChart),
         ),
         body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -141,13 +143,17 @@ class ChartItemsViewState extends State<ChartItemsView> {
       num? Function(WorkItem, num?) measure) async {
     var items = await widget.data.loadItems();
     var itemsData = charts.loadItemsFor(180, items);
+    var kinds = await widget.data.loadKinds();
 
-    var kindsData = itemsData.groupBy((i) => i.kind).entries;
+    var kindsData = itemsData.groupBy((i) => i.kindId).entries;
     var res = kindsData
         .map((i) => flcharts.Series<WorkItem, int>(
-            id: i.key,
+            id: "${i.key}",
             data: aggr(charts, i.value),
-            displayName: i.key,
+            displayName: kinds
+                .firstWhere((k) => k.key == i.key,
+                    orElse: () => WorkKind.m("unknown ${i.key}"))
+                .title,
             domainFn: (WorkItem wi, _) =>
                 wi.created.difference(DateTime.now()).inDays,
             measureFn: measure))
