@@ -8,7 +8,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   //https://stackoverflow.com/a/68911879/940182
-  var locale = await findSystemLocale();
+  await findSystemLocale();
   runApp(MyApp());
 }
 

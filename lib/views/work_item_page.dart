@@ -47,22 +47,22 @@ class WorkItemPage extends StatelessWidget {
 
   List<Widget> buildRows(WorkItem item, AppLocalizations? t) {
     var res = [
-      buildNumericRow(t!.qtyCap, changedQty, item.qty),
-      buildNumericRow(t.weightCap, changedWeight, item.weight.toInt()),
+      buildNumericRow(t!.qtyCap, changedQty, item.qty, 1),
+      buildNumericRow(t.weightCap, changedWeight, item.weight.toInt(), 0),
     ];
     if (!item.created.isSameDay(DateTime.now())) {
       res.add(Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Spacer(
+          const Spacer(
             flex: 5,
           ),
           Text(t.createdCap),
-          Spacer(
+          const Spacer(
             flex: 1,
           ),
           Text(item.created.smartString()),
-          Spacer(
+          const Spacer(
             flex: 5,
           ),
         ]),
@@ -71,13 +71,14 @@ class WorkItemPage extends StatelessWidget {
     return res;
   }
 
-  Widget buildNumericRow(String caption, Function(int) diff, int value) {
+  Widget buildNumericRow(
+      String caption, Function(int) diff, int value, final int minValue) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(caption),
         NumericStepButton(
-          minValue: 0,
+          minValue: minValue,
           onChanged: diff,
           value: value,
         )

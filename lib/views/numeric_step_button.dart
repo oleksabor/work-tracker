@@ -28,8 +28,12 @@ class _NumericStepButtonState extends State<NumericStepButton> {
   void increment(int delta) {
     setState(() {
       var maxValue = widget.maxValue ?? (counter + delta);
-      if (counter < maxValue && counter + delta <= maxValue) {
-        counter += delta;
+      if (counter < maxValue) {
+        if (counter + delta <= maxValue) {
+          counter += delta;
+        } else {
+          counter = maxValue;
+        }
       }
       widget.onChanged(counter);
     });
@@ -38,8 +42,12 @@ class _NumericStepButtonState extends State<NumericStepButton> {
   void decrement(int delta) {
     setState(() {
       var minValue = widget.minValue ?? (counter - delta);
-      if (counter > minValue && counter - delta >= minValue) {
-        counter -= delta;
+      if (counter > minValue) {
+        if (counter - delta >= minValue) {
+          counter -= delta;
+        } else {
+          counter = minValue;
+        }
       }
       widget.onChanged(counter);
       setState(() {});
@@ -62,33 +70,40 @@ class _NumericStepButtonState extends State<NumericStepButton> {
 
   late bool isPressed;
 
+  Widget buildIcon(void Function(int) onPressed, IconData? icon) {
+    return GestureDetector(
+      child: IconButton(
+        onPressed: () => onPressed(1),
+        icon: Icon(
+          icon,
+          //color: Theme.of(context).secondaryHeaderColor,
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 18.0),
+        color: Theme.of(context).iconTheme.color,
+      ),
+      onLongPressStart: (_) async {
+        startPressing(() => onPressed(10));
+      },
+      onLongPressCancel: () {
+        cancelPress();
+      },
+      onLongPressEnd: (_) {
+        cancelPress();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     counter = widget.value ?? counter;
     widget.value = null; // reset after first use
+    if (widget.minValue != null && counter < widget.minValue!) {
+      counter = widget.minValue!;
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        GestureDetector(
-          child: IconButton(
-            onPressed: () => decrement(1),
-            icon: const Icon(
-              Icons.remove,
-              //color: Theme.of(context).secondaryHeaderColor,
-            ),
-            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 18.0),
-            color: Theme.of(context).iconTheme.color,
-          ),
-          onLongPressStart: (_) async {
-            startPressing(() => decrement(10));
-          },
-          onLongPressCancel: () {
-            cancelPress();
-          },
-          onLongPressEnd: (_) {
-            cancelPress();
-          },
-        ),
+        buildIcon((i) => decrement(i), Icons.remove),
         Text(
           '$counter',
           textAlign: TextAlign.center,
@@ -98,26 +113,7 @@ class _NumericStepButtonState extends State<NumericStepButton> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        GestureDetector(
-          child: IconButton(
-            onPressed: () => increment(1),
-            icon: const Icon(
-              Icons.add,
-              //color: Theme.of(context).secondaryHeaderColor,
-            ),
-            padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 18.0),
-            color: Theme.of(context).iconTheme.color,
-          ),
-          onLongPressStart: (_) async {
-            startPressing(() => increment(10));
-          },
-          onLongPressCancel: () {
-            cancelPress();
-          },
-          onLongPressEnd: (_) {
-            cancelPress();
-          },
-        ),
+        buildIcon((i) => increment(i), Icons.add),
       ],
     );
   }
