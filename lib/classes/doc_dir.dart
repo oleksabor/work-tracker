@@ -22,19 +22,20 @@ class DirData extends Iterable<DirEntry> {
     try {
       return await fd();
     } catch (e) {
+      print(e);
       return null;
     }
   }
 
   static Future<DirData> loadDirectories() async {
-    var docDir = await getApplicationDocumentsDirectory();
+    var docDir = await safeDir(getApplicationDocumentsDirectory);
     Directory? libDir = await safeDir(getLibraryDirectory);
 
     var es = await safeDir(getExternalStorageDirectory);
     return DirData(
-        appDocuments: docDir.path,
-        extStorage: es?.path,
-        appLibrary: libDir?.path);
+        appDocuments: docDir?.path ?? "no doc dir",
+        extStorage: es?.path ?? "no ext dir",
+        appLibrary: libDir?.path ?? "no lib dir");
   }
 
   @override
