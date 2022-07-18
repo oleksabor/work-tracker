@@ -1,0 +1,3 @@
+### 0.9.0
+- work items are linked by integer key
+- debug page shows item kind and total items quantity

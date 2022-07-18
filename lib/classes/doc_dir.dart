@@ -30,7 +30,6 @@ class DirData extends Iterable<DirEntry> {
   static Future<DirData> loadDirectories() async {
     var docDir = await safeDir(getApplicationDocumentsDirectory);
     var libDir = await safeDir(getLibraryDirectory);
-
     var es = await safeDir(getExternalStorageDirectory);
     return DirData(
         appDocuments: docDir?.path ?? "no doc dir",
