@@ -69,13 +69,15 @@ class DebugPage extends StatelessWidget {
     var workModel = WorkViewModel();
     var t = AppLocalizations.of(context);
     return <Widget>[
-      Expanded(
-          child: FutureBuilder<DirData>(
-        future: DirData.loadDirectories(),
-        builder: (c, s) => s.hasData
-            ? createColumnDir(s.data!)
-            : const CircularProgressIndicator(),
-      )),
+      Column(children: [
+        Expanded(
+            child: FutureBuilder<DirData>(
+          future: DirData.loadDirectories(),
+          builder: (c, s) => s.hasData
+              ? createColumnDir(s.data!)
+              : const CircularProgressIndicator(),
+        ))
+      ]),
       Column(children: [
         Expanded(
             child: FutureBuilder<List<WorkKind>>(
