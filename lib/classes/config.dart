@@ -1,0 +1,13 @@
+import 'package:hive/hive.dart';
+import 'package:work_tracker/classes/config_graph.dart';
+import 'package:work_tracker/classes/hive_type_values.dart';
+
+part 'config.g.dart';
+
+@HiveType(typeId: HiveTypesEnum.config)
+class Config extends HiveObject {
+  @HiveField(0)
+  ConfigGraph graph = ConfigGraph();
+}
+
+//flutter packages pub run build_runner build --delete-conflicting-outputs

@@ -14,5 +14,9 @@
     "createdCap": "Дата",
     "todayCap": "сьогодні",
     "yesterdayCap": "вчора",
-    "onCap": "від"
+    "onCap": "від",
+    "titleConfig": "Конфіг",
+    "titleConfigChart": "Графік",
+    "weight4graph": "використовувати вагу в графіках",
+    "weight4graphCoefficient" : "коефіцієнт одиниці ваги"
     }

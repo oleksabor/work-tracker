@@ -1,6 +1,6 @@
-import 'package:work_tracker/classes/hive_type_vales.dart';
+import 'package:work_tracker/classes/hive_type_values.dart';
 import 'package:hive/hive.dart';
-import 'hive_type_vales.dart';
+import 'hive_type_values.dart';
 
 part 'work_item.g.dart';
 
@@ -33,3 +33,10 @@ class WorkItem extends HiveObject {
     return res;
   }
 }
+
+    // if (numOfFields < 5) {
+    //   // old structure and no kindId in the file
+    //   res.kindId = -1;
+    // } else {
+    //   res.kindId = fields[4] as int;
+    // }

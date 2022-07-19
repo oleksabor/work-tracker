@@ -17,5 +17,9 @@
     "createdCap": "Created",
     "todayCap": "today",
     "yesterdayCap": "yesterday",
-    "onCap": "on"
+    "onCap": "on",
+    "titleConfig": "Config",
+    "titleConfigChart": "Chart",
+    "weight4graph": "use weight in graph",
+    "weight4graphCoefficient" : "weight coefficient"
 }
