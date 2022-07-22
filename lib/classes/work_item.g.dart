@@ -21,13 +21,9 @@ class WorkItemAdapter extends TypeAdapter<WorkItem> {
       ..created = fields[1] as DateTime
       ..qty = fields[2] as int
       ..weight = fields[3] as double;
-    if (numOfFields < 5) {
-      // old structure and no kindId in the file
-      res.kindId = -1;
-    } else {
-      res.kindId = fields[4] as int;
+    if (numOfFields > 4) {
+      res.kindId = fields[4] == null ? -1 : fields[4] as int;
     }
-
     return res;
   }
 
