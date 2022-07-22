@@ -16,15 +16,11 @@ class WorkKindAdapter extends TypeAdapter<WorkKind> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-<<<<<<< Updated upstream
-    return WorkKind()..title = fields[0] as String;
-=======
     var res = WorkKind()..title = fields[0] as String;
     if (numOfFields > 1) {
       res.parentHash = fields[1] as int;
     }
     return res;
->>>>>>> Stashed changes
   }
 
   @override
