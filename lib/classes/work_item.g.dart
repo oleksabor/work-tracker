@@ -24,7 +24,6 @@ class WorkItemAdapter extends TypeAdapter<WorkItem> {
     if (numOfFields > 4) {
       res.kindId = fields[4] == null ? -1 : fields[4] as int;
     }
-    return res;
   }
 
   @override

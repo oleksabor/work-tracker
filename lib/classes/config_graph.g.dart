@@ -1,36 +1,34 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'work_kind.dart';
+part of 'config_graph.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class WorkKindAdapter extends TypeAdapter<WorkKind> {
+class ConfigGraphAdapter extends TypeAdapter<ConfigGraph> {
   @override
-  final int typeId = 1;
+  final int typeId = 3;
 
   @override
-  WorkKind read(BinaryReader reader) {
+  ConfigGraph read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    var res = WorkKind()..title = fields[0] as String;
-    if (numOfFields > 1) {
-      res.parentHash = fields[1] as int;
-    }
-    return res;
+    return ConfigGraph()
+      ..weight4graph = fields[0] as bool
+      ..bodyWeight = fields[1] as double;
   }
 
   @override
-  void write(BinaryWriter writer, WorkKind obj) {
+  void write(BinaryWriter writer, ConfigGraph obj) {
     writer
       ..writeByte(2)
       ..writeByte(0)
-      ..write(obj.title)
+      ..write(obj.weight4graph)
       ..writeByte(1)
-      ..write(obj.parentHash);
+      ..write(obj.bodyWeight);
   }
 
   @override
@@ -39,7 +37,7 @@ class WorkKindAdapter extends TypeAdapter<WorkKind> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is WorkKindAdapter &&
+      other is ConfigGraphAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

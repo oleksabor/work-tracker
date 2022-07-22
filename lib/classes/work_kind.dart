@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'hive_type_vales.dart';
+import 'hive_type_values.dart';
 
 part 'work_kind.g.dart';
 

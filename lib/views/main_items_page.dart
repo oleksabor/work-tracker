@@ -5,6 +5,7 @@ import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:work_tracker/views/charts_page.dart';
+import 'package:work_tracker/views/config_page.dart';
 import 'package:work_tracker/views/work_item_page.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -101,9 +102,10 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     return "$version+$buildNumber";
   }
 
-  final menuTags = [tagChart, tagDebug];
+  final menuTags = [tagChart, tagDebug, tagSettings];
   static const tagDebug = "Debug";
   static const tagChart = "Charts";
+  static const tagSettings = "Settings";
 
   void handleClick(String tag) async {
     if (kDebugMode) {
@@ -120,6 +122,12 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
         await Navigator.push(
           context,
           MaterialPageRoute(builder: (ctx) => ChartItemsView(_model)),
+        );
+        break;
+      case tagSettings:
+        await Navigator.push(
+          context,
+          MaterialPageRoute(builder: (ctx) => ConfigPage()),
         );
         break;
     }
