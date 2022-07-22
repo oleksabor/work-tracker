@@ -1,5 +1,8 @@
 import 'dart:math';
 import 'package:collection/collection.dart';
+import 'package:work_tracker/classes/chart_data.dart';
+import 'package:work_tracker/classes/config_graph.dart';
+import 'package:work_tracker/classes/config_model.dart';
 import 'package:work_tracker/classes/iterable_extension.dart';
 import 'package:work_tracker/classes/work_item.dart';
 
@@ -13,47 +16,49 @@ class ChartViewModel {
     return itemsData;
   }
 
-  Map<DateTime, List<WorkItem>> groupByDate(Iterable<WorkItem> items) {
-    var dateData = items.groupBy(
+  ChartData mapWI(WorkItem src, ConfigGraph cg) {
+    var res = ChartData(src.created, value: src.qty.toDouble());
+    if (cg.weight4graph && cg.bodyWeight > 0) {
+      res.value += res.value * src.weight / cg.bodyWeight;
+    }
+    return res;
+  }
+
+  Map<DateTime, List<ChartData>> groupByDate(
+      Iterable<WorkItem> items, ConfigGraph config) {
+    var dateData = items.map((e) => mapWI(e, config)).groupBy(
         (p0) => DateTime(p0.created.year, p0.created.month, p0.created.day));
     return dateData;
   }
 
-  List<WorkItem> sumByDate(Iterable<WorkItem> items) {
-    var dateData = groupByDate(items);
+  List<ChartData> sumByDate(Iterable<WorkItem> items, ConfigGraph config) {
+    var dateData = groupByDate(items, config);
 
-    var res = <WorkItem>[];
+    var res = <ChartData>[];
     for (var k in dateData.entries) {
-      var wi = WorkItem();
-      wi.created = k.key;
-      wi.qty = k.value.map((i) => i.qty).sum;
-      wi.weight = k.value.map((e) => e.weight).sum;
+      var wi = ChartData(k.key, value: k.value.map((i) => i.value).sum);
       res.add(wi);
     }
     return res;
   }
 
-  List<WorkItem> avgByDate(Iterable<WorkItem> items) {
-    var dateData = groupByDate(items);
+  List<ChartData> avgByDate(Iterable<WorkItem> items, ConfigGraph config) {
+    var dateData = groupByDate(items, config);
 
-    var res = <WorkItem>[];
+    var res = <ChartData>[];
     for (var k in dateData.entries) {
-      var wi = WorkItem();
-      wi.created = k.key;
-      wi.weight = k.value.map((i) => i.qty).average;
+      var wi = ChartData(k.key, value: k.value.map((i) => i.value).average);
       res.add(wi);
     }
     return res;
   }
 
-  List<WorkItem> maxByDate(Iterable<WorkItem> items) {
-    var dateData = groupByDate(items);
+  List<ChartData> maxByDate(Iterable<WorkItem> items, ConfigGraph config) {
+    var dateData = groupByDate(items, config);
 
-    var res = <WorkItem>[];
+    var res = <ChartData>[];
     for (var k in dateData.entries) {
-      var wi = WorkItem();
-      wi.created = k.key;
-      wi.qty = k.value.map((i) => i.qty).reduce(max);
+      var wi = ChartData(k.key, value: k.value.map((i) => i.value).reduce(max));
       res.add(wi);
     }
     return res;

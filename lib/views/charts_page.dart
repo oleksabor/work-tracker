@@ -1,6 +1,9 @@
 import 'package:charts_flutter/flutter.dart' as flcharts;
 import 'package:flutter/material.dart';
+import 'package:work_tracker/classes/chart_data.dart';
 import 'package:work_tracker/classes/chart_view_model.dart';
+import 'package:work_tracker/classes/config_graph.dart';
+import 'package:work_tracker/classes/config_model.dart';
 import 'package:work_tracker/classes/iterable_extension.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
@@ -84,7 +87,8 @@ class ChartItemsViewState extends State<ChartItemsView> {
     ]);
   }
 
-  List<WorkItem> Function(ChartViewModel model, List<WorkItem> src) getAggr() {
+  List<ChartData> Function(
+      ChartViewModel model, List<WorkItem> src, ConfigGraph config) getAggr() {
     switch (groupChart) {
       case GroupChart.avg:
         return getAvg;
@@ -95,32 +99,33 @@ class ChartItemsViewState extends State<ChartItemsView> {
     }
   }
 
-  num? Function(WorkItem, num?) getMeasure() {
+  num? Function(ChartData, num?) getMeasure() {
     switch (groupChart) {
-      case GroupChart.avg:
-        return (wi, _) => wi.weight;
       default:
-        return (wi, _) => wi.qty;
+        return (wi, _) => wi.value;
     }
   }
 
-  List<WorkItem> getSum(ChartViewModel model, List<WorkItem> items) {
-    return model.sumByDate(items);
+  List<ChartData> getSum(
+      ChartViewModel model, List<WorkItem> items, ConfigGraph config) {
+    return model.sumByDate(items, config);
   }
 
-  List<WorkItem> getMax(ChartViewModel model, List<WorkItem> items) {
-    return model.maxByDate(items);
+  List<ChartData> getMax(
+      ChartViewModel model, List<WorkItem> items, ConfigGraph config) {
+    return model.maxByDate(items, config);
   }
 
-  List<WorkItem> getAvg(ChartViewModel model, List<WorkItem> items) {
-    return model.avgByDate(items);
+  List<ChartData> getAvg(
+      ChartViewModel model, List<WorkItem> items, ConfigGraph config) {
+    return model.avgByDate(items, config);
   }
 
   Widget getChartFuture(
-      Future<List<flcharts.Series<WorkItem, num>>> chartData) {
+      Future<List<flcharts.Series<ChartData, num>>> chartData) {
     return Expanded(
         flex: 10,
-        child: FutureBuilder<List<flcharts.Series<WorkItem, num>>>(
+        child: FutureBuilder<List<flcharts.Series<ChartData, num>>>(
             future: chartData,
             builder: (ctx, snapshot) {
               return snapshot.hasData && snapshot.data != null
@@ -129,7 +134,7 @@ class ChartItemsViewState extends State<ChartItemsView> {
             }));
   }
 
-  Widget getChart(List<flcharts.Series<WorkItem, num>> data) {
+  Widget getChart(List<flcharts.Series<ChartData, num>> data) {
     return flcharts.LineChart(
       data,
       animate: true,
@@ -138,23 +143,25 @@ class ChartItemsViewState extends State<ChartItemsView> {
     );
   }
 
-  Future<List<flcharts.Series<WorkItem, num>>> getChartData(
-      List<WorkItem> Function(ChartViewModel, List<WorkItem>) aggr,
-      num? Function(WorkItem, num?) measure) async {
+  Future<List<flcharts.Series<ChartData, num>>> getChartData(
+      List<ChartData> Function(ChartViewModel, List<WorkItem>, ConfigGraph)
+          aggr,
+      num? Function(ChartData, num?) measure) async {
+    var config = await ConfigModel().load();
     var items = await widget.data.loadItems();
     var itemsData = charts.loadItemsFor(180, items);
     var kinds = await widget.data.loadKinds();
 
     var kindsData = itemsData.groupBy((i) => i.kindId).entries;
     var res = kindsData
-        .map((i) => flcharts.Series<WorkItem, int>(
+        .map((i) => flcharts.Series<ChartData, int>(
             id: "${i.key}",
-            data: aggr(charts, i.value),
+            data: aggr(charts, i.value, config.graph),
             displayName: kinds
                 .firstWhere((k) => k.key == i.key,
                     orElse: () => WorkKind.m("unknown ${i.key}"))
                 .title,
-            domainFn: (WorkItem wi, _) =>
+            domainFn: (ChartData wi, _) =>
                 wi.created.difference(DateTime.now()).inDays,
             measureFn: measure))
         .toList();

@@ -18,7 +18,7 @@ class ConfigGraphAdapter extends TypeAdapter<ConfigGraph> {
     };
     return ConfigGraph()
       ..weight4graph = fields[0] as bool
-      ..weight4graphCoefficient = fields[1] as double;
+      ..bodyWeight = fields[1] as double;
   }
 
   @override
@@ -28,7 +28,7 @@ class ConfigGraphAdapter extends TypeAdapter<ConfigGraph> {
       ..writeByte(0)
       ..write(obj.weight4graph)
       ..writeByte(1)
-      ..write(obj.weight4graphCoefficient);
+      ..write(obj.bodyWeight);
   }
 
   @override

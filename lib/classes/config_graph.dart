@@ -8,5 +8,5 @@ class ConfigGraph {
   @HiveField(0)
   bool weight4graph = false;
   @HiveField(1)
-  double weight4graphCoefficient = 0;
+  double bodyWeight = 0;
 }
