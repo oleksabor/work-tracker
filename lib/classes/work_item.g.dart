@@ -16,12 +16,15 @@ class WorkItemAdapter extends TypeAdapter<WorkItem> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return WorkItem()
+    var res = WorkItem()
       ..kind = fields[0] as String
       ..created = fields[1] as DateTime
       ..qty = fields[2] as int
-      ..weight = fields[3] as double
-      ..kindId = fields[4] == null ? -1 : fields[4] as int;
+      ..weight = fields[3] as double;
+    if (numOfFields > 4) {
+      res.kindId = fields[4] == null ? -1 : fields[4] as int;
+    }
+    return res;
   }
 
   @override
