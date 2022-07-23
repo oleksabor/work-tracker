@@ -17,3 +17,6 @@ avdmanager create avd -n emu31 --package "system-images;android-31;google_apis;x
 
 sudo apt-get install openjdk-11-jdk
 
+#reset network if fails
+sudo nmcli networking on
+

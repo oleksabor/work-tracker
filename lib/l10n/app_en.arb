@@ -21,5 +21,7 @@
     "titleConfig": "Config",
     "titleConfigChart": "Chart",
     "weight4graph": "use weight in graph",
-    "weight4graphCoefficient" : "weight coefficient"
+    "weight4graphCoefficient" : "weight coefficient",
+    "bodyWeight": "body weight",
+    "bodyWeightDescription": "graph value = qty + qty * weight / bodyWeight"
 }
