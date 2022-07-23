@@ -4,7 +4,6 @@ import 'package:work_tracker/classes/config.dart';
 import 'package:work_tracker/classes/config_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:work_tracker/views/numeric_step_button.dart';
-import 'numeric_edit.dart';
 
 class ConfigPage extends StatefulWidget {
   const ConfigPage({super.key});
@@ -102,10 +101,16 @@ class ConfigPageState extends State<ConfigPage> {
       ]),
       IgnorePointer(
           ignoring: !config!.graph.weight4graph,
-          child: NumericStepButton(
-              value: config.graph.bodyWeight.toInt(),
-              minValue: 30,
-              onChanged: setGraphWeightCoefficient))
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+            Text(t.bodyWeight),
+            NumericStepButton(
+                value: config.graph.bodyWeight.toInt(),
+                minValue: 30,
+                onChanged: setGraphWeightCoefficient)
+          ])),
+      Text(t.bodyWeightDescription,
+          style: const TextStyle(fontStyle: FontStyle.italic))
     ]);
   }
 }

@@ -18,5 +18,7 @@
     "titleConfig": "Конфіг",
     "titleConfigChart": "Графік",
     "weight4graph": "використовувати вагу в графіках",
-    "weight4graphCoefficient" : "коефіцієнт одиниці ваги"
+    "weight4graphCoefficient" : "коефіцієнт одиниці ваги",
+    "bodyWeight": "вага тіла",
+    "bodyWeightDescription": "graph value = qty + qty * weight / bodyWeight"
     }
