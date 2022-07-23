@@ -19,8 +19,8 @@ class WorkItem extends HiveObject {
   double weight = 0;
 
   // reference to the work kind key value
-  @HiveField(4, defaultValue: -1)
-  int kindId = 0;
+  @HiveField(4)
+  int kindId = -1;
 
   WorkItem.k(this.kind);
   WorkItem.i(this.kindId);
