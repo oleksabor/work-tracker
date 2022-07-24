@@ -1,3 +1,4 @@
+# working with sdkmanager
 # https://gist.github.com/mrk-han/66ac1a724456cadf1c93f4218c6060ae
 
 sudo $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "system-images;android-31;google_apis;x86_64"
@@ -15,6 +16,7 @@ flutter doctor --android-licenses
 
 avdmanager create avd -n emu31 --package "system-images;android-31;google_apis;x86_64"
 
+#new flutter sdk requires new Java to be installed
 sudo apt-get install openjdk-11-jdk
 
 #reset network if fails
