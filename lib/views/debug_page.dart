@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:work_tracker/classes/date_extension.dart';
+import 'package:work_tracker/classes/debug_model.dart';
 import 'package:work_tracker/classes/doc_dir.dart';
 import 'package:work_tracker/classes/db_loader.dart';
 import 'package:work_tracker/classes/work_item.dart';
@@ -8,11 +10,17 @@ import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class DebugPage extends StatelessWidget {
+class DebugPage extends StatefulWidget {
   final WorkViewModel model;
-
   const DebugPage.m({Key? key, required this.model}) : super(key: key);
 
+  @override
+  State<StatefulWidget> createState() {
+    return DebugPageState();
+  }
+}
+
+class DebugPageState extends State<DebugPage> {
   Widget createColumnDir(DirData data) {
     var items = data.toList();
     var res = ListView.builder(
@@ -42,19 +50,6 @@ class DebugPage extends StatelessWidget {
     );
   }
 
-  Future moveDb() async {
-    var vm = DbLoader();
-    if (await Permission.storage.request().isGranted) {
-      var externalDir = await vm.getExternalDir();
-
-      if (externalDir != null) await vm.moveDb2Dir(externalDir.path);
-    }
-  }
-
-  Future closeDb() async {
-    model.dispose();
-  }
-
   Widget createKindList(List<WorkKind> items) {
     return ListView.builder(
       padding: const EdgeInsets.all(10.0),
@@ -65,6 +60,9 @@ class DebugPage extends StatelessWidget {
       },
     );
   }
+
+  DebugModel model = DebugModel();
+  int? dbItemsUpgraded;
 
   List<Widget> createSwipes(BuildContext context) {
     var workModel = WorkViewModel();
@@ -113,12 +111,37 @@ class DebugPage extends StatelessWidget {
           Text(DateTime.now().asStringTime())
         ]),
         TextButton(
-          onPressed: moveDb,
+          onPressed: () async {
+            if (await Permission.storage.request().isGranted) {
+              await model.moveDb();
+            }
+          },
           child: Text(t.moveDb2ExtCap),
         ),
         TextButton(
-          onPressed: closeDb,
+          onPressed: () => model.closeDb(workModel),
           child: Text("close db"),
+        ),
+        TextButton(
+          onPressed: () async {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return Column(children: const [
+                    Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    Center(child: Text("please wait")),
+                  ]);
+                });
+            dbItemsUpgraded = await model.upgradeDb(workModel);
+            if (kDebugMode) {
+              await Future.delayed(const Duration(seconds: 5));
+            }
+            if (!mounted) return;
+            Navigator.pop(context);
+          },
+          child: Text("upgrade db ($dbItemsUpgraded)"),
         )
       ]),
     ];
