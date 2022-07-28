@@ -14,6 +14,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'debug_page.dart';
 import 'lifecycle_watcher_state.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:simple_logger/simple_logger.dart';
 
 /// main app page
 class MainItemsPage extends StatefulWidget {
@@ -97,19 +98,19 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
   Future<String> getAppVersion() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String version = packageInfo.version;
-    String buildNumber = packageInfo.buildNumber;
 
-    return "$version+$buildNumber";
+    return version;
   }
 
   final menuTags = [tagChart, tagDebug, tagSettings];
   static const tagDebug = "Debug";
   static const tagChart = "Charts";
   static const tagSettings = "Settings";
+  final logger = SimpleLogger();
 
   void handleClick(String tag) async {
     if (kDebugMode) {
-      print("menu " + tag);
+      logger.fine('menu $tag');
     }
     switch (tag) {
       case tagDebug:
@@ -127,7 +128,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
       case tagSettings:
         await Navigator.push(
           context,
-          MaterialPageRoute(builder: (ctx) => ConfigPage()),
+          MaterialPageRoute(builder: (ctx) => const ConfigPage()),
         );
         break;
     }

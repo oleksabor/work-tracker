@@ -1,34 +1,34 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'config.dart';
+part of 'config_log.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class ConfigAdapter extends TypeAdapter<Config> {
+class ConfigLogAdapter extends TypeAdapter<ConfigLog> {
   @override
-  final int typeId = 2;
+  final int typeId = 4;
 
   @override
-  Config read(BinaryReader reader) {
+  ConfigLog read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Config()
-      ..graph = fields[0] as ConfigGraph
-      ..log = fields[1] == null ? ConfigLog() : fields[1] as ConfigLog;
+    return ConfigLog()
+      ..logLevel = fields[0] as String
+      ..includeCallerInfo = fields[1] as bool;
   }
 
   @override
-  void write(BinaryWriter writer, Config obj) {
+  void write(BinaryWriter writer, ConfigLog obj) {
     writer
       ..writeByte(2)
       ..writeByte(0)
-      ..write(obj.graph)
+      ..write(obj.logLevel)
       ..writeByte(1)
-      ..write(obj.log);
+      ..write(obj.includeCallerInfo);
   }
 
   @override
@@ -37,7 +37,7 @@ class ConfigAdapter extends TypeAdapter<Config> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ConfigAdapter &&
+      other is ConfigLogAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

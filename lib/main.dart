@@ -1,7 +1,7 @@
+import 'package:work_tracker/classes/init_get.dart';
 import 'package:work_tracker/views/main_items_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'dart:io';
 import 'package:intl/intl_standalone.dart';
 
 void main() async {
@@ -9,6 +9,7 @@ void main() async {
 
   //https://stackoverflow.com/a/68911879/940182
   await findSystemLocale();
+  configureDependencies();
   runApp(MyApp());
 }
 

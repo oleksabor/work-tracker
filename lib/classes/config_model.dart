@@ -1,8 +1,11 @@
+import 'package:injectable/injectable.dart';
 import 'package:work_tracker/classes/config.dart';
 import 'package:work_tracker/classes/db_loader.dart';
 
+@injectable
 class ConfigModel {
-  DbLoader db = DbLoader();
+  ConfigModel(this.db);
+  DbLoader db;
 
   Future<Config> load() async {
     var box = await db.openBox<Config>("config");

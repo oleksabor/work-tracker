@@ -23,4 +23,6 @@ num=$(( patch+num ))
 
 echo $mmp ' => ' $mmp$label'+'$num
 
+flutter clean
+
 flutter build appbundle --build-name $mmp$label --build-number  $num

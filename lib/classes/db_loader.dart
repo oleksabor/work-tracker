@@ -1,14 +1,16 @@
 import 'dart:io';
 import 'package:async/async.dart';
+import 'package:injectable/injectable.dart';
 import 'package:work_tracker/classes/config.dart';
 import 'package:work_tracker/classes/config_graph.dart';
+import 'package:work_tracker/classes/config_log.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as Path;
 
+@singleton
 class DbLoader {
   static bool initialized = false;
 
@@ -89,14 +91,12 @@ class DbLoader {
       var hiveDb = await findDbFile(getDbFolders());
       _initDBMemoizer.runOnce(() {
         Hive.init(hiveDb);
-        if (kDebugMode) {
-          print("data storage dir is $hiveDb");
-        }
         //flutter packages pub run build_runner build --delete-conflicting-outputs
         Hive.registerAdapter(WorkItemAdapter());
         Hive.registerAdapter(WorkKindAdapter());
         Hive.registerAdapter(ConfigAdapter());
         Hive.registerAdapter(ConfigGraphAdapter());
+        Hive.registerAdapter(ConfigLogAdapter());
       });
       initialized = true;
     }
