@@ -1,5 +1,6 @@
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
+import 'package:simple_logger/simple_logger.dart';
 
 class DirEntry {
   final String title;
@@ -12,6 +13,7 @@ class DirData extends Iterable<DirEntry> {
   final String appDocuments;
   String? appLibrary;
   String? extStorage;
+  static final logger = SimpleLogger();
 
   DirData(
       {required this.appDocuments,
@@ -22,7 +24,7 @@ class DirData extends Iterable<DirEntry> {
     try {
       return await fd();
     } catch (e) {
-      print(e);
+      logger.warning(e);
       return null;
     }
   }

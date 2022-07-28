@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:work_tracker/classes/debug_model.dart';
 import 'package:work_tracker/classes/doc_dir.dart';
-import 'package:work_tracker/classes/db_loader.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
 import 'package:work_tracker/classes/work_view_model.dart';

@@ -4,6 +4,7 @@ import 'package:work_tracker/classes/chart_data.dart';
 import 'package:work_tracker/classes/chart_view_model.dart';
 import 'package:work_tracker/classes/config_graph.dart';
 import 'package:work_tracker/classes/config_model.dart';
+import 'package:work_tracker/classes/init_get.dart';
 import 'package:work_tracker/classes/iterable_extension.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
@@ -27,6 +28,13 @@ enum GroupChart { avg, max, sum }
 class ChartItemsViewState extends State<ChartItemsView> {
   final ChartViewModel charts = ChartViewModel();
   GroupChart? groupChart = GroupChart.max;
+  late ConfigModel configModel;
+
+  @override
+  void initState() {
+    super.initState();
+    configModel = getIt<ConfigModel>();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +155,7 @@ class ChartItemsViewState extends State<ChartItemsView> {
       List<ChartData> Function(ChartViewModel, List<WorkItem>, ConfigGraph)
           aggr,
       num? Function(ChartData, num?) measure) async {
-    var config = await ConfigModel().load();
+    var config = await configModel.load();
     var items = await widget.data.loadItems();
     var itemsData = charts.loadItemsFor(180, items);
     var kinds = await widget.data.loadKinds();
