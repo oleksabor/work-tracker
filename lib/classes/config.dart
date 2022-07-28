@@ -1,6 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:work_tracker/classes/config_graph.dart';
 import 'package:work_tracker/classes/config_log.dart';
+import 'package:work_tracker/classes/config_notify.dart';
 import 'package:work_tracker/classes/hive_type_values.dart';
 
 part 'config.g.dart';
@@ -11,6 +12,8 @@ class Config extends HiveObject {
   ConfigGraph graph = ConfigGraph();
   @HiveField(1)
   ConfigLog log = ConfigLog();
+  @HiveField(2)
+  ConfigNotify notify = ConfigNotify();
 }
 
 //flutter packages pub run build_runner build --delete-conflicting-outputs

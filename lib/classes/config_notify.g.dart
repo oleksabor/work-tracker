@@ -1,37 +1,40 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'config.dart';
+part of 'config_notify.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class ConfigAdapter extends TypeAdapter<Config> {
+class ConfigNotifyAdapter extends TypeAdapter<ConfigNotify> {
   @override
-  final int typeId = 2;
+  final int typeId = 5;
 
   @override
-  Config read(BinaryReader reader) {
+  ConfigNotify read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Config()
-      ..graph = fields[0] as ConfigGraph
-      ..log = fields[1] == null ? ConfigLog() : fields[1] as ConfigLog
-      ..notify = fields[2] == null ? ConfigNotify() : fields[2] as ConfigNotify;
+    return ConfigNotify()
+      ..volume = fields[0] as double
+      ..frequency = fields[1] as double
+      ..sampleRate = fields[2] as double
+      ..period = fields[3] as double;
   }
 
   @override
-  void write(BinaryWriter writer, Config obj) {
+  void write(BinaryWriter writer, ConfigNotify obj) {
     writer
-      ..writeByte(3)
+      ..writeByte(4)
       ..writeByte(0)
-      ..write(obj.graph)
+      ..write(obj.volume)
       ..writeByte(1)
-      ..write(obj.log)
+      ..write(obj.frequency)
       ..writeByte(2)
-      ..write(obj.notify);
+      ..write(obj.sampleRate)
+      ..writeByte(3)
+      ..write(obj.period);
   }
 
   @override
@@ -40,7 +43,7 @@ class ConfigAdapter extends TypeAdapter<Config> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ConfigAdapter &&
+      other is ConfigNotifyAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

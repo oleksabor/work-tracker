@@ -26,5 +26,6 @@
     "bodyWeightDescription": "graph value = qty + qty * weight / bodyWeight",
     "logLevel":"log level",
     "logCallerInfo":"include caller info",
-    "titleConfigLog":"Log"
+    "titleConfigLog":"Log",
+    "titleConfigNotify": "Notify"
 }

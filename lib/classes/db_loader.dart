@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 import 'package:work_tracker/classes/config.dart';
 import 'package:work_tracker/classes/config_graph.dart';
 import 'package:work_tracker/classes/config_log.dart';
+import 'package:work_tracker/classes/config_notify.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
 import 'package:hive/hive.dart';
@@ -97,6 +98,7 @@ class DbLoader {
         Hive.registerAdapter(ConfigAdapter());
         Hive.registerAdapter(ConfigGraphAdapter());
         Hive.registerAdapter(ConfigLogAdapter());
+        Hive.registerAdapter(ConfigNotifyAdapter());
       });
       initialized = true;
     }

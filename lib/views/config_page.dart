@@ -6,6 +6,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:work_tracker/classes/init_get.dart';
 import 'package:work_tracker/views/numeric_step_button.dart';
 import 'package:simple_logger/simple_logger.dart';
+import 'package:sound_generator/sound_generator.dart';
+import 'package:sound_generator/waveTypes.dart';
 
 class ConfigPage extends StatefulWidget {
   const ConfigPage({super.key});
@@ -33,6 +35,11 @@ class ConfigPageState extends State<ConfigPage> {
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
 
+    var tabs = {
+      t!.titleConfigChart: buildChartsTab,
+      t.titleConfigLog: buildLogsTab,
+      t.titleConfigNotify: buildNotifyTab
+    };
     return WillPopScope(
         onWillPop: () async {
           if (_formKey.currentState == null ||
@@ -49,33 +56,30 @@ class ConfigPageState extends State<ConfigPage> {
                 builder: (c, s) {
                   logger = s.hasData ? s.data : null;
                   return DefaultTabController(
-                      length: 2,
-                      child: Scaffold(
+                    length: tabs.length,
+                    child: Scaffold(
                         appBar: AppBar(
                           title: Text(t!.titleConfig),
                           bottom: TabBar(
-                            tabs: [
-                              Tab(text: t.titleConfigChart),
-                              Tab(text: t.titleConfigLog),
-                            ],
-                          ),
+                              tabs:
+                                  tabs.keys.map((c) => Tab(text: c)).toList()),
                         ),
-                        body: TabBarView(children: [
-                          FutureBuilder<Config>(
-                            future: configRead,
-                            builder: (context, snapshot) => snapshot.hasData
-                                ? buildChartsTab(context, snapshot.data)
-                                : const CircularProgressIndicator(),
-                          ),
-                          FutureBuilder<Config>(
-                            future: configRead,
-                            builder: (context, snapshot) => snapshot.hasData
-                                ? buildLogsTab(context, snapshot.data)
-                                : const CircularProgressIndicator(),
-                          ),
-                        ]),
-                      ));
+                        body: TabBarView(
+                            children: tabs.values
+                                .map((v) => buildTab<Config>(configRead, v))
+                                .toList())),
+                  );
                 })));
+  }
+
+  FutureBuilder<T> buildTab<T>(
+      Future<T>? value, Function(BuildContext, T?) buildFunction) {
+    return FutureBuilder<T>(
+      future: value,
+      builder: (context, snapshot) => snapshot.hasData
+          ? buildFunction(context, snapshot.data)
+          : const CircularProgressIndicator(),
+    );
   }
 
   Future<Config>? configRead;
@@ -145,11 +149,77 @@ class ConfigPageState extends State<ConfigPage> {
             NumericStepButton(
                 value: config.graph.bodyWeight.toInt(),
                 minValue: 30,
-                onChanged: setGraphWeightCoefficient)
+                onChanged: setGraphWeightCoefficient),
           ])),
       Text(t.bodyWeightDescription,
           style: const TextStyle(fontStyle: FontStyle.italic))
     ]);
+  }
+
+  Widget buildNotifyTab(BuildContext context, Config? config) {
+    var t = AppLocalizations.of(context)!;
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Text("Frequency"),
+          Container(
+              width: double.infinity,
+              height: 40,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Expanded(
+                      flex: 2,
+                      child: Center(
+                          child: Text(
+                              config!.notify.frequency.toStringAsFixed(2) +
+                                  " Hz")),
+                    ),
+                    Expanded(
+                      flex: 8, // 60%
+                      child: Slider(
+                          min: 20,
+                          max: 10000,
+                          value: config!.notify.frequency,
+                          onChanged: (v) {
+                            setState(() {
+                              config.notify.frequency = v.toDouble();
+                              SoundGenerator.setFrequency(
+                                  config.notify.frequency);
+                            });
+                          }),
+                    ),
+                  ])),
+          Text("Volume"),
+          Container(
+              width: double.infinity,
+              height: 40,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Expanded(
+                      flex: 2,
+                      child: Center(
+                          child: Text(config.notify.volume.toStringAsFixed(2))),
+                    ),
+                    Expanded(
+                      flex: 8, // 60%
+                      child: Slider(
+                          min: 0,
+                          max: 1,
+                          value: config.notify.volume,
+                          onChanged: (v) {
+                            setState(() {
+                              config.notify.volume = v.toDouble();
+                              SoundGenerator.setVolume(config.notify.volume);
+                            });
+                          }),
+                    )
+                  ]))
+        ]);
   }
 
   setLogCaller(bool v) {
