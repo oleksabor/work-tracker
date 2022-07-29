@@ -28,7 +28,33 @@ class ConfigPageState extends State<ConfigPage> {
   void initState() {
     super.initState();
     configModel = getIt<ConfigModel>();
-    configRead = configModel.load();
+    configRead = configModel.load().then((c) {
+      initConfig(c);
+
+      return c;
+    });
+  }
+
+  void initConfig(Config c) {
+    isPlaying = false;
+
+    SoundGenerator.init(c.notify.sampleRate);
+
+    SoundGenerator.onIsPlayingChanged.listen((value) {
+      setState(() {
+        isPlaying = value;
+      });
+    });
+
+    // SoundGenerator.onOneCycleDataHandler.listen((value) {
+    //   setState(() {
+    //     oneCycleData = value;
+    //   });
+    // });
+
+    SoundGenerator.setAutoUpdateOneCycleSample(true);
+    //Force update for one time
+    SoundGenerator.refreshOneCycleData();
   }
 
   @override
@@ -156,71 +182,101 @@ class ConfigPageState extends State<ConfigPage> {
     ]);
   }
 
+  //COPIED FROM https://pub.dev/packages/sound_generator/example
   Widget buildNotifyTab(BuildContext context, Config? config) {
     var t = AppLocalizations.of(context)!;
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text("Frequency"),
-          Container(
-              width: double.infinity,
-              height: 40,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 2,
-                      child: Center(
-                          child: Text(
-                              config!.notify.frequency.toStringAsFixed(2) +
-                                  " Hz")),
-                    ),
-                    Expanded(
-                      flex: 8, // 60%
-                      child: Slider(
-                          min: 20,
-                          max: 10000,
-                          value: config!.notify.frequency,
-                          onChanged: (v) {
-                            setState(() {
-                              config.notify.frequency = v.toDouble();
-                              SoundGenerator.setFrequency(
-                                  config.notify.frequency);
-                            });
-                          }),
-                    ),
-                  ])),
-          Text("Volume"),
-          Container(
-              width: double.infinity,
-              height: 40,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 2,
-                      child: Center(
-                          child: Text(config.notify.volume.toStringAsFixed(2))),
-                    ),
-                    Expanded(
-                      flex: 8, // 60%
-                      child: Slider(
-                          min: 0,
-                          max: 1,
-                          value: config.notify.volume,
-                          onChanged: (v) {
-                            setState(() {
-                              config.notify.volume = v.toDouble();
-                              SoundGenerator.setVolume(config.notify.volume);
-                            });
-                          }),
-                    )
-                  ]))
-        ]);
+    return SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20.0,
+          vertical: 20,
+        ),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 5),
+              const Text("Wave Form"),
+              Center(
+                  child: DropdownButton<String>(
+                      value: config!.notify.waveType,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          config.notify.waveType = newValue!;
+                          SoundGenerator.setWaveType(parseWave(newValue));
+                        });
+                      },
+                      items: waveTypes.values.map((waveTypes classType) {
+                        var text = classType.toString().split('.').last;
+                        return DropdownMenuItem<String>(
+                            value: text, child: Text(text));
+                      }).toList())),
+              SizedBox(height: 5),
+              const Text("Frequency"),
+              sliderContainer(
+                  config!.notify.frequency.toStringAsFixed(2) + " Hz",
+                  config.notify.frequency, (v) {
+                config.notify.frequency = v.toDouble();
+                SoundGenerator.setFrequency(config.notify.frequency);
+              }, min: 20, max: 20000),
+              SizedBox(height: 5),
+              const Text("Volume"),
+              sliderContainer(
+                  config.notify.volume.toStringAsFixed(2), config.notify.volume,
+                  (v) {
+                config.notify.volume = v.toDouble();
+                SoundGenerator.setVolume(config.notify.volume);
+              }),
+              SizedBox(height: 5),
+              const Text("Time to play"),
+              sliderContainer(config.notify.period.toString(),
+                  config.notify.period.toDouble(), (v) {
+                config.notify.period = v.toInt();
+              }, min: 1, max: 10),
+              SizedBox(height: 5),
+              CircleAvatar(
+                  radius: 30,
+                  backgroundColor: Colors.lightBlueAccent,
+                  child: IconButton(
+                      icon: Icon(isPlaying ? Icons.stop : Icons.play_arrow),
+                      onPressed: () {
+                        isPlaying
+                            ? SoundGenerator.stop()
+                            : SoundGenerator.play();
+                      })),
+            ]));
   }
+
+  Widget sliderContainer(
+      String caption, double value, void Function(double v) event,
+      {double min = 0, double max = 1}) {
+    return Container(
+        width: double.infinity,
+        height: 40,
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Expanded(
+                flex: 2,
+                child: Center(child: Text(caption)),
+              ),
+              Expanded(
+                flex: 8, // 60%
+                child: Slider(
+                    min: min,
+                    max: max,
+                    value: value,
+                    onChanged: (v) {
+                      setState(() {
+                        event(v);
+                      });
+                    }),
+              ),
+            ]));
+  }
+
+  bool isPlaying = false;
 
   setLogCaller(bool v) {
     if (configRead != null) {
@@ -238,5 +294,16 @@ class ConfigPageState extends State<ConfigPage> {
     return levels
         .map((l) => DropdownMenuItem(value: l, child: Text(l)))
         .toList();
+  }
+
+  waveTypes parseWave(String newValue) {
+    return waveTypes.values.byName(newValue);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    SoundGenerator.release();
   }
 }

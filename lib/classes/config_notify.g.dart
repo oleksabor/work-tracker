@@ -16,17 +16,25 @@ class ConfigNotifyAdapter extends TypeAdapter<ConfigNotify> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return ConfigNotify()
-      ..volume = fields[0] as double
-      ..frequency = fields[1] as double
-      ..sampleRate = fields[2] as double
-      ..period = fields[3] as double;
+    try {
+      return ConfigNotify()
+        ..volume = fields[0] as double
+        ..frequency = fields[1] as double
+        ..sampleRate = fields[2] as int
+        ..period = fields[3] as int
+        ..waveType = fields[4] as String;
+    } catch (e) {
+      if (kDebugMode) {
+        print("failed to read configNotify ${e.toString()}");
+      }
+      return ConfigNotify();
+    }
   }
 
   @override
   void write(BinaryWriter writer, ConfigNotify obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.volume)
       ..writeByte(1)
@@ -34,7 +42,9 @@ class ConfigNotifyAdapter extends TypeAdapter<ConfigNotify> {
       ..writeByte(2)
       ..write(obj.sampleRate)
       ..writeByte(3)
-      ..write(obj.period);
+      ..write(obj.period)
+      ..writeByte(4)
+      ..write(obj.waveType);
   }
 
   @override
