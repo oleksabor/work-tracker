@@ -4,10 +4,9 @@ import 'package:work_tracker/classes/config.dart';
 import 'package:work_tracker/classes/config_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:work_tracker/classes/init_get.dart';
+import 'package:work_tracker/classes/notify_model.dart';
 import 'package:work_tracker/views/numeric_step_button.dart';
 import 'package:simple_logger/simple_logger.dart';
-import 'package:sound_generator/sound_generator.dart';
-import 'package:sound_generator/waveTypes.dart';
 
 class ConfigPage extends StatefulWidget {
   const ConfigPage({super.key});
@@ -23,6 +22,7 @@ class ConfigPageState extends State<ConfigPage> {
   final _formKey = GlobalKey<FormState>();
   final loggerF = getIt.getAsync<SimpleLogger>();
   SimpleLogger? logger;
+  final notifyModel = getIt.get<NotifyModel>();
 
   @override
   void initState() {
@@ -37,24 +37,11 @@ class ConfigPageState extends State<ConfigPage> {
 
   void initConfig(Config c) {
     isPlaying = false;
-
-    SoundGenerator.init(c.notify.sampleRate);
-
-    SoundGenerator.onIsPlayingChanged.listen((value) {
+    notifyModel.init(c, opc: (value) {
       setState(() {
         isPlaying = value;
       });
     });
-
-    // SoundGenerator.onOneCycleDataHandler.listen((value) {
-    //   setState(() {
-    //     oneCycleData = value;
-    //   });
-    // });
-
-    SoundGenerator.setAutoUpdateOneCycleSample(true);
-    //Force update for one time
-    SoundGenerator.refreshOneCycleData();
   }
 
   @override
@@ -185,6 +172,8 @@ class ConfigPageState extends State<ConfigPage> {
   //COPIED FROM https://pub.dev/packages/sound_generator/example
   Widget buildNotifyTab(BuildContext context, Config? config) {
     var t = AppLocalizations.of(context)!;
+    var notify = config!.notify;
+    var volumeInt = (notify.volume * 100).toInt();
     return SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.symmetric(
@@ -199,50 +188,76 @@ class ConfigPageState extends State<ConfigPage> {
               const Text("Wave Form"),
               Center(
                   child: DropdownButton<String>(
-                      value: config!.notify.waveType,
+                      value: notify.waveType,
                       onChanged: (String? newValue) {
                         setState(() {
-                          config.notify.waveType = newValue!;
-                          SoundGenerator.setWaveType(parseWave(newValue));
+                          notify.waveType = newValue!;
+                          notifyModel.setWaveType(newValue);
                         });
                       },
-                      items: waveTypes.values.map((waveTypes classType) {
-                        var text = classType.toString().split('.').last;
-                        return DropdownMenuItem<String>(
-                            value: text, child: Text(text));
-                      }).toList())),
+                      items: notifyModel
+                          .getWaveTypes()
+                          .map((String s) => DropdownMenuItem<String>(
+                              value: s, child: Text(s)))
+                          .toList())),
               SizedBox(height: 5),
               const Text("Frequency"),
               sliderContainer(
-                  config!.notify.frequency.toStringAsFixed(2) + " Hz",
-                  config.notify.frequency, (v) {
-                config.notify.frequency = v.toDouble();
-                SoundGenerator.setFrequency(config.notify.frequency);
-              }, min: 20, max: 20000),
+                  '${notify.frequency.toInt()} Hz', notify.frequency, (v) {
+                notify.frequency = v.toDouble();
+                notifyModel.setFrequency(notify.frequency);
+              }, min: 60, max: 10000),
+              SizedBox(height: 5),
+              const Text("play sound after new item"),
+              Switch(
+                value: notify.playAfterNewResult,
+                onChanged: (v) {
+                  setState(() => notify.playAfterNewResult = v);
+                },
+              ),
               SizedBox(height: 5),
               const Text("Volume"),
-              sliderContainer(
-                  config.notify.volume.toStringAsFixed(2), config.notify.volume,
-                  (v) {
+              sliderContainer('$volumeInt %', notify.volume, (v) {
                 config.notify.volume = v.toDouble();
-                SoundGenerator.setVolume(config.notify.volume);
+                notifyModel.setVolume(notify.volume);
               }),
               SizedBox(height: 5),
               const Text("Time to play"),
-              sliderContainer(config.notify.period.toString(),
-                  config.notify.period.toDouble(), (v) {
-                config.notify.period = v.toInt();
+              sliderContainer('${notify.period} sec', notify.period.toDouble(),
+                  (v) {
+                notify.period = v.toInt();
               }, min: 1, max: 10),
               SizedBox(height: 5),
+              const Text("Pause after new exercise"),
+              const SizedBox(height: 5),
+              Container(
+                  width: double.infinity,
+                  height: 40,
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        const Expanded(
+                          flex: 2,
+                          child: Center(child: Text("seconds")),
+                        ),
+                        Expanded(
+                          flex: 8, // 60%
+                          child: NumericStepButton(
+                              value: config.notify.delay,
+                              minValue: 1,
+                              onChanged: (v) {
+                                setState(() => config.notify.delay = v);
+                              }),
+                        ),
+                      ])),
               CircleAvatar(
                   radius: 30,
                   backgroundColor: Colors.lightBlueAccent,
                   child: IconButton(
                       icon: Icon(isPlaying ? Icons.stop : Icons.play_arrow),
                       onPressed: () {
-                        isPlaying
-                            ? SoundGenerator.stop()
-                            : SoundGenerator.play();
+                        isPlaying ? notifyModel.stop() : notifyModel.playTest();
                       })),
             ]));
   }
@@ -250,6 +265,8 @@ class ConfigPageState extends State<ConfigPage> {
   Widget sliderContainer(
       String caption, double value, void Function(double v) event,
       {double min = 0, double max = 1}) {
+    if (value > max) value = max;
+    if (value < min) value = min;
     return Container(
         width: double.infinity,
         height: 40,
@@ -296,14 +313,10 @@ class ConfigPageState extends State<ConfigPage> {
         .toList();
   }
 
-  waveTypes parseWave(String newValue) {
-    return waveTypes.values.byName(newValue);
-  }
-
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    SoundGenerator.release();
+    notifyModel.dispose();
   }
 }

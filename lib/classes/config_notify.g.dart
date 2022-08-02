@@ -22,7 +22,9 @@ class ConfigNotifyAdapter extends TypeAdapter<ConfigNotify> {
         ..frequency = fields[1] as double
         ..sampleRate = fields[2] as int
         ..period = fields[3] as int
-        ..waveType = fields[4] as String;
+        ..waveType = fields[4] as String
+        ..playAfterNewResult = fields[5] as bool
+        ..delay = fields[6] as int;
     } catch (e) {
       if (kDebugMode) {
         print("failed to read configNotify ${e.toString()}");
@@ -34,7 +36,7 @@ class ConfigNotifyAdapter extends TypeAdapter<ConfigNotify> {
   @override
   void write(BinaryWriter writer, ConfigNotify obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.volume)
       ..writeByte(1)
@@ -44,7 +46,11 @@ class ConfigNotifyAdapter extends TypeAdapter<ConfigNotify> {
       ..writeByte(3)
       ..write(obj.period)
       ..writeByte(4)
-      ..write(obj.waveType);
+      ..write(obj.waveType)
+      ..writeByte(5)
+      ..write(obj.playAfterNewResult)
+      ..writeByte(6)
+      ..write(obj.delay);
   }
 
   @override

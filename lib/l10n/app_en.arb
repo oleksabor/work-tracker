@@ -27,5 +27,6 @@
     "logLevel":"log level",
     "logCallerInfo":"include caller info",
     "titleConfigLog":"Log",
-    "titleConfigNotify": "Notify"
+    "titleConfigNotify": "Notify",
+    "notificationLabel": "notify"
 }

@@ -25,8 +25,11 @@ class NumericStepButton extends StatefulWidget {
 class _NumericStepButtonState extends State<NumericStepButton> {
   int counter = 0;
 
-  void increment(int delta) {
+  void increment(int delta, {int count = 0}) {
     setState(() {
+      if (count > 5) {
+        delta *= 2;
+      }
       var maxValue = widget.maxValue ?? (counter + delta);
       if (counter < maxValue) {
         if (counter + delta <= maxValue) {
@@ -39,8 +42,11 @@ class _NumericStepButtonState extends State<NumericStepButton> {
     });
   }
 
-  void decrement(int delta) {
+  void decrement(int delta, {int count = 0}) {
     setState(() {
+      if (count > 5) {
+        delta *= 2;
+      }
       var minValue = widget.minValue ?? (counter - delta);
       if (counter > minValue) {
         if (counter - delta >= minValue) {
@@ -60,17 +66,19 @@ class _NumericStepButtonState extends State<NumericStepButton> {
     });
   }
 
-  void startPressing(Function() fu) async {
+  void startPressing(Function(int count) fu) async {
     isPressed = true;
+    int q = 0;
     do {
-      fu();
+      q++;
+      fu(q);
       await Future.delayed(const Duration(milliseconds: 600));
     } while (isPressed);
   }
 
   late bool isPressed;
 
-  Widget buildIcon(void Function(int) onPressed, IconData? icon) {
+  Widget buildIcon(void Function(int, {int count}) onPressed, IconData? icon) {
     return GestureDetector(
       child: IconButton(
         onPressed: () => onPressed(1),
@@ -82,7 +90,7 @@ class _NumericStepButtonState extends State<NumericStepButton> {
         color: Theme.of(context).iconTheme.color,
       ),
       onLongPressStart: (_) async {
-        startPressing(() => onPressed(10));
+        startPressing((c) => onPressed(10, count: c));
       },
       onLongPressCancel: () {
         cancelPress();
@@ -103,7 +111,8 @@ class _NumericStepButtonState extends State<NumericStepButton> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        buildIcon((i) => decrement(i), Icons.remove),
+        buildIcon(
+            (i, {int count = 0}) => decrement(i, count: count), Icons.remove),
         Text(
           '$counter',
           textAlign: TextAlign.center,
@@ -113,7 +122,8 @@ class _NumericStepButtonState extends State<NumericStepButton> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        buildIcon((i) => increment(i), Icons.add),
+        buildIcon(
+            (i, {int count = 0}) => increment(i, count: count), Icons.add),
       ],
     );
   }

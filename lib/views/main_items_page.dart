@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:work_tracker/classes/config_model.dart';
+import 'package:work_tracker/classes/init_get.dart';
+import 'package:work_tracker/classes/notify_model.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +49,15 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
       setState(() {
         kToday.todayWork?.add(item);
       });
+      notify();
+    }
+  }
+
+  void notify() async {
+    var configModel = getIt<ConfigModel>();
+    var config = await configModel.load();
+    if (config.notify.playAfterNewResult) {
+      NotifyModel.playSchedule(config?.notify);
     }
   }
 
