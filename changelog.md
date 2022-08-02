@@ -1,3 +1,5 @@
+- next exercise notification (using sound generator)
+
 ### 0.10.0
 - old structure support (checking for field count when reading)
 - chart data have exercise weight coefficient applied when configured [#10](https://github.com/oleksabor/work-tracker/issues/10)

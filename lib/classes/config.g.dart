@@ -18,17 +18,20 @@ class ConfigAdapter extends TypeAdapter<Config> {
     };
     return Config()
       ..graph = fields[0] as ConfigGraph
-      ..log = fields[1] == null ? ConfigLog() : fields[1] as ConfigLog;
+      ..log = fields[1] == null ? ConfigLog() : fields[1] as ConfigLog
+      ..notify = fields[2] == null ? ConfigNotify() : fields[2] as ConfigNotify;
   }
 
   @override
   void write(BinaryWriter writer, Config obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.graph)
       ..writeByte(1)
-      ..write(obj.log);
+      ..write(obj.log)
+      ..writeByte(2)
+      ..write(obj.notify);
   }
 
   @override
