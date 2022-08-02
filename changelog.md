@@ -1,3 +1,4 @@
+### 0.11.0
 - next exercise notification (using sound generator)
 
 ### 0.10.0
