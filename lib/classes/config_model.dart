@@ -7,12 +7,26 @@ class ConfigModel {
   ConfigModel(this.db);
   DbLoader db;
 
+  static var notifications = [
+    '',
+    'Car Lock.mp3',
+    'Breaklock.mp3',
+    'Car Security Lock.mp3',
+    'Mgs4 Lock.mp3',
+    'Lock On.mp3'
+  ];
+
   Future<Config> load() async {
-    var box = await db.openBox<Config>("config");
-    if (box.values.isEmpty) {
-      return Config();
-    } else {
+    try {
+      var box = await db.openBox<Config>("config");
+      if (box.values.isEmpty) {
+        throw "no config value was loaded";
+      }
       return box.values.first;
+    } catch (e, st) {
+      print(e);
+      //db.clearBox("config");
+      return Config();
     }
   }
 
@@ -22,7 +36,7 @@ class ConfigModel {
         await value.save();
       } else {
         var box = await db.openBox<Config>("config");
-        box.add(value);
+        box.add(value); // TODO close box to commit changes ?
       }
     }
   }
