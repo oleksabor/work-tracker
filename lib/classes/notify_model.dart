@@ -1,48 +1,34 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_logger/simple_logger.dart';
-import 'package:sound_generator/sound_generator.dart';
 import 'package:work_tracker/classes/config.dart';
+import 'package:work_tracker/classes/config_model.dart';
 import 'package:work_tracker/classes/config_notify.dart';
-import 'package:sound_generator/waveTypes.dart';
 import 'package:work_tracker/classes/init_get.dart';
 
 @injectable
 class NotifyModel {
-  StreamSubscription<bool>? _onData;
+  static final AudioCache _ac = AudioCache();
+  static AudioPlayer? _player;
+  void Function(bool)? _onPlayingChanged;
 
   void init(Config config, {void Function(bool value)? opc}) {
-    _isPlaying = false;
+    _isScheduled = _isPlaying = false;
 
-    SoundGenerator.init(config.notify.sampleRate);
     releasePlayingChanged();
-    if (opc != null) {
-      _onData = SoundGenerator.onIsPlayingChanged.listen((value) {
-        opc(value);
-      });
-    }
-    // SoundGenerator.onOneCycleDataHandler.listen((value) {
-    //   setState(() {
-    //     oneCycleData = value;
-    //   });
-    // });
-    setFrequency(config.notify.frequency);
-    setVolume(config.notify.volume);
-    setWaveType(config.notify.waveType);
-
-    SoundGenerator.setAutoUpdateOneCycleSample(true);
-    //Force update for one time
-    SoundGenerator.refreshOneCycleData();
+    _onPlayingChanged = opc;
   }
 
   void releasePlayingChanged() {
-    if (_onData != null) {
-      _onData?.cancel();
+    if (_player != null) {
+      _player!.release();
     }
+    _onPlayingChanged = null;
   }
 
   bool _isPlaying = false;
@@ -50,7 +36,7 @@ class NotifyModel {
   static bool _isScheduled = false;
 
   /// schedules to play notification sound
-  /// for [ConfigNotify.period] seconds after [ConfigNotify.delay] seconds.
+  /// after [ConfigNotify.delay] seconds.
   /// Stores current [ConfigNotify] instance as [SharedPreferences] json string using [saveShared]
   /// Is executed by [AndroidAlarmManager] isolated from main app instance
   static void playSchedule(ConfigNotify? config) async {
@@ -71,15 +57,15 @@ class NotifyModel {
 
   /// stores current [ConfigNotify] instance as [SharedPreferences] json string
   static Future<void> saveShared(ConfigNotify? config) async {
+    var logger = await getIt.getAsync<SimpleLogger>();
     if (config == null) return;
     final prefs = await SharedPreferences.getInstance();
     var str = jsonEncode(config);
-    if (kDebugMode) {
-      print('configNotify saved as $str');
-    }
+    logger.fine('configNotify saving as $str');
     if (prefs.containsKey(configNotifyName)) {
       await prefs.remove(configNotifyName);
     }
+    await prefs.setString(configNotifyName, "no data");
     await prefs.setString(configNotifyName, str);
   }
 
@@ -89,11 +75,15 @@ class NotifyModel {
   /// Returns null if no shared preference was found
   static Future<ConfigNotify?> loadShared() async {
     final prefs = await SharedPreferences.getInstance();
+    await prefs.reload();
     var str = prefs.getString(configNotifyName);
     if (kDebugMode) {
       print('configNotify loaded from $str');
     }
-    return loadFromString(str);
+    var res = loadFromString(str);
+    // await prefs.setString(configNotifyName,
+    //     "cleared"); // requires saveShared to be called before each loadShared
+    return res;
   }
 
   static ConfigNotify? loadFromString(String? v) {
@@ -101,47 +91,45 @@ class NotifyModel {
   }
 
   /// alarm manager handler to start sound playing
-  /// stops to play sound after [ConfigNotify.period]
   static void playImpl() async {
     var config = await loadShared();
 
-    if (config == null) {
+    if (config == null || _isScheduled) {
       return;
     }
     _isScheduled = true;
-    SoundGenerator.init(config.sampleRate);
-    SoundGenerator.setFrequency(config.frequency);
-    SoundGenerator.setVolume(config.volume);
-    SoundGenerator.setWaveType(parseWave(config.waveType));
-    SoundGenerator.setAutoUpdateOneCycleSample(true);
-    //Force update for one time
-    SoundGenerator.refreshOneCycleData();
-    SoundGenerator.play();
-    Future.delayed(
-        // it starts in "background" no await is required
-        Duration(seconds: config.period),
-        stopSchedule);
-  }
 
-  static void stopSchedule() async {
-    SoundGenerator.stop();
-    AndroidAlarmManager.cancel(helloAlarmID);
+    await _ac.play(config.notification, volume: config.volume);
+
     _isScheduled = false;
   }
 
   /// play notification sound until [stop] method is called
-  void playTest() {
+  void playTest(ConfigNotify config) {
     if (isPlaying) {
       return;
     }
-    SoundGenerator.play();
     _isPlaying = true;
+    updateIsPlaying(_isPlaying);
+    var playerF = _ac.play(config.notification,
+        volume: config.volume, mode: PlayerMode.LOW_LATENCY);
+    playerF.then((ap) {
+      _isPlaying = false;
+      updateIsPlaying(_isPlaying);
+    }).onError((error, stackTrace) {
+      _isPlaying = false;
+      updateIsPlaying(_isPlaying);
+    });
+  }
+
+  void updateIsPlaying(bool v) {
+    if (_onPlayingChanged != null) {
+      _onPlayingChanged!(v);
+    }
   }
 
   void stop() {
-    if (isPlaying) {
-      SoundGenerator.stop();
-    }
+    if (isPlaying) {}
     _isPlaying = false;
   }
 
@@ -149,28 +137,10 @@ class NotifyModel {
 
   void dispose() {
     releasePlayingChanged();
-    SoundGenerator.release();
+    _onPlayingChanged = null; // is it like unsubscribe
   }
 
-  void setWaveType(String newValue) {
-    SoundGenerator.setWaveType(parseWave(newValue));
-  }
-
-  void setFrequency(double value) {
-    SoundGenerator.setFrequency(value);
-  }
-
-  void setVolume(double value) {
-    SoundGenerator.setVolume(value);
-  }
-
-  static waveTypes parseWave(String newValue) {
-    return waveTypes.values.byName(newValue);
-  }
-
-  List<String> getWaveTypes() {
-    return waveTypes.values
-        .map((waveTypes classType) => classType.name)
-        .toList();
+  List<String> getNotifications() {
+    return ConfigModel.notifications;
   }
 }

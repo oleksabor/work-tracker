@@ -10,52 +10,33 @@ class ConfigNotify {
   @HiveField(0)
   double volume;
 
+  /// internal notification sound
   @HiveField(1)
-  double frequency;
+  String notification;
 
-  /// have default value and is not changed in the SoundGenerator example
+  /// delay in seconds between an exercise and the notification
   @HiveField(2)
-  int sampleRate;
-
-  /// how long the sound should be played
-  @HiveField(3)
-  int period;
-
-  @HiveField(4)
-  String waveType;
-
-  /// delay in seconds between exercises
-  @HiveField(5)
   int delay;
 
   @HiveField(6)
   bool playAfterNewResult;
 
   ConfigNotify()
-      : frequency = 20,
-        volume = 1,
-        sampleRate = 9600,
-        period = 2,
-        waveType = "SINUSOIDAL",
+      : volume = 1,
         delay = 300,
-        playAfterNewResult = true;
+        playAfterNewResult = false,
+        notification = '';
 
   ConfigNotify.fromJson(Map<String, dynamic> data)
-      : frequency = data['frequency'],
-        volume = data['volume'],
-        sampleRate = data['sampleRate'],
-        period = data['period'],
-        waveType = data['waveType'],
+      : volume = data['volume'],
         delay = data['delay'],
+        notification = data['notification'],
         playAfterNewResult = data['playAfterNewResult'];
 
   Map<String, dynamic> toJson() => {
         'playAfterNewResult': playAfterNewResult,
         'volume': volume,
-        'sampleRate': sampleRate,
-        'period': period,
-        'waveType': waveType,
         'delay': delay,
-        'frequency': frequency
+        'notification': notification
       };
 }

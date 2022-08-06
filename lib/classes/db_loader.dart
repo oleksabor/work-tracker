@@ -102,7 +102,17 @@ class DbLoader {
       });
       initialized = true;
     }
-    var box2 = await Hive.openBox<T>(name);
-    return box2;
+    try {
+      var box2 = await Hive.openBox<T>(name);
+      return box2;
+    } catch (e, st) {
+      print('failed to open box $name');
+      print(st);
+      rethrow;
+    }
+  }
+
+  Future clearBox(String name) async {
+    await Hive.deleteBoxFromDisk(name);
   }
 }

@@ -38,6 +38,9 @@ class ConfigPageState extends State<ConfigPage> {
   void initConfig(Config c) {
     isPlaying = false;
     notifyModel.init(c, opc: (value) {
+      if (kDebugMode) {
+        logger?.fine('notification sound $value');
+      }
       setState(() {
         isPlaying = value;
       });
@@ -185,30 +188,22 @@ class ConfigPageState extends State<ConfigPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 5),
-              const Text("Wave Form"),
+              const Text("Notification sound"),
               Center(
                   child: DropdownButton<String>(
-                      value: notify.waveType,
+                      value: notify.notification,
                       onChanged: (String? newValue) {
                         setState(() {
-                          notify.waveType = newValue!;
-                          notifyModel.setWaveType(newValue);
+                          notify.notification = newValue!;
                         });
                       },
                       items: notifyModel
-                          .getWaveTypes()
+                          .getNotifications()
                           .map((String s) => DropdownMenuItem<String>(
                               value: s, child: Text(s)))
                           .toList())),
               SizedBox(height: 5),
-              const Text("Frequency"),
-              sliderContainer(
-                  '${notify.frequency.toInt()} Hz', notify.frequency, (v) {
-                notify.frequency = v.toDouble();
-                notifyModel.setFrequency(notify.frequency);
-              }, min: 60, max: 10000),
-              SizedBox(height: 5),
-              const Text("play sound after new item"),
+              const Text("play sound after exercise"),
               Switch(
                 value: notify.playAfterNewResult,
                 onChanged: (v) {
@@ -219,16 +214,9 @@ class ConfigPageState extends State<ConfigPage> {
               const Text("Volume"),
               sliderContainer('$volumeInt %', notify.volume, (v) {
                 config.notify.volume = v.toDouble();
-                notifyModel.setVolume(notify.volume);
               }),
               SizedBox(height: 5),
-              const Text("Time to play"),
-              sliderContainer('${notify.period} sec', notify.period.toDouble(),
-                  (v) {
-                notify.period = v.toInt();
-              }, min: 1, max: 10),
-              SizedBox(height: 5),
-              const Text("Pause after new exercise"),
+              const Text("Pause after exercise"),
               const SizedBox(height: 5),
               Container(
                   width: double.infinity,
@@ -256,9 +244,14 @@ class ConfigPageState extends State<ConfigPage> {
                   backgroundColor: Colors.lightBlueAccent,
                   child: IconButton(
                       icon: Icon(isPlaying ? Icons.stop : Icons.play_arrow),
-                      onPressed: () {
-                        isPlaying ? notifyModel.stop() : notifyModel.playTest();
-                      })),
+                      // null onPressed causes button to be disabled
+                      onPressed: config.notify.notification.isEmpty
+                          ? null
+                          : () {
+                              isPlaying
+                                  ? notifyModel.stop()
+                                  : notifyModel.playTest(notify);
+                            })),
             ]));
   }
 
@@ -318,5 +311,8 @@ class ConfigPageState extends State<ConfigPage> {
     // TODO: implement dispose
     super.dispose();
     notifyModel.dispose();
+    if (kDebugMode) {
+      logger?.fine('config state was disposed');
+    }
   }
 }
