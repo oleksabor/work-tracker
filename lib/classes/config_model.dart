@@ -36,7 +36,8 @@ class ConfigModel {
         await value.save();
       } else {
         var box = await db.openBox<Config>("config");
-        box.add(value); // TODO close box to commit changes ?
+        box.add(value);
+        box.close(); // like commit
       }
     }
   }
