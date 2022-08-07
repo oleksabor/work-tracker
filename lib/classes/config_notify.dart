@@ -18,25 +18,49 @@ class ConfigNotify {
   @HiveField(2)
   int delay;
 
-  @HiveField(6)
+  @HiveField(3)
   bool playAfterNewResult;
+
+  @HiveField(4)
+  NotificationKind kind;
+
+  /// plays sound overriding silent or vibrate mode
+  @HiveField(5)
+  bool asAlarm;
 
   ConfigNotify()
       : volume = 1,
         delay = 300,
         playAfterNewResult = false,
-        notification = '';
+        notification = '',
+        kind = NotificationKind.system,
+        asAlarm = true;
 
   ConfigNotify.fromJson(Map<String, dynamic> data)
       : volume = data['volume'],
         delay = data['delay'],
         notification = data['notification'],
-        playAfterNewResult = data['playAfterNewResult'];
+        playAfterNewResult = data['playAfterNewResult'],
+        kind = data['systemNotification'],
+        asAlarm = data['asAlarm'];
 
   Map<String, dynamic> toJson() => {
         'playAfterNewResult': playAfterNewResult,
         'volume': volume,
         'delay': delay,
-        'notification': notification
+        'notification': notification,
+        'systemNotification': kind,
+        'asAlarm': asAlarm
       };
+}
+
+enum NotificationKind {
+  /// system notification sound
+  system,
+
+  /// mp3 from resources
+  inbuilt,
+
+  /// external file
+  external,
 }

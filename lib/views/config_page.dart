@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:work_tracker/classes/config.dart';
 import 'package:work_tracker/classes/config_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:work_tracker/classes/config_notify.dart';
 import 'package:work_tracker/classes/init_get.dart';
 import 'package:work_tracker/classes/notify_model.dart';
 import 'package:work_tracker/views/numeric_step_button.dart';
@@ -172,28 +173,37 @@ class ConfigPageState extends State<ConfigPage> {
     ]);
   }
 
-  //COPIED FROM https://pub.dev/packages/sound_generator/example
-  Widget buildNotifyTab(BuildContext context, Config? config) {
-    var t = AppLocalizations.of(context)!;
-    var notify = config!.notify;
+  void notificationKindChanged(ConfigNotify notify, NotificationKind? kind) {
+    if (kind != null) {
+      notify.kind = kind;
+    }
+  }
+
+  List<Widget> notificationControls(AppLocalizations t, ConfigNotify notify) {
+    List<Widget> res = [
+      ListTile(
+          title: Text('use system notification'),
+          leading: Radio<NotificationKind>(
+            value: NotificationKind.system,
+            groupValue: notify.kind,
+            onChanged: (v) =>
+                setState(() => notificationKindChanged(notify, v)),
+          )),
+      ListTile(
+          title: Text('use in-built sound'),
+          leading: Radio<NotificationKind>(
+            value: NotificationKind.inbuilt,
+            groupValue: notify.kind,
+            onChanged: (v) =>
+                setState(() => notificationKindChanged(notify, v)),
+          )),
+    ];
     var volumeInt = (notify.volume * 100).toInt();
-    return SingleChildScrollView(
-        physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 20.0,
-          vertical: 20,
-        ),
-        child: Column(children: [
-          SizedBox(height: 5),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Text("play sound after exercise"),
-            Switch(
-              value: notify.playAfterNewResult,
-              onChanged: (v) {
-                setState(() => notify.playAfterNewResult = v);
-              },
-            )
-          ]),
+    switch (notify.kind) {
+      case NotificationKind.system:
+        break;
+      case NotificationKind.inbuilt:
+        res.addAll([
           const SizedBox(height: 5),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             const Text("sound"),
@@ -213,7 +223,7 @@ class ConfigPageState extends State<ConfigPage> {
           SizedBox(height: 5),
           Row(children: [const Text("Volume")]),
           sliderContainer('$volumeInt %', notify.volume, (v) {
-            config.notify.volume = v.toDouble();
+            notify.volume = v.toDouble();
           }),
           SizedBox(height: 5),
           Row(children: [const Text("Pause after exercise")]),
@@ -231,28 +241,77 @@ class ConfigPageState extends State<ConfigPage> {
                     Expanded(
                       flex: 8, // 60%
                       child: NumericStepButton(
-                          value: config.notify.delay,
+                          value: notify.delay,
                           minValue: 1,
                           onChanged: (v) {
-                            setState(() => config.notify.delay = v);
+                            setState(() => notify.delay = v);
                           }),
                     ),
                   ])),
-          SizedBox(height: 5),
-          CircleAvatar(
-              radius: 30,
-              backgroundColor: Colors.lightBlueAccent,
-              child: IconButton(
-                  icon: Icon(isPlaying ? Icons.stop : Icons.play_arrow),
-                  // null onPressed causes button to be disabled
-                  onPressed: config.notify.notification.isEmpty
-                      ? null
-                      : () {
-                          isPlaying
-                              ? notifyModel.stop()
-                              : notifyModel.playTest(notify);
-                        })),
-        ]));
+        ]);
+    }
+    var click = onPlayClick(notify);
+    res.addAll([
+      SizedBox(height: 5),
+      CircleAvatar(
+          radius: 30,
+          backgroundColor: Colors.lightBlueAccent,
+          child: IconButton(
+              icon: Icon(isPlaying ? Icons.stop : Icons.play_arrow),
+              // null onPressed causes button to be disabled
+              onPressed: click)),
+    ]);
+    return res;
+  }
+
+  void Function()? onPlayClick(ConfigNotify config) {
+    onClick() {
+      setState(
+          () => isPlaying ? notifyModel.stop() : notifyModel.playTest(config));
+    }
+
+    switch (config.kind) {
+      case NotificationKind.system:
+        return onClick;
+      case NotificationKind.inbuilt:
+        return config.notification.isEmpty ? null : onClick;
+    }
+  }
+
+  //COPIED FROM https://pub.dev/packages/sound_generator/example
+  Widget buildNotifyTab(BuildContext context, Config? config) {
+    var t = AppLocalizations.of(context)!;
+    var notify = config!.notify;
+    List<Widget> children = [
+      SizedBox(height: 5),
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        const Text("play sound after exercise"),
+        Switch(
+          value: notify.playAfterNewResult,
+          onChanged: (v) {
+            setState(() => notify.playAfterNewResult = v);
+          },
+        )
+      ]),
+      SizedBox(height: 5),
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        const Text("play as alarm"),
+        Switch(
+          value: notify.asAlarm,
+          onChanged: (v) {
+            setState(() => notify.asAlarm = v);
+          },
+        )
+      ]),
+    ];
+    children.addAll(notificationControls(t, config.notify));
+    return SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20.0,
+          vertical: 20,
+        ),
+        child: Column(children: children));
   }
 
   Widget sliderContainer(
