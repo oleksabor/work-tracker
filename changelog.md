@@ -1,3 +1,8 @@
+### 0.12.0
+- ringnote player for notification
+  [#29](https://github.com/oleksabor/work-tracker/issues/29)
+- system notification sound is supported
+
 ### 0.11.1
 - AudioPlayer for notification 
   [#20](https://github.com/oleksabor/work-tracker/issues/20) 
