@@ -1,3 +1,10 @@
+### 0.11.1
+- AudioPlayer for notification 
+  [#20](https://github.com/oleksabor/work-tracker/issues/20) 
+  [#22](https://github.com/oleksabor/work-tracker/issues/22)
+- commit for notification config 
+  [#19](https://github.com/oleksabor/work-tracker/issues/19)
+
 ### 0.11.0
 - next exercise notification (using sound generator)
 
