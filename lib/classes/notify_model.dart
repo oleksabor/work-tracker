@@ -111,8 +111,7 @@ class NotifyModel {
     }
     _isPlaying = true;
     updateIsPlaying(_isPlaying);
-    var playerF = _ac.play(config.notification,
-        volume: config.volume, mode: PlayerMode.LOW_LATENCY);
+    var playerF = _ac.play(config.notification, volume: config.volume);
     playerF.then((ap) {
       _isPlaying = false;
       updateIsPlaying(_isPlaying);
