@@ -32,6 +32,6 @@ I've used
  to save the notification configuration by the app and to load the config by the callback method.
  The notification config instance is serialized as Json string and stored as shared preference value.
 
-The [sound generator](https://pub.dev/packages/sound_generator) 
+The [audio players](https://pub.dev/packages/audioplayers) 
 produces notification sound.
 
