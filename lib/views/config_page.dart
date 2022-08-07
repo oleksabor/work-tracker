@@ -158,7 +158,7 @@ class ConfigPageState extends State<ConfigPage> {
         )
       ]),
       IgnorePointer(
-          ignoring: !config!.graph.weight4graph,
+          ignoring: !config.graph.weight4graph,
           child:
               Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
             Text(t.bodyWeight),
@@ -183,76 +183,76 @@ class ConfigPageState extends State<ConfigPage> {
           horizontal: 20.0,
           vertical: 20,
         ),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 5),
-              const Text("Notification sound"),
-              Center(
-                  child: DropdownButton<String>(
-                      value: notify.notification,
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          notify.notification = newValue!;
-                        });
-                      },
-                      items: notifyModel
-                          .getNotifications()
-                          .map((String s) => DropdownMenuItem<String>(
-                              value: s, child: Text(s)))
-                          .toList())),
-              SizedBox(height: 5),
-              const Text("play sound after exercise"),
-              Switch(
-                value: notify.playAfterNewResult,
-                onChanged: (v) {
-                  setState(() => notify.playAfterNewResult = v);
+        child: Column(children: [
+          SizedBox(height: 5),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            const Text("play sound after exercise"),
+            Switch(
+              value: notify.playAfterNewResult,
+              onChanged: (v) {
+                setState(() => notify.playAfterNewResult = v);
+              },
+            )
+          ]),
+          const SizedBox(height: 5),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            const Text("sound"),
+            DropdownButton<String>(
+                value: notify.notification,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    notify.notification = newValue!;
+                  });
                 },
-              ),
-              SizedBox(height: 5),
-              const Text("Volume"),
-              sliderContainer('$volumeInt %', notify.volume, (v) {
-                config.notify.volume = v.toDouble();
-              }),
-              SizedBox(height: 5),
-              const Text("Pause after exercise"),
-              const SizedBox(height: 5),
-              Container(
-                  width: double.infinity,
-                  height: 40,
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[
-                        const Expanded(
-                          flex: 2,
-                          child: Center(child: Text("seconds")),
-                        ),
-                        Expanded(
-                          flex: 8, // 60%
-                          child: NumericStepButton(
-                              value: config.notify.delay,
-                              minValue: 1,
-                              onChanged: (v) {
-                                setState(() => config.notify.delay = v);
-                              }),
-                        ),
-                      ])),
-              CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Colors.lightBlueAccent,
-                  child: IconButton(
-                      icon: Icon(isPlaying ? Icons.stop : Icons.play_arrow),
-                      // null onPressed causes button to be disabled
-                      onPressed: config.notify.notification.isEmpty
-                          ? null
-                          : () {
-                              isPlaying
-                                  ? notifyModel.stop()
-                                  : notifyModel.playTest(notify);
-                            })),
-            ]));
+                items: notifyModel
+                    .getNotifications()
+                    .map((String s) =>
+                        DropdownMenuItem<String>(value: s, child: Text(s)))
+                    .toList())
+          ]),
+          SizedBox(height: 5),
+          Row(children: [const Text("Volume")]),
+          sliderContainer('$volumeInt %', notify.volume, (v) {
+            config.notify.volume = v.toDouble();
+          }),
+          SizedBox(height: 5),
+          Row(children: [const Text("Pause after exercise")]),
+          Container(
+              width: double.infinity,
+              height: 40,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    const Expanded(
+                      flex: 2,
+                      child: Center(child: Text("seconds")),
+                    ),
+                    Expanded(
+                      flex: 8, // 60%
+                      child: NumericStepButton(
+                          value: config.notify.delay,
+                          minValue: 1,
+                          onChanged: (v) {
+                            setState(() => config.notify.delay = v);
+                          }),
+                    ),
+                  ])),
+          SizedBox(height: 5),
+          CircleAvatar(
+              radius: 30,
+              backgroundColor: Colors.lightBlueAccent,
+              child: IconButton(
+                  icon: Icon(isPlaying ? Icons.stop : Icons.play_arrow),
+                  // null onPressed causes button to be disabled
+                  onPressed: config.notify.notification.isEmpty
+                      ? null
+                      : () {
+                          isPlaying
+                              ? notifyModel.stop()
+                              : notifyModel.playTest(notify);
+                        })),
+        ]));
   }
 
   Widget sliderContainer(
