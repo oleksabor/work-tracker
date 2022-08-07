@@ -9,11 +9,11 @@ class ConfigModel {
 
   static var notifications = [
     '',
-    'Car Lock.mp3',
+    'CarLock.mp3',
     'Breaklock.mp3',
-    'Car Security Lock.mp3',
-    'Mgs4 Lock.mp3',
-    'Lock On.mp3'
+    'CarSecurityLock.mp3',
+    'Mgs4Lock.mp3',
+    'LockOn.mp3'
   ];
 
   Future<Config> load() async {

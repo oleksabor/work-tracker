@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,11 +9,10 @@ import 'package:work_tracker/classes/config.dart';
 import 'package:work_tracker/classes/config_model.dart';
 import 'package:work_tracker/classes/config_notify.dart';
 import 'package:work_tracker/classes/init_get.dart';
+import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
 @injectable
 class NotifyModel {
-  static final AudioCache _ac = AudioCache();
-  static AudioPlayer? _player;
   void Function(bool)? _onPlayingChanged;
 
   void init(Config config, {void Function(bool value)? opc}) {
@@ -25,9 +23,6 @@ class NotifyModel {
   }
 
   void releasePlayingChanged() {
-    if (_player != null) {
-      _player!.release();
-    }
     _onPlayingChanged = null;
   }
 
@@ -81,8 +76,6 @@ class NotifyModel {
       print('configNotify loaded from $str');
     }
     var res = loadFromString(str);
-    // await prefs.setString(configNotifyName,
-    //     "cleared"); // requires saveShared to be called before each loadShared
     return res;
   }
 
@@ -91,31 +84,39 @@ class NotifyModel {
   }
 
   /// alarm manager handler to start sound playing
-  static void playImpl() async {
-    var config = await loadShared();
-
-    if (config == null || _isScheduled) {
-      return;
+  /// is executed as isolate by AlarmManager
+  static void playAlarm() async {
+    if (!_isScheduled) {
+      _isScheduled = true;
+      playImpl(await loadShared());
+      _isScheduled = false;
     }
-    _isScheduled = true;
-
-    await _ac.play(config.notification, volume: config.volume);
-
-    _isScheduled = false;
   }
 
-  /// play notification sound until [stop] method is called
+  static Future<void> playImpl(ConfigNotify? config) async {
+    if (config == null) {
+      return;
+    }
+    switch (config.kind) {
+      case NotificationKind.inbuilt:
+        await FlutterRingtonePlayer.play(
+            fromAsset: 'assets/${config.notification}',
+            asAlarm: config.asAlarm);
+        break;
+      case NotificationKind.system:
+      default:
+        await FlutterRingtonePlayer.playNotification(asAlarm: config.asAlarm);
+        break;
+    }
+  }
+
   void playTest(ConfigNotify config) {
     if (isPlaying) {
       return;
     }
     _isPlaying = true;
     updateIsPlaying(_isPlaying);
-    var playerF = _ac.play(config.notification, volume: config.volume);
-    playerF.then((ap) {
-      _isPlaying = false;
-      updateIsPlaying(_isPlaying);
-    }).onError((error, stackTrace) {
+    playImpl(config).then((v) {
       _isPlaying = false;
       updateIsPlaying(_isPlaying);
     });
