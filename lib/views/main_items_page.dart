@@ -185,8 +185,8 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
                     },
                   )),
               Row(
-                children: [getVersionText(), const SizedBox(width: 10)],
                 mainAxisAlignment: MainAxisAlignment.end,
+                children: [getVersionText(), const SizedBox(width: 10)],
               )
             ])
         // floatingActionButton: FloatingActionButton(
