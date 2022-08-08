@@ -25,5 +25,13 @@
     "logCallerInfo":"include caller info",
     "titleConfigLog":"Log",
     "titleConfigNotify": "Notify",
-    "notificationLabel": "notify"
+    "notificationLabel": "notify",
+    "sysNotificationLabel": "системний звук",
+    "inbuiltNotificationLabel": "вбудований звук",
+    "soundLabel": "звук",
+    "volumeLabel": "гучність",
+    "pauseExerciseLabel": "Пауза після вправи",
+"secondsLabel": "секунд",
+"playSoundLabel": "нотифікація після вправи",
+"playAsAlarmLabel": "як будильник"
     }

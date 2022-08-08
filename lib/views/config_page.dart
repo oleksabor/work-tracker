@@ -54,8 +54,8 @@ class ConfigPageState extends State<ConfigPage> {
 
     var tabs = {
       t!.titleConfigChart: buildChartsTab,
+      t.titleConfigNotify: buildNotifyTab,
       t.titleConfigLog: buildLogsTab,
-      t.titleConfigNotify: buildNotifyTab
     };
     return WillPopScope(
         onWillPop: () async {
@@ -182,7 +182,7 @@ class ConfigPageState extends State<ConfigPage> {
   List<Widget> notificationControls(AppLocalizations t, ConfigNotify notify) {
     List<Widget> res = [
       ListTile(
-          title: Text('use system notification'),
+          title: Text(t.sysNotificationLabel),
           leading: Radio<NotificationKind>(
             value: NotificationKind.system,
             groupValue: notify.kind,
@@ -190,7 +190,7 @@ class ConfigPageState extends State<ConfigPage> {
                 setState(() => notificationKindChanged(notify, v)),
           )),
       ListTile(
-          title: Text('use in-built sound'),
+          title: Text(t.inbuiltNotificationLabel),
           leading: Radio<NotificationKind>(
             value: NotificationKind.inbuilt,
             groupValue: notify.kind,
@@ -206,7 +206,7 @@ class ConfigPageState extends State<ConfigPage> {
         res.addAll([
           const SizedBox(height: 5),
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Text("sound"),
+            Text(t.soundLabel),
             DropdownButton<String>(
                 value: notify.notification,
                 onChanged: (String? newValue) {
@@ -221,12 +221,12 @@ class ConfigPageState extends State<ConfigPage> {
                     .toList())
           ]),
           SizedBox(height: 5),
-          Row(children: [const Text("Volume")]),
+          Row(children: [Text(t.volumeLabel)]),
           sliderContainer('$volumeInt %', notify.volume, (v) {
             notify.volume = v.toDouble();
           }),
           SizedBox(height: 5),
-          Row(children: [const Text("Pause after exercise")]),
+          Row(children: [Text(t.pauseExerciseLabel)]),
           Container(
               width: double.infinity,
               height: 40,
@@ -234,9 +234,9 @@ class ConfigPageState extends State<ConfigPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
-                    const Expanded(
+                    Expanded(
                       flex: 2,
-                      child: Center(child: Text("seconds")),
+                      child: Center(child: Text(t.secondsLabel)),
                     ),
                     Expanded(
                       flex: 8, // 60%
@@ -285,7 +285,7 @@ class ConfigPageState extends State<ConfigPage> {
     List<Widget> children = [
       SizedBox(height: 5),
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        const Text("play sound after exercise"),
+        Text(t!.playSoundLabel),
         Switch(
           value: notify.playAfterNewResult,
           onChanged: (v) {
@@ -295,7 +295,7 @@ class ConfigPageState extends State<ConfigPage> {
       ]),
       SizedBox(height: 5),
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        const Text("play as alarm"),
+        Text(t.playAsAlarmLabel),
         Switch(
           value: notify.asAlarm,
           onChanged: (v) {

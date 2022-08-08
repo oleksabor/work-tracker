@@ -28,5 +28,13 @@
     "logCallerInfo":"include caller info",
     "titleConfigLog":"Log",
     "titleConfigNotify": "Notify",
-    "notificationLabel": "notify"
+    "notificationLabel": "notify",
+    "sysNotificationLabel": "use system notification",
+    "inbuiltNotificationLabel": "use in-built sound",
+    "soundLabel": "sound",
+    "volumeLabel": "Volume",
+    "pauseExerciseLabel": "Pause after exercise",
+"secondsLabel": "seconds",
+"playSoundLabel": "play sound after exercise",
+"playAsAlarmLabel": "play as alarm"
 }
