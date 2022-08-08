@@ -35,3 +35,15 @@ I've used
 The [ringtone player](https://pub.dev/packages/flutter_ringtone_player) 
 produces notification sound.
 
+### Localization
+
+`en` and `uk` localizations are supported.
+
+Commands below should re-generate `app_localizations.dart` source code.
+
+```bash
+flutter gen-l10n --template-arb-file=app_en.arb
+```
+
+where `app_en.arb` is the resource file name.
+
