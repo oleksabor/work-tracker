@@ -48,12 +48,12 @@ extension ConfigPageNotification on ConfigPageState {
                         DropdownMenuItem<String>(value: s, child: Text(s)))
                     .toList())
           ]),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Row(children: [Text(t.volumeLabel)]),
           sliderContainer('$volumeInt %', notify.volume, (v) {
             notify.volume = v.toDouble();
           }),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Row(children: [Text(t.pauseExerciseLabel)]),
           Container(
               width: double.infinity,
@@ -80,7 +80,7 @@ extension ConfigPageNotification on ConfigPageState {
     }
     var click = onPlayClick(notify);
     res.addAll([
-      SizedBox(height: 5),
+      const SizedBox(height: 5),
       CircleAvatar(
           radius: 30,
           backgroundColor: Colors.lightBlueAccent,
@@ -111,7 +111,7 @@ extension ConfigPageNotification on ConfigPageState {
     var t = AppLocalizations.of(context)!;
     var notify = config!.notify;
     List<Widget> children = [
-      SizedBox(height: 5),
+      const SizedBox(height: 5),
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Text(t!.playSoundLabel),
         Switch(
@@ -121,7 +121,7 @@ extension ConfigPageNotification on ConfigPageState {
           },
         )
       ]),
-      SizedBox(height: 5),
+      const SizedBox(height: 5),
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
         Text(t.playAsAlarmLabel),
         Switch(
