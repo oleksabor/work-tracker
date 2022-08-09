@@ -67,6 +67,7 @@ class WorkItemsViewState extends State<WorkItemsView> {
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
+    var colorBtn = Theme.of(context).iconTheme.color;
 
     return Scaffold(
       appBar: AppBar(
@@ -97,7 +98,7 @@ class WorkItemsViewState extends State<WorkItemsView> {
                           return v;
                         });
                       },
-                      color: Theme.of(context).primaryColor,
+                      color: colorBtn,
                       icon: const Icon(Icons.arrow_back),
                     ),
                     IconButton(
@@ -107,7 +108,7 @@ class WorkItemsViewState extends State<WorkItemsView> {
                           return v;
                         });
                       },
-                      color: Theme.of(context).primaryColor,
+                      color: colorBtn,
                       icon: const Icon(Icons.arrow_forward),
                     )
                   ])
