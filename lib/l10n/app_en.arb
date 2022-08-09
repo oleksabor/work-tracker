@@ -36,5 +36,6 @@
     "pauseExerciseLabel": "Pause after exercise",
 "secondsLabel": "seconds",
 "playSoundLabel": "play sound after exercise",
-"playAsAlarmLabel": "play as alarm"
+"playAsAlarmLabel": "play as alarm",
+"noDataLabel": "no data"  
 }

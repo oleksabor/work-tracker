@@ -66,12 +66,11 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     if (kind.todayWork != null && kind.todayWork!.isNotEmpty) {
       d = kind.todayWork!.last.created;
     }
-    var items = _model.loadItemsByDate(kind.kind, d);
     await Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (ctx) => WorkItemsView(
-              date: d, kind: kind.kind.title, items: items, model: _model)),
+          builder: (ctx) =>
+              WorkItemsView(date: d, kind: kind.kind, model: _model)),
     );
   }
 

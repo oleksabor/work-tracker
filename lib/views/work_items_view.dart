@@ -1,23 +1,27 @@
+import 'dart:async';
+
 import 'package:intl/intl.dart';
 import 'package:work_tracker/classes/date_extension.dart';
+import 'package:work_tracker/classes/history_model.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:flutter/material.dart';
+import 'package:work_tracker/classes/work_kind.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:work_tracker/views/work_item_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// items list on day
 class WorkItemsView extends StatefulWidget {
-  final Future<List<WorkItem>> items;
   final DateTime date;
-  final String kind;
+  final WorkKind kind;
+  late HistoryModel history;
+  late Future<List<WorkItem>> items;
 
   final WorkViewModel model;
-  WorkItemsView(
-      {required this.items,
-      required this.date,
-      required this.kind,
-      required this.model});
+  WorkItemsView({required this.date, required this.kind, required this.model}) {
+    history = HistoryModel(model, kind, date);
+    items = history.getItems((d) => date.isSameDay(d.created));
+  }
   @override
   State<StatefulWidget> createState() {
     return WorkItemsViewState();
@@ -26,11 +30,7 @@ class WorkItemsView extends StatefulWidget {
 
 ///[items] list view  per day
 class WorkItemsViewState extends State<WorkItemsView> {
-  Future<List<WorkItem>>? localItems;
-  Future<List<WorkItem>> get items => localItems ?? widget.items;
-  set items(Future<List<WorkItem>> v) {
-    localItems = v;
-  }
+  HistoryModel get history => widget.history;
 
   DateTime? localDate;
   DateTime get date => localDate ?? widget.date;
@@ -38,108 +38,87 @@ class WorkItemsViewState extends State<WorkItemsView> {
     localDate = v;
   }
 
-  String get kind => widget.kind;
+  WorkKind get kind => widget.kind;
 
   WorkViewModel get model => widget.model;
 
   String getWidgetTitle(String kind, DateTime date, AppLocalizations? t) {
-    return "$kind ${t!.onCap} ${asDate(date, t)}";
+    return "$kind ${t!.onCap} ${history.asDate(date, t)}";
   }
 
-  String asDate(DateTime value, AppLocalizations? t) {
-    var diff = value.difference(DateTime.now());
-    if (diff.inDays == 0) {
-      return t!.todayCap;
-    }
-    if (diff.inDays == -1) {
-      return t!.yesterdayCap;
-    }
-    return DateFormat.MMMMd(DateMethods.localeStr).format(value);
-  }
-
-  Future<List<WorkItem>> getItems(bool Function(WorkItem wi) filter) async {
-    var all = await model.loadItems();
-    if (all == null) return [];
-
-    var itemsPrev = all.where((i) => i.kind == kind && filter(i));
-    if (itemsPrev.isNotEmpty) {
-      itemsPrev = itemsPrev;
-      return itemsPrev.toList();
-    }
-    return [];
-  }
-
-  void getItemsBefore(DateTime adate) async {
-    adate = DateTime(adate.year, adate.month, adate.day);
-    var prevItems = await getItems((wi) => wi.created.isBefore(adate));
-    if (prevItems.isNotEmpty) {
-      date = prevItems.last.created;
-      prevItems = prevItems.where((i) => i.created.isSameDay(date)).toList();
-      items = Future.value(prevItems);
+  Future<List<WorkItem>> getItems(Future<List<WorkItem>> items) async {
+    var res = await items;
+    if (res.isNotEmpty) {
+      date = history.date;
+      return res;
+    } else {
+      return widget.items;
     }
   }
 
-  void getItemsAfter(DateTime adate) async {
-    adate = DateTime(adate.year, adate.month, adate.day).add(Duration(days: 1));
-    var prevItems = await getItems((wi) => wi.created.isAfter(adate));
-    if (prevItems.isNotEmpty) {
-      date = prevItems.first.created;
-      prevItems = prevItems
-          .where((i) => i.created.isSameDay(prevItems.last.created))
-          .toList();
-      items = Future.value(prevItems);
-    }
+  Future<List<WorkItem>> getItemsBefore(DateTime adate) async {
+    return getItems(history.getItemsBefore(adate));
+  }
+
+  Future<List<WorkItem>> getItemsAfter(DateTime adate) async {
+    return getItems(history.getItemsAfter(adate));
   }
 
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
+    var colorBtn = Theme.of(context).iconTheme.color;
+
     return Scaffold(
-        appBar: AppBar(
-          // Here we take the value from the MyHomePage object that was created by
-          // the App.build method, and use it to set our appbar title.
-          title: Text(getWidgetTitle(kind, date, t)),
-        ),
-        body: Column(children: <Widget>[
-          Flexible(
-              child: FutureBuilder<List>(
-            future: items,
-            initialData: [],
-            builder: (context, snapshot) {
-              return snapshot.hasData
-                  ? ListView.builder(
-                      padding: const EdgeInsets.all(10.0),
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (ctx, i) {
-                        return _buildRow(ctx, snapshot.data![i], t);
+      appBar: AppBar(
+        title: Text(getWidgetTitle(kind.title, date, t)),
+      ),
+      body: FutureBuilder<List<WorkItem>>(
+        future: widget.items,
+        initialData: [],
+        builder: (context, snapshot) {
+          if (snapshot.data!.isEmpty) {
+            return Column(children: [Text(t!.noDataLabel)]);
+          }
+          return snapshot.hasData
+              ? Column(children: <Widget>[
+                  Flexible(
+                      child: ListView.builder(
+                    padding: const EdgeInsets.all(10.0),
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (ctx, i) {
+                      return _buildRow(ctx, snapshot.data![i], t);
+                    },
+                  )),
+                  Row(children: [
+                    IconButton(
+                      onPressed: () async {
+                        widget.items = getItemsBefore(date).then((v) {
+                          setState(() {});
+                          return v;
+                        });
                       },
+                      color: colorBtn,
+                      icon: const Icon(Icons.arrow_back),
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        widget.items = getItemsAfter(date).then((v) {
+                          setState(() {});
+                          return v;
+                        });
+                      },
+                      color: colorBtn,
+                      icon: const Icon(Icons.arrow_forward),
                     )
-                  : const Center(
-                      child: CircularProgressIndicator(),
-                    );
-            },
-          )),
-          Row(children: [
-            IconButton(
-              onPressed: () {
-                getItemsBefore(date);
-
-                setState(() {});
-              },
-              color: Theme.of(context).primaryColor,
-              icon: const Icon(Icons.arrow_back),
-            ),
-            IconButton(
-              onPressed: () {
-                getItemsAfter(date);
-
-                setState(() {});
-              },
-              color: Theme.of(context).primaryColor,
-              icon: const Icon(Icons.arrow_forward),
-            )
-          ])
-        ]));
+                  ])
+                ])
+              : const Center(
+                  child: CircularProgressIndicator(),
+                );
+        },
+      ),
+    );
   }
 
   // String get qtyCaption => "quantity";
