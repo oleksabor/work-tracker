@@ -48,17 +48,19 @@ class WorkViewModel {
   Future<List<WorkItem>> filterItemsByKind(
       List<WorkItem>? res, WorkKind kind, DateTime? when) async {
     if (res != null && res.isNotEmpty) {
-      var emptyIds = res.where((e) => e.kindId < 0);
-      for (var e in emptyIds.toList()) {
-        // set WorkItem.kindId for old records
-        if (e.kind == kind.title) {
-          e.kindId = kind.kindId;
+      return Future.microtask(() {
+        var emptyIds = res.where((e) => e.kindId < 0);
+        for (var e in emptyIds.toList()) {
+          // set WorkItem.kindId for old records
+          if (e.kind == kind.title) {
+            e.kindId = kind.kindId;
+          }
         }
-      }
-      var filtered = res.where(($i) =>
-          $i.kindId == kind.kindId &&
-          (when == null || when.isSameDay($i.created)));
-      return filtered.toList();
+        var filtered = res.where(($i) =>
+            $i.kindId == kind.kindId &&
+            (when == null || when.isSameDay($i.created)));
+        return filtered.toList();
+      });
     }
     return [];
   }

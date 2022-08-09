@@ -33,5 +33,6 @@
     "pauseExerciseLabel": "Пауза після вправи",
 "secondsLabel": "секунд",
 "playSoundLabel": "нотифікація після вправи",
-"playAsAlarmLabel": "як будильник"
+"playAsAlarmLabel": "як будильник",
+"noDataLabel": "немає даних"
     }
