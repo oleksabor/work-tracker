@@ -113,7 +113,6 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     return version;
   }
 
-  final menuTags = [tagChart, tagDebug, tagSettings];
   static const tagDebug = "Debug";
   static const tagChart = "Charts";
   static const tagSettings = "Settings";
@@ -149,18 +148,24 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
   Widget build(BuildContext context) {
     DateMethods.locale = Localizations.localeOf(context);
     DateMethods.mediaQueryData = MediaQuery.of(context);
-    var t = AppLocalizations.of(context);
+    var t = AppLocalizations.of(context)!;
+    final menuTags = {
+      tagChart: t.menuCharts,
+      tagDebug: t.menuDebug,
+      tagSettings: t.menuSettings
+    };
+
     return Scaffold(
         appBar: AppBar(
-          title: Text(t?.titleWin ?? "failed to localize"),
+          title: Text(t.titleWin),
           actions: <Widget>[
             PopupMenuButton<String>(
               onSelected: handleClick,
               itemBuilder: (BuildContext context) {
-                return menuTags.map((String choice) {
+                return menuTags.entries.map((e) {
                   return PopupMenuItem<String>(
-                    value: choice,
-                    child: Text(choice),
+                    value: e.key,
+                    child: Text(e.value),
                   );
                 }).toList();
               },

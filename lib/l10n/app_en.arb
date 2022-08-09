@@ -37,5 +37,8 @@
 "secondsLabel": "seconds",
 "playSoundLabel": "play sound after exercise",
 "playAsAlarmLabel": "play as alarm",
-"noDataLabel": "no data"  
+"noDataLabel": "no data",
+"menuDebug": "Debug",
+"menuCharts": "Charts",
+"menuSettings": "Settings"  
 }

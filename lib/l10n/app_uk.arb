@@ -34,5 +34,8 @@
 "secondsLabel": "секунд",
 "playSoundLabel": "нотифікація після вправи",
 "playAsAlarmLabel": "як будильник",
-"noDataLabel": "немає даних"
+"noDataLabel": "немає даних",
+"menuDebug": "Debug",
+"menuCharts": "Графік",
+"menuSettings": "Налаштування"
     }
