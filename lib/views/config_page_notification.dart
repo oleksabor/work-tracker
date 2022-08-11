@@ -113,7 +113,7 @@ extension ConfigPageNotification on ConfigPageState {
     List<Widget> children = [
       const SizedBox(height: 5),
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(t!.playSoundLabel),
+        Text(t.playSoundLabel),
         Switch(
           value: notify.playAfterNewResult,
           onChanged: (v) {

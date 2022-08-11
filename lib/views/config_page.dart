@@ -42,7 +42,7 @@ class ConfigPageState extends State<ConfigPage> {
     isPlaying = false;
     notifyModel.init(c, opc: (value) {
       if (kDebugMode) {
-        logger?.fine('notification sound $value');
+        logger?.fine('playing test sound $value');
       }
       setState(() {
         isPlaying = value;
