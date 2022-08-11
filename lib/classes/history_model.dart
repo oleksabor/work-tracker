@@ -61,6 +61,14 @@ class HistoryModel {
     }
     return [];
   }
+
+  Future<List<WorkItem>> delete(
+      WorkItem i, Future<List<WorkItem>> items) async {
+    i.delete();
+    _cache = null;
+    (await items).remove(i);
+    return items;
+  }
 }
 
 class HistoryResult {

@@ -40,5 +40,8 @@
 "noDataLabel": "no data",
 "menuDebug": "Debug",
 "menuCharts": "Charts",
-"menuSettings": "Settings"  
+"menuSettings": "Settings"  ,
+"menuDelete": "Delete",
+"menuEdit": "Edit"
+
 }

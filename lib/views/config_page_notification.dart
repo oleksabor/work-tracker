@@ -7,48 +7,24 @@ extension ConfigPageNotification on ConfigPageState {
     }
   }
 
-// those controls are arranged in a column
   List<Widget> notificationControls(AppLocalizations t, ConfigNotify notify) {
     List<Widget> res = [
-      const SizedBox(height: 5),
-      Row(children: [Text(t.pauseExerciseLabel)]),
-      Container(
-          width: double.infinity,
-          height: 40,
-          child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Expanded(
-                  flex: 2,
-                  child: Center(child: Text(t.secondsLabel)),
-                ),
-                Expanded(
-                  flex: 8, // 60%
-                  child: NumericStepButton(
-                      value: notify.delay,
-                      minValue: 1,
-                      onChanged: (v) {
-                        setState(() => notify.delay = v);
-                      }),
-                ),
-              ])),
-      Row(children: [
-        Expanded(
-            child: RadioListTile<NotificationKind>(
-                title: Text(t.sysNotificationLabel),
-                value: NotificationKind.system,
-                groupValue: notify.kind,
-                onChanged: (v) =>
-                    setState(() => notificationKindChanged(notify, v)),
-                contentPadding: EdgeInsets.zero))
-      ]),
-      RadioListTile<NotificationKind>(
+      ListTile(
+          title: Text(t.sysNotificationLabel),
+          leading: Radio<NotificationKind>(
+            value: NotificationKind.system,
+            groupValue: notify.kind,
+            onChanged: (v) =>
+                setState(() => notificationKindChanged(notify, v)),
+          )),
+      ListTile(
           title: Text(t.inbuiltNotificationLabel),
-          value: NotificationKind.inbuilt,
-          groupValue: notify.kind,
-          onChanged: (v) => setState(() => notificationKindChanged(notify, v)),
-          contentPadding: EdgeInsets.zero),
+          leading: Radio<NotificationKind>(
+            value: NotificationKind.inbuilt,
+            groupValue: notify.kind,
+            onChanged: (v) =>
+                setState(() => notificationKindChanged(notify, v)),
+          )),
     ];
     var volumeInt = (notify.volume * 100).toInt();
     switch (notify.kind) {
@@ -77,8 +53,42 @@ extension ConfigPageNotification on ConfigPageState {
           sliderContainer('$volumeInt %', notify.volume, (v) {
             notify.volume = v.toDouble();
           }),
+          const SizedBox(height: 5),
+          Row(children: [Text(t.pauseExerciseLabel)]),
+          Container(
+              width: double.infinity,
+              height: 40,
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: <Widget>[
+                    Expanded(
+                      flex: 2,
+                      child: Center(child: Text(t.secondsLabel)),
+                    ),
+                    Expanded(
+                      flex: 8, // 60%
+                      child: NumericStepButton(
+                          value: notify.delay,
+                          minValue: 1,
+                          onChanged: (v) {
+                            setState(() => notify.delay = v);
+                          }),
+                    ),
+                  ])),
         ]);
     }
+    var click = onPlayClick(notify);
+    res.addAll([
+      const SizedBox(height: 5),
+      CircleAvatar(
+          radius: 30,
+          backgroundColor: Colors.lightBlueAccent,
+          child: IconButton(
+              icon: Icon(isPlaying ? Icons.stop : Icons.play_arrow),
+              // null onPressed causes button to be disabled
+              onPressed: click)),
+    ]);
     return res;
   }
 
@@ -97,7 +107,6 @@ extension ConfigPageNotification on ConfigPageState {
   }
 
   //COPIED FROM https://pub.dev/packages/sound_generator/example
-  // sad and ugly code - too many controls
   Widget buildNotifyTab(BuildContext context, Config? config) {
     var t = AppLocalizations.of(context)!;
     var notify = config!.notify;
@@ -108,10 +117,7 @@ extension ConfigPageNotification on ConfigPageState {
         Switch(
           value: notify.playAfterNewResult,
           onChanged: (v) {
-            setState(() {
-              notify.playAfterNewResult = v;
-              logger?.fine("playing: $v");
-            });
+            setState(() => notify.playAfterNewResult = v);
           },
         )
       ]),
@@ -127,17 +133,6 @@ extension ConfigPageNotification on ConfigPageState {
       ]),
     ];
     children.addAll(notificationControls(t, config.notify));
-    var click = onPlayClick(notify);
-    children.addAll([
-      const SizedBox(height: 5),
-      CircleAvatar(
-          radius: 30,
-          backgroundColor: Colors.lightBlueAccent,
-          child: IconButton(
-              icon: Icon(isPlaying ? Icons.stop : Icons.play_arrow),
-              // null onPressed causes button to be disabled
-              onPressed: click)),
-    ]);
     return SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.symmetric(

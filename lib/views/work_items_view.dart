@@ -1,6 +1,4 @@
 import 'dart:async';
-
-import 'package:intl/intl.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:work_tracker/classes/history_model.dart';
 import 'package:work_tracker/classes/work_item.dart';
@@ -18,7 +16,9 @@ class WorkItemsView extends StatefulWidget {
   late Future<List<WorkItem>> items;
 
   final WorkViewModel model;
-  WorkItemsView({required this.date, required this.kind, required this.model}) {
+  WorkItemsView(
+      {Key? key, required this.date, required this.kind, required this.model})
+      : super(key: key) {
     history = HistoryModel(model, kind, date);
     items = history.getItems((d) => date.isSameDay(d.created));
   }
@@ -64,10 +64,18 @@ class WorkItemsViewState extends State<WorkItemsView> {
     return getItems(history.getItemsAfter(adate));
   }
 
+  static const String tagDelete = "deleteMenu";
+  void contextMenuClick(String? v, WorkItem i) {
+    widget.items = history.delete(i, widget.items);
+  }
+
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
     var colorBtn = Theme.of(context).iconTheme.color;
+    final menuTags = {
+      tagDelete: t!.menuDelete,
+    };
 
     return Scaffold(
       appBar: AppBar(
@@ -80,6 +88,16 @@ class WorkItemsViewState extends State<WorkItemsView> {
           if (snapshot.data!.isEmpty) {
             return Column(children: [Text(t!.noDataLabel)]);
           }
+          var itemsMenu = menuTags.entries
+              .map((e) => PopupMenuItem<String>(
+                  value: e.key,
+                  child: Row(
+                    children: <Widget>[
+                      Icon(Icons.delete), // TODO add icon to the menuTags
+                      Text(e.value),
+                    ],
+                  )))
+              .toList();
           return snapshot.hasData
               ? Column(children: <Widget>[
                   Flexible(
@@ -87,7 +105,30 @@ class WorkItemsViewState extends State<WorkItemsView> {
                     padding: const EdgeInsets.all(10.0),
                     itemCount: snapshot.data!.length,
                     itemBuilder: (ctx, i) {
-                      return _buildRow(ctx, snapshot.data![i], t);
+                      return GestureDetector(
+                          onTapDown: _storePosition,
+                          onLongPress: () {
+                            final RenderBox overlay = Overlay.of(ctx)
+                                ?.context
+                                .findRenderObject() as RenderBox;
+
+                            showMenu<String>(
+                                    context: ctx,
+                                    items: itemsMenu,
+                                    position: RelativeRect.fromRect(
+                                        _tapPosition &
+                                            const Size(40,
+                                                40), // smaller rect, the touch area
+                                        Offset.zero &
+                                            overlay
+                                                .size // Bigger rect, the entire screen
+                                        ))
+                                .then((v) {
+                              contextMenuClick(v, snapshot.data![i]);
+                              setState(() {});
+                            });
+                          },
+                          child: _buildRow(ctx, snapshot.data![i], t));
                     },
                   )),
                   Row(children: [
@@ -121,8 +162,11 @@ class WorkItemsViewState extends State<WorkItemsView> {
     );
   }
 
-  // String get qtyCaption => "quantity";
-  // String get weightCaption => "weight";
+  void _storePosition(TapDownDetails details) {
+    _tapPosition = details.globalPosition;
+  }
+
+  late Offset _tapPosition;
 
   Widget _buildRow(BuildContext context, WorkItem i, AppLocalizations? t) {
     var st = "${t?.qtyCap}: ${i.qty}";

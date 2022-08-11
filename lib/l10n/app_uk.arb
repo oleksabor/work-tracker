@@ -37,5 +37,8 @@
 "noDataLabel": "немає даних",
 "menuDebug": "Debug",
 "menuCharts": "Графік",
-"menuSettings": "Налаштування"
+"menuSettings": "Налаштування",
+"menuDelete": "Видалити",
+"menuEdit": "Редагувати"
+
     }
