@@ -1,3 +1,11 @@
+### 0.13.0
+- work item can be removed from history 
+  [#35](https://github.com/oleksabor/work-tracker/issues/35)
+- work items history browsing fixed
+  [#33](https://github.com/oleksabor/work-tracker/issues/33)
+- notification config controls were rearranged
+  [#40](https://github.com/oleksabor/work-tracker/issues/40)
+
 ### 0.12.0
 - ringnote player for notification
   [#29](https://github.com/oleksabor/work-tracker/issues/29)
