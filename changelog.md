@@ -1,3 +1,9 @@
+### 0.13.2
+- sound after exercise fixed
+- config notify serialization to json
+- app start fixed
+- item is not deleted if user does not click on popup item
+
 ### 0.13.0
 - work item can be removed from history 
   [#35](https://github.com/oleksabor/work-tracker/issues/35)
