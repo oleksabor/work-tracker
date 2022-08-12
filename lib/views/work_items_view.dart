@@ -124,8 +124,10 @@ class WorkItemsViewState extends State<WorkItemsView> {
                                                 .size // Bigger rect, the entire screen
                                         ))
                                 .then((v) {
-                              contextMenuClick(v, snapshot.data![i]);
-                              setState(() {});
+                              if (v != null) {
+                                contextMenuClick(v, snapshot.data![i]);
+                                setState(() {});
+                              }
                             });
                           },
                           child: _buildRow(ctx, snapshot.data![i], t));
