@@ -41,7 +41,7 @@ class NotifyModel {
     var logger = await getIt.getAsync<SimpleLogger>();
     var dr = Duration(seconds: config.delay);
     await saveShared(config);
-    if (!await AndroidAlarmManager.oneShot(dr, helloAlarmID, playImpl,
+    if (!await AndroidAlarmManager.oneShot(dr, helloAlarmID, playAlarm,
         exact: true)) {
       logger.warning("failed to set the alarm for $dr");
     } else {
