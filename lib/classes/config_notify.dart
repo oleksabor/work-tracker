@@ -41,7 +41,7 @@ class ConfigNotify {
         delay = data['delay'],
         notification = data['notification'],
         playAfterNewResult = data['playAfterNewResult'],
-        kind = data['systemNotification'],
+        kind = NotificationKind.values[data['kind']],
         asAlarm = data['asAlarm'];
 
   Map<String, dynamic> toJson() => {
@@ -49,7 +49,7 @@ class ConfigNotify {
         'volume': volume,
         'delay': delay,
         'notification': notification,
-        'systemNotification': kind,
+        'kind': kind.index,
         'asAlarm': asAlarm
       };
 }
