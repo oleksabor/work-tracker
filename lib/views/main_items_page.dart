@@ -5,19 +5,24 @@ import 'package:work_tracker/classes/config_model.dart';
 import 'package:work_tracker/classes/init_get.dart';
 import 'package:work_tracker/classes/notify_model.dart';
 import 'package:work_tracker/classes/work_item.dart';
+import 'package:work_tracker/classes/work_kind.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:work_tracker/views/charts_page.dart';
 import 'package:work_tracker/views/config_page.dart';
+import 'package:work_tracker/views/pop_menu_data.dart';
 import 'package:work_tracker/views/work_item_page.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:work_tracker/views/work_items_view.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:work_tracker/views/work_kind_page.dart';
 import 'debug_page.dart';
 import 'lifecycle_watcher_state.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:simple_logger/simple_logger.dart';
+
+part 'main_items_context_menu.dart';
 
 /// main app page
 class MainItemsPage extends StatefulWidget {
@@ -116,33 +121,10 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
   static const tagDebug = "Debug";
   static const tagChart = "Charts";
   static const tagSettings = "Settings";
+  static const tagEdit = "edit";
+  static const tagDelete = "delete";
+  static const tagAddKind = "addKind";
   final logger = SimpleLogger();
-
-  void handleClick(String tag) async {
-    if (kDebugMode) {
-      logger.fine('menu $tag');
-    }
-    switch (tag) {
-      case tagDebug:
-        await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (ctx) => DebugPage.m(model: _model)),
-        );
-        break;
-      case tagChart:
-        await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (ctx) => ChartItemsView(_model)),
-        );
-        break;
-      case tagSettings:
-        await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (ctx) => const ConfigPage()),
-        );
-        break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -150,27 +132,22 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     DateMethods.mediaQueryData = MediaQuery.of(context);
     var t = AppLocalizations.of(context)!;
     final menuTags = {
+      tagAddKind: t.menuAddKind,
       tagChart: t.menuCharts,
       tagDebug: t.menuDebug,
       tagSettings: t.menuSettings
     };
 
+    kindPopup = MenuContext<String, WorkKindToday>([
+      PopupMenuData(tagEdit, t.menuEdit, icon: Icons.edit, onClick: editKind),
+      PopupMenuData(tagDelete, t.menuDelete,
+          icon: Icons.delete, onClick: deleteKind)
+    ]);
+
     return Scaffold(
         appBar: AppBar(
           title: Text(t.titleWin),
-          actions: <Widget>[
-            PopupMenuButton<String>(
-              onSelected: handleClick,
-              itemBuilder: (BuildContext context) {
-                return menuTags.entries.map((e) {
-                  return PopupMenuItem<String>(
-                    value: e.key,
-                    child: Text(e.value),
-                  );
-                }).toList();
-              },
-            ),
-          ],
+          actions: <Widget>[getMainContext(menuTags)],
         ),
         body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -207,12 +184,16 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
       itemCount: items!.length,
       itemBuilder: (ctx, i) {
         return GestureDetector(
-            onLongPress: () => workItemAdd(ctx, items[i]),
+            onLongPress: () =>
+                kindPopup.show(ctx, items[i], kindPopup.tapPosition),
+            onTapDown: kindPopup.storePosition,
             onTap: () => workItemsView(ctx, items[i]),
             child: _buildRow(ctx, items[i]));
       },
     );
   }
+
+  late MenuContext<String, WorkKindToday> kindPopup;
 
   FutureBuilder<String> getVersionText() {
     return FutureBuilder<String>(
@@ -272,7 +253,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
   @override
   void onResumed() {
     setState(() {
-      loadWorkFor(DateTime.now());
+      todayWork = loadWorkFor(DateTime.now());
     });
   }
 }

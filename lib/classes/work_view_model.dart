@@ -16,6 +16,9 @@ class WorkViewModel {
   DbLoader db = DbLoader();
 
   Box<WorkItem>? openedBox;
+  Box<WorkKind>? _boxKinds;
+  Future<Box<WorkKind>> boxKinds() async =>
+      _boxKinds = (_boxKinds ?? await db.openBox<WorkKind>(kindsName));
 
   Future<List<WorkItem>> loadItems() async {
     openedBox = await db.openBox<WorkItem>(itemsName);
@@ -66,7 +69,7 @@ class WorkViewModel {
   }
 
   Future<List<WorkKind>> loadKinds() async {
-    var b = await db.openBox<WorkKind>(kindsName);
+    var b = await boxKinds();
     var kinds = b.values.toList();
     if (kinds == null || kinds.isEmpty) {
       kinds = WorkKind.kinds;
@@ -77,7 +80,7 @@ class WorkViewModel {
 
   Future<List<WorkKindToday>> loadWork(DateTime when) async {
     var kinds = await loadKinds();
-    var wkEmpty = kinds.map(($k) => WorkKindToday($k, null));
+    var wkEmpty = kinds.map(($k) => WorkKindToday($k));
     var res = await createWork(wkEmpty.toList(), when);
     return res;
   }
@@ -122,11 +125,31 @@ class WorkViewModel {
       openedBox?.close();
       openedBox = null;
     }
+    if (_boxKinds != null) {
+      _boxKinds?.close();
+      _boxKinds = null;
+    }
+  }
+
+  Future<void> updateKind(WorkKind item) async {
+    if (item.isInBox) {
+      await item.save();
+    } else {
+      var b = await boxKinds();
+      await b.add(item);
+      //TODO check case when item is being added and then removed
+    }
+  }
+
+  Future<void> removeKind(WorkKind item) async {
+    if (item.isInBox) {
+      await item.delete();
+    }
   }
 }
 
 class WorkKindToday {
   WorkKind kind;
   List<WorkItem>? todayWork;
-  WorkKindToday(this.kind, this.todayWork);
+  WorkKindToday(this.kind, {this.todayWork});
 }

@@ -39,6 +39,9 @@
 "menuCharts": "Графік",
 "menuSettings": "Налаштування",
 "menuDelete": "Видалити",
-"menuEdit": "Редагувати"
+"menuEdit": "Редагувати",
+"workKindTitle": "Вправа",
+"menuAddKind": "Новий тип",
+"titleEmptyValidation": "вкажіть значення"
 
-    }
+}
