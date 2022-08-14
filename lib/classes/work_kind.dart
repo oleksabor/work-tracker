@@ -26,4 +26,11 @@ class WorkKind extends HiveObject {
   bool operator ==(Object other) {
     return hashCode == other.hashCode;
   }
+
+  /// [key] is read-only so all other item's properties have to be set individually
+  WorkKind assignFrom(WorkKind item) {
+    title = item.title;
+    parentHash = item.parentHash;
+    return this;
+  }
 }

@@ -42,6 +42,8 @@
 "menuCharts": "Charts",
 "menuSettings": "Settings"  ,
 "menuDelete": "Delete",
-"menuEdit": "Edit"
-
+"menuEdit": "Edit",
+"workKindTitle": "Work kind",
+"menuAddKind": "New kind",
+"titleEmptyValidation": "empty value not allowed"
 }
