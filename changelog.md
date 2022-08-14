@@ -1,3 +1,7 @@
+### 0.14.0
+- work kind CRUD
+- notification sound when phone is locked
+
 ### 0.13.2
 - sound after exercise fixed
 - config notify serialization to json
