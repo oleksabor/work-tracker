@@ -62,7 +62,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     var configModel = getIt<ConfigModel>();
     var config = await configModel.load();
     if (config.notify.playAfterNewResult) {
-      NotifyModel.playSchedule(config?.notify);
+      NotifyModel.playSchedule(config.notify);
     }
   }
 
@@ -149,37 +149,30 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
           title: Text(t.titleWin),
           actions: <Widget>[getMainContext(menuTags)],
         ),
-        body: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Expanded(
-                  flex: 10,
-                  child: FutureBuilder<List>(
-                    future: todayWork,
-                    initialData: [],
-                    builder: (context, snapshot) {
-                      return snapshot.hasData
-                          ? getItemsListView(snapshot.data)
-                          : const Center(
-                              child: CircularProgressIndicator(),
-                            );
-                    },
-                  )),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [getVersionText(), const SizedBox(width: 10)],
-              )
-            ])
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: _incrementCounter,
-        //   tooltip: 'add',
-        //   child: Icon(Icons.add),
-        // ), // This trailing comma makes auto-formatting nicer for build methods.
-        );
+        body: Column(mainAxisSize: MainAxisSize.max, children: [
+          Flexible(
+              flex: 9,
+              child: FutureBuilder<List>(
+                future: todayWork,
+                initialData: [],
+                builder: (context, snapshot) {
+                  return snapshot.hasData
+                      ? getItemsListView(snapshot.data)
+                      : const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                },
+              )),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [getVersionText(), const SizedBox(width: 10)],
+          )
+        ]));
   }
 
   ListView getItemsListView(List<dynamic>? items) {
     return ListView.builder(
+      scrollDirection: Axis.vertical,
       padding: const EdgeInsets.all(10.0),
       itemCount: items!.length,
       itemBuilder: (ctx, i) {
