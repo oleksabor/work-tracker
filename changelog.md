@@ -1,3 +1,6 @@
+### 0.14.2
+- waking up the locked screen
+
 ### 0.14.1
 - list view scrolling adjusted
 - item is being removed when the whole kind is removed
