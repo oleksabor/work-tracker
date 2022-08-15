@@ -1,3 +1,7 @@
+### 0.14.1
+- list view scrolling adjusted
+- item is being removed when the whole kind is removed
+
 ### 0.14.0
 - work kind CRUD
 - notification sound when phone is locked
