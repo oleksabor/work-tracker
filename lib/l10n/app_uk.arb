@@ -42,6 +42,18 @@
 "menuEdit": "Редагувати",
 "workKindTitle": "Вправа",
 "menuAddKind": "Новий тип",
-"titleEmptyValidation": "вкажіть значення"
+"titleEmptyValidation": "вкажіть значення",
+"cancelCap": "Відміна",
+"itemsExist": "Зареєстровано {qty} підходів для вправи що видаляється. Продовжити?",
+"@itemsExist": {
+    "placeholders": {
+      "qty": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "123"
+      }
+    }
+  },
+  "confirmRemoval": "Підтвердіть видалення"
 
 }
