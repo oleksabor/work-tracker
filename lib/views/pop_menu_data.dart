@@ -55,7 +55,7 @@ class MenuContext<TKey, TItem> {
       return; // popup menu has been cancelled
     }
     var popEntry = items.firstWhere((element) => element.id == v);
-    if (popEntry != null && popEntry.onClick != null) {
+    if (popEntry.onClick != null) {
       popEntry.onClick!(ctx, kindT);
     }
   }

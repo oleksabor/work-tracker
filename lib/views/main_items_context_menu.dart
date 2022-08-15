@@ -30,8 +30,39 @@ extension WorkItemsContext on _MainItemsPageState {
   }
 
   void deleteKind(BuildContext context, WorkKindToday item) async {
-    await _model.removeKind(item.kind);
-    onResumed();
+    var res = true;
+    if (item.todayWork != null && item.todayWork!.isNotEmpty) {
+      var t = AppLocalizations.of(context)!;
+      res = await showConfirmationDialog(
+              res, t.confirmRemoval, t.itemsExist(item.todayWork!.length)) ??
+          false;
+    }
+    if (res) {
+      await _model.removeKind(item.kind, item.todayWork);
+      onResumed();
+    }
+  }
+
+  // https://api.flutter.dev/flutter/material/AlertDialog-class.html
+  Future<T?> showConfirmationDialog<T>(
+      T okValue, String title, String description) async {
+    var t = AppLocalizations.of(context)!;
+    return await showDialog<T>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+              title: Text(title),
+              content: Text(description),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context, null),
+                  child: Text(t.cancelCap),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, okValue),
+                  child: Text(t.okCap),
+                ),
+              ],
+            ));
   }
 
   PopupMenuButton<String> getMainContext(Map<String, String> menu) {

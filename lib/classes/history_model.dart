@@ -64,7 +64,7 @@ class HistoryModel {
 
   Future<List<WorkItem>> delete(
       WorkItem i, Future<List<WorkItem>> items) async {
-    i.delete();
+    await i.delete();
     _cache = null;
     (await items).remove(i);
     return items;

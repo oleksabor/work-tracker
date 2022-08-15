@@ -114,9 +114,9 @@ class WorkViewModel {
     }
   }
 
-  void removeItem(WorkItem item) {
+  Future<void> removeItem(WorkItem item) async {
     if (openedBox != null) {
-      item.delete();
+      await item.delete();
     }
   }
 
@@ -141,9 +141,14 @@ class WorkViewModel {
     }
   }
 
-  Future<void> removeKind(WorkKind item) async {
+  Future<void> removeKind(WorkKind item, List<WorkItem>? children) async {
     if (item.isInBox) {
       await item.delete();
+      if (children != null) {
+        for (var c in children) {
+          await removeItem(c);
+        }
+      }
     }
   }
 }

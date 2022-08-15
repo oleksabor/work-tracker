@@ -45,5 +45,17 @@
 "menuEdit": "Edit",
 "workKindTitle": "Work kind",
 "menuAddKind": "New kind",
-"titleEmptyValidation": "empty value not allowed"
+"titleEmptyValidation": "empty value not allowed",
+"cancelCap": "Cancel",
+"itemsExist": "There are {qty} item(s) registered for item being removed. Continue?",
+"@itemsExist": {
+    "placeholders": {
+      "qty": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "123"
+      }
+    }
+  },
+  "confirmRemoval": "Confirm delete"
 }
