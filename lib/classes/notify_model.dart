@@ -42,7 +42,7 @@ class NotifyModel {
     var dr = Duration(seconds: config.delay);
     await saveShared(config);
     if (!await AndroidAlarmManager.oneShot(dr, helloAlarmID, playAlarm,
-        exact: true, wakeup: true)) {
+        exact: true, wakeup: true, alarmClock: true, allowWhileIdle: true)) {
       logger.warning("failed to set the alarm for $dr");
     } else {
       _isScheduled = true;
