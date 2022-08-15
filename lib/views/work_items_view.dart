@@ -71,10 +71,10 @@ class WorkItemsViewState extends State<WorkItemsView> {
 
   @override
   Widget build(BuildContext context) {
-    var t = AppLocalizations.of(context);
+    var t = AppLocalizations.of(context)!;
     var colorBtn = Theme.of(context).iconTheme.color;
     final menuTags = {
-      tagDelete: t!.menuDelete,
+      tagDelete: t.menuDelete,
     };
 
     return Scaffold(
@@ -86,7 +86,7 @@ class WorkItemsViewState extends State<WorkItemsView> {
         initialData: [],
         builder: (context, snapshot) {
           if (snapshot.data!.isEmpty) {
-            return Column(children: [Text(t!.noDataLabel)]);
+            return Column(children: [Text(t.noDataLabel)]);
           }
           var itemsMenu = menuTags.entries
               .map((e) => PopupMenuItem<String>(

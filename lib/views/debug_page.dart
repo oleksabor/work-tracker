@@ -77,26 +77,28 @@ class DebugPageState extends State<DebugPage> {
         ))
       ]),
       Column(children: [
-        Expanded(
+        Flexible(
+            flex: 9,
             child: FutureBuilder<List<WorkKind>>(
-          future: workModel.loadKinds(),
-          builder: (c, s) => s.hasData
-              ? createKindList(s.data!)
-              : const CircularProgressIndicator(),
-        )),
-        Expanded(
+              future: workModel.loadKinds(),
+              builder: (c, s) => s.hasData
+                  ? createKindList(s.data!)
+                  : const CircularProgressIndicator(),
+            )),
+        Flexible(
+            flex: 1,
             child: FutureBuilder<List<WorkItem>>(
-          future: workModel.loadItems(),
-          builder: (c, s) => s.hasData
-              ? Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                      const Text("work items count"),
-                      const SizedBox(width: 50),
-                      Text("${s.data!.length}")
-                    ])
-              : const CircularProgressIndicator(),
-        )),
+              future: workModel.loadItems(),
+              builder: (c, s) => s.hasData
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                          const Text("work items count"),
+                          const SizedBox(width: 50),
+                          Text("${s.data!.length}")
+                        ])
+                  : const CircularProgressIndicator(),
+            )),
       ]),
       Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
