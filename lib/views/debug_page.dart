@@ -8,6 +8,7 @@ import 'package:work_tracker/classes/work_kind.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'dart:math';
 
 class DebugPage extends StatefulWidget {
   final WorkViewModel model;
@@ -66,7 +67,9 @@ class DebugPageState extends State<DebugPage> {
   List<Widget> createSwipes(BuildContext context) {
     var workModel = WorkViewModel();
     var t = AppLocalizations.of(context);
+    // three columns for three tabs (swipes)
     return <Widget>[
+      // directories
       Column(children: [
         Expanded(
             child: FutureBuilder<DirData>(
@@ -76,6 +79,7 @@ class DebugPageState extends State<DebugPage> {
               : const CircularProgressIndicator(),
         ))
       ]),
+      // kinds
       Column(children: [
         Flexible(
             flex: 9,
@@ -100,6 +104,7 @@ class DebugPageState extends State<DebugPage> {
                   : const CircularProgressIndicator(),
             )),
       ]),
+      //formats
       Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
           Text(t!.timeFormatCap),
@@ -143,9 +148,57 @@ class DebugPageState extends State<DebugPage> {
             Navigator.pop(context);
           },
           child: Text("upgrade db ($dbItemsUpgraded)"),
-        )
+        ),
+        TextButton(
+          onPressed: () async {
+            showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return Column(children: const [
+                    Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    Center(child: Text("please wait")),
+                  ]);
+                });
+            await seedDummyData(workModel);
+            if (kDebugMode) {
+              await Future.delayed(const Duration(seconds: 3));
+            }
+            Navigator.pop(context);
+          },
+          child: Text("seed dummy data"),
+        ),
       ]),
     ];
+  }
+
+  Future<void> seedDummyData(WorkViewModel model) async {
+    var kinds = await model.loadKinds();
+    var n = DateTime.now();
+    var dates = [
+      n,
+      n.add(Duration(days: -4)),
+      n.add(Duration(days: -8)),
+      n.add(Duration(days: 14))
+    ];
+
+    var repeat = 3;
+    var random = Random();
+    for (var k in kinds) {
+      for (var d in dates) {
+        var q = 0;
+        while (q++ < repeat) {
+          var wi = WorkItem.i(k.kindId)
+            ..created = d.add(Duration(days: -k.kindId + 1))
+            ..qty = random.nextInt(30) + 1;
+          if (random.nextInt(10) > 4) {
+            wi.weight = random.nextInt(10).toDouble();
+          }
+          model.store(wi);
+        }
+      }
+    }
   }
 
   @override
