@@ -1,3 +1,6 @@
+### 1.0.0
+- application icon
+
 ### 0.14.2
 - waking up the locked screen
 
