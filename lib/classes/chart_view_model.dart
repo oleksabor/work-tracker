@@ -2,7 +2,6 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:work_tracker/classes/chart_data.dart';
 import 'package:work_tracker/classes/config_graph.dart';
-import 'package:work_tracker/classes/config_model.dart';
 import 'package:work_tracker/classes/iterable_extension.dart';
 import 'package:work_tracker/classes/work_item.dart';
 
@@ -12,8 +11,13 @@ class ChartViewModel {
     var startDate = now.subtract(Duration(days: days));
     var itemsData = items
         .where((_) => _.created.isAfter(startDate))
+        .sortedByCompare((_) => _.created, dateDesc)
         .toList(growable: false);
     return itemsData;
+  }
+
+  int dateDesc(DateTime d1, DateTime d2) {
+    return -1 * d1.compareTo(d2);
   }
 
   ChartData mapWI(WorkItem src, ConfigGraph cg) {
