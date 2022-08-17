@@ -24,6 +24,10 @@ flutter doctor --android-licenses
 
 avdmanager create avd -n emu31 --package "system-images;android-31;google_apis;x86_64"
 avdmanager create avd -n emu29 --package "system-images;android-29;default;x86"
+avdmanager create avd -n emu29_7in --tag 48 --package "system-images;android-29;default;x86"
+# to make 7" and 10" GooglePlay screenshots
+avdmanager create avd -n emu29_10in --package "system-images;android-29;default;x86" --device "10.1in WXGA (Tablet)"
+avdmanager create avd -n emu29_7in --package "system-images;android-29;default;x86" --device "7in WSVGA (Tablet)"
 
 #new flutter sdk requires new Java to be installed
 sudo apt-get install openjdk-11-jdk
