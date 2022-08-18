@@ -1,0 +1,270 @@
+Available Android Virtual Devices:
+    Name: em33
+    Path: /home/boi/.android/avd/em33.avd
+  Target: Google APIs (Google Inc.)
+          Based on: Android API 33 Tag/ABI: google_apis/x86_64
+    Skin: 1080x1920
+  Sdcard: 512 MB
+---------
+    Name: emu29
+    Path: /home/boi/.android/avd/emu29.avd
+  Target: Default Android System Image
+          Based on: Android 10.0 (Q) Tag/ABI: default/x86
+    Skin: 1080x1920
+  Sdcard: 512 MB
+---------
+    Name: emu31
+    Path: /home/boi/.android/avd/emu31.avd
+  Target: Google APIs (Google Inc.)
+          Based on: Android 12.0 (S) Tag/ABI: google_apis/x86_64
+    Skin: 1080x1920        # proper screen size for emulator
+  Sdcard: 512 MB
+Available devices definitions:
+id: 0 or "tv_1080p"
+    Name: Android TV (1080p)
+    OEM : Google
+    Tag : android-tv
+---------
+id: 1 or "tv_4k"
+    Name: Android TV (4K)
+    OEM : Google
+    Tag : android-tv
+---------
+id: 2 or "tv_720p"
+    Name: Android TV (720p)
+    OEM : Google
+    Tag : android-tv
+---------
+id: 3 or "automotive_1024p_landscape"
+    Name: Automotive (1024p landscape)
+    OEM : Google
+    Tag : android-automotive-playstore
+---------
+id: 4 or "Galaxy Nexus"
+    Name: Galaxy Nexus
+    OEM : Google
+---------
+id: 5 or "Nexus 10"
+    Name: Nexus 10
+    OEM : Google
+---------
+id: 6 or "Nexus 4"
+    Name: Nexus 4
+    OEM : Google
+---------
+id: 7 or "Nexus 5"
+    Name: Nexus 5
+    OEM : Google
+---------
+id: 8 or "Nexus 5X"
+    Name: Nexus 5X
+    OEM : Google
+---------
+id: 9 or "Nexus 6"
+    Name: Nexus 6
+    OEM : Google
+---------
+id: 10 or "Nexus 6P"
+    Name: Nexus 6P
+    OEM : Google
+---------
+id: 11 or "Nexus 7 2013"
+    Name: Nexus 7
+    OEM : Google
+---------
+id: 12 or "Nexus 7"
+    Name: Nexus 7 (2012)
+    OEM : Google
+---------
+id: 13 or "Nexus 9"
+    Name: Nexus 9
+    OEM : Google
+---------
+id: 14 or "Nexus One"
+    Name: Nexus One
+    OEM : Google
+---------
+id: 15 or "Nexus S"
+    Name: Nexus S
+    OEM : Google
+---------
+id: 16 or "pixel"
+    Name: Pixel
+    OEM : Google
+---------
+id: 17 or "pixel_2"
+    Name: Pixel 2
+    OEM : Google
+---------
+id: 18 or "pixel_2_xl"
+    Name: Pixel 2 XL
+    OEM : Google
+---------
+id: 19 or "pixel_3"
+    Name: Pixel 3
+    OEM : Google
+---------
+id: 20 or "pixel_3_xl"
+    Name: Pixel 3 XL
+    OEM : Google
+---------
+id: 21 or "pixel_3a"
+    Name: Pixel 3a
+    OEM : Google
+---------
+id: 22 or "pixel_3a_xl"
+    Name: Pixel 3a XL
+    OEM : Google
+---------
+id: 23 or "pixel_4"
+    Name: Pixel 4
+    OEM : Google
+---------
+id: 24 or "pixel_4_xl"
+    Name: Pixel 4 XL
+    OEM : Google
+---------
+id: 25 or "pixel_4a"
+    Name: Pixel 4a
+    OEM : Google
+---------
+id: 26 or "pixel_5"
+    Name: Pixel 5
+    OEM : Google
+---------
+id: 27 or "pixel_c"
+    Name: Pixel C
+    OEM : Google
+---------
+id: 28 or "pixel_xl"
+    Name: Pixel XL
+    OEM : Google
+---------
+id: 29 or "resizable"
+    Name: Resizable
+    OEM : Generic
+---------
+id: 30 or "wearos_large_round"
+    Name: Wear OS Large Round
+    OEM : Google
+    Tag : android-wear
+---------
+id: 31 or "wearos_rect"
+    Name: Wear OS Rectangular
+    OEM : Google
+    Tag : android-wear
+---------
+id: 32 or "wearos_small_round"
+    Name: Wear OS Small Round
+    OEM : Google
+    Tag : android-wear
+---------
+id: 33 or "wearos_square"
+    Name: Wear OS Square
+    OEM : Google
+    Tag : android-wear
+---------
+id: 34 or "2.7in QVGA"
+    Name: 2.7" QVGA
+    OEM : Generic
+---------
+id: 35 or "2.7in QVGA slider"
+    Name: 2.7" QVGA slider
+    OEM : Generic
+---------
+id: 36 or "3.2in HVGA slider (ADP1)"
+    Name: 3.2" HVGA slider (ADP1)
+    OEM : Generic
+---------
+id: 37 or "3.2in QVGA (ADP2)"
+    Name: 3.2" QVGA (ADP2)
+    OEM : Generic
+---------
+id: 38 or "3.3in WQVGA"
+    Name: 3.3" WQVGA
+    OEM : Generic
+---------
+id: 39 or "3.4in WQVGA"
+    Name: 3.4" WQVGA
+    OEM : Generic
+---------
+id: 40 or "3.7 FWVGA slider"
+    Name: 3.7" FWVGA slider
+    OEM : Generic
+---------
+id: 41 or "3.7in WVGA (Nexus One)"
+    Name: 3.7" WVGA (Nexus One)
+    OEM : Generic
+---------
+id: 42 or "4in WVGA (Nexus S)"
+    Name: 4" WVGA (Nexus S)
+    OEM : Generic
+---------
+id: 43 or "4.65in 720p (Galaxy Nexus)"
+    Name: 4.65" 720p (Galaxy Nexus)
+    OEM : Generic
+---------
+id: 44 or "4.7in WXGA"
+    Name: 4.7" WXGA
+    OEM : Generic
+---------
+id: 45 or "5.1in WVGA"
+    Name: 5.1" WVGA
+    OEM : Generic
+---------
+id: 46 or "5.4in FWVGA"
+    Name: 5.4" FWVGA
+    OEM : Generic
+---------
+id: 47 or "6.7in Foldable"
+    Name: 6.7" Horizontal Fold-in
+    OEM : Generic
+---------
+id: 48 or "7in WSVGA (Tablet)"
+    Name: 7" WSVGA (Tablet)
+    OEM : Generic
+---------
+id: 49 or "7.4in Rollable"
+    Name: 7.4" Rollable
+    OEM : Generic
+---------
+id: 50 or "7.6in Foldable"
+    Name: 7.6" Fold-in with outer display
+    OEM : Generic
+---------
+id: 51 or "8in Foldable"
+    Name: 8" Fold-out
+    OEM : Generic
+---------
+id: 52 or "10.1in WXGA (Tablet)"
+    Name: 10.1" WXGA (Tablet)
+    OEM : Generic
+---------
+id: 53 or "13.5in Freeform"
+    Name: 13.5" Freeform
+    OEM : Generic
+Available Android targets:
+----------
+id: 1 or "android-28"
+     Name: Android API 28
+     Type: Platform
+     API level: 28
+     Revision: 6
+----------
+id: 2 or "android-29"
+     Name: Android API 29
+     Type: Platform
+     API level: 29
+     Revision: 5
+----------
+id: 3 or "android-31"
+     Name: Android API 31
+     Type: Platform
+     API level: 31
+     Revision: 1
+----------
+id: 4 or "android-33"
+     Name: Android API 33, extension level 3
+     Type: Platform
+     API level: 33
+     Revision: 2

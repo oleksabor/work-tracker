@@ -4,20 +4,28 @@ import 'package:work_tracker/classes/work_kind.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 
 class DebugModel {
-  Future upgradeDb(WorkViewModel workModel) async {
+  Future<int> upgradeDb(WorkViewModel workModel) async {
     var items = await workModel.loadItems();
     var kinds = await workModel.loadKinds();
-    await upgradeDbImpl(items, kinds);
+    return await upgradeDbImpl(items, kinds, (wi) async {
+      wi.save();
+    });
   }
 
-  Future<int> upgradeDbImpl(List<WorkItem> items, List<WorkKind> kinds) async {
-    var old = items.where((i) => i.kindId < 0);
+  Future<int> upgradeDbImpl(List<WorkItem> items, List<WorkKind> kinds,
+      Future<void> Function(WorkItem) saveImpl) async {
+    var old = items.where((i) => i.kindId < 0).toList(growable: false);
+    var errors = 0;
     for (var o in old) {
-      var k = kinds.firstWhere((element) => element.title == o.kind);
-      o.kindId = k.kindId;
-      await o.save();
+      try {
+        var k = kinds.firstWhere((element) => element.title == o.kind);
+        o.kindId = k.kindId;
+        await saveImpl(o);
+      } on StateError catch (se) {
+        errors++;
+      }
     }
-    return old.length;
+    return old.length - errors;
   }
 
   Future moveDb() async {
