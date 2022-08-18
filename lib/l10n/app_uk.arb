@@ -1,6 +1,4 @@
 {
-    "helloWorld": "Привіт",
-    "incrementLabel": "Кількість натискань кнопки:",
     "titleWin": "Нотатки качалки",
     "titleApp": "Нотатки качалки application",
     "titleWinDebug": "Debug",
@@ -54,6 +52,8 @@
       }
     }
   },
-  "confirmRemoval": "Підтвердіть видалення"
-
+  "confirmRemoval": "Підтвердіть видалення",
+  "incrementLabel": "збільшити",
+  "decrementLabel": "зменшити",
+  "addNewItem": "додати новий елемент"
 }

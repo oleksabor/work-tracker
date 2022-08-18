@@ -169,7 +169,9 @@ class ConfigPageState extends State<ConfigPage> {
             NumericStepButton(
                 value: config.graph.bodyWeight.toInt(),
                 minValue: 30,
-                onChanged: setGraphWeightCoefficient),
+                onChanged: setGraphWeightCoefficient,
+                decrementContent: t.decrementLabel,
+                incrementContent: t.incrementLabel),
           ])),
       Text(t.bodyWeightDescription,
           style: const TextStyle(fontStyle: FontStyle.italic))

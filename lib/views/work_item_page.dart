@@ -22,7 +22,7 @@ class WorkItemPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var t = AppLocalizations.of(context);
+    var t = AppLocalizations.of(context)!;
     return Scaffold(
         appBar: AppBar(
           title: Text(item.kind),
@@ -35,7 +35,7 @@ class WorkItemPage extends StatelessWidget {
               onPressed: () {
                 Navigator.pop(context, item);
               },
-              child: Text(t!.okCap),
+              child: Text(t.okCap),
             ),
           ));
           var res = Center(
@@ -45,10 +45,10 @@ class WorkItemPage extends StatelessWidget {
         }));
   }
 
-  List<Widget> buildRows(WorkItem item, AppLocalizations? t) {
+  List<Widget> buildRows(WorkItem item, AppLocalizations t) {
     var res = [
-      buildNumericRow(t!.qtyCap, changedQty, item.qty, 1),
-      buildNumericRow(t.weightCap, changedWeight, item.weight.toInt(), 0),
+      buildNumericRow(t.qtyCap, changedQty, item.qty, 1, t),
+      buildNumericRow(t.weightCap, changedWeight, item.weight.toInt(), 0, t),
     ];
     if (!item.created.isSameDay(DateTime.now())) {
       res.add(Padding(
@@ -71,17 +71,18 @@ class WorkItemPage extends StatelessWidget {
     return res;
   }
 
-  Widget buildNumericRow(
-      String caption, Function(int) diff, int value, final int minValue) {
+  Widget buildNumericRow(String caption, Function(int) diff, int value,
+      final int minValue, AppLocalizations t) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
         Text(caption),
         NumericStepButton(
-          minValue: minValue,
-          onChanged: diff,
-          value: value,
-        )
+            minValue: minValue,
+            onChanged: diff,
+            value: value,
+            decrementContent: t.decrementLabel,
+            incrementContent: t.incrementLabel)
       ]),
     );
   }
