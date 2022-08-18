@@ -79,7 +79,7 @@ class ConfigPageState extends State<ConfigPage> {
                     length: tabs.length,
                     child: Scaffold(
                         appBar: AppBar(
-                          title: Text(t!.titleConfig),
+                          title: Text(t.titleConfig),
                           bottom: TabBar(
                               tabs:
                                   tabs.keys.map((c) => Tab(text: c)).toList()),
