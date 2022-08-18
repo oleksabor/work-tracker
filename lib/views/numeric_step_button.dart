@@ -6,6 +6,11 @@ class NumericStepButton extends StatefulWidget {
   int? maxValue;
   int? value;
 
+  /// increment icon content description for screen readers
+  String incrementContent;
+
+  /// decrement icon content description for screen readers
+  String decrementContent;
   final ValueChanged<int> onChanged;
 
   NumericStepButton(
@@ -13,7 +18,9 @@ class NumericStepButton extends StatefulWidget {
       this.value,
       this.minValue,
       this.maxValue,
-      required this.onChanged})
+      required this.onChanged,
+      this.decrementContent = "",
+      this.incrementContent = ""})
       : super(key: key);
 
   @override
@@ -78,11 +85,13 @@ class _NumericStepButtonState extends State<NumericStepButton> {
 
   late bool isPressed;
 
-  Widget buildIcon(void Function(int, {int count}) onPressed, IconData? icon) {
+  Widget buildIcon(void Function(int, {int count}) onPressed, IconData? icon,
+      String semanticLabel) {
     return GestureDetector(
       child: IconButton(
         onPressed: () => onPressed(1),
         icon: Icon(
+          semanticLabel: semanticLabel,
           icon,
           //color: Theme.of(context).secondaryHeaderColor,
         ),
@@ -111,8 +120,8 @@ class _NumericStepButtonState extends State<NumericStepButton> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        buildIcon(
-            (i, {int count = 0}) => decrement(i, count: count), Icons.remove),
+        buildIcon((i, {int count = 0}) => decrement(i, count: count),
+            Icons.remove, widget.decrementContent),
         Text(
           '$counter',
           textAlign: TextAlign.center,
@@ -122,8 +131,8 @@ class _NumericStepButtonState extends State<NumericStepButton> {
             fontWeight: FontWeight.w500,
           ),
         ),
-        buildIcon(
-            (i, {int count = 0}) => increment(i, count: count), Icons.add),
+        buildIcon((i, {int count = 0}) => increment(i, count: count), Icons.add,
+            widget.incrementContent),
       ],
     );
   }

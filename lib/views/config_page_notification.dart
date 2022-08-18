@@ -30,7 +30,9 @@ extension ConfigPageNotification on ConfigPageState {
                       minValue: 1,
                       onChanged: (v) {
                         setState(() => notify.delay = v);
-                      }),
+                      },
+                      decrementContent: t.decrementLabel,
+                      incrementContent: t.incrementLabel),
                 ),
               ])),
       Row(children: [
