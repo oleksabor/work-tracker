@@ -142,10 +142,11 @@ class DebugPageState extends State<DebugPage> {
                 });
             dbItemsUpgraded = await model.upgradeDb(workModel);
             if (kDebugMode) {
-              await Future.delayed(const Duration(seconds: 5));
+              await Future.delayed(const Duration(seconds: 1));
             }
             if (!mounted) return;
             Navigator.pop(context);
+            setState(() {});
           },
           child: Text("upgrade db ($dbItemsUpgraded)"),
         ),
