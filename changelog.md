@@ -1,3 +1,9 @@
+### 1.0.1
+- upgrade db result fixed
+- semantic labels on +- icons
+- chart data ordered by date
+- dummy data can be seed (for GooglePlay screens on tablet devices)
+
 ### 1.0.0
 - application icon
 
