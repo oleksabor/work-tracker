@@ -1,6 +1,6 @@
 # work_tracker
 
-Test Flutter project to track my workout notes.
+Test Flutter project to track my street workouts results.
 
 ## Features
 * stores log of exercises.
