@@ -11,3 +11,5 @@ final getIt = GetIt.instance;
   //generateForDir: ['classes'],
 )
 void configureDependencies() => $initGetIt(getIt);
+
+// flutter packages pub run build_runner build   --delete-conflicting-outputs

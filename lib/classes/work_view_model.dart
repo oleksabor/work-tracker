@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:async/async.dart';
+import 'package:injectable/injectable.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
 import 'package:hive/hive.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as Path;
 import 'package:work_tracker/classes/db_loader.dart';
 
+@injectable
 class WorkViewModel {
   final boxName = "workData";
   final itemsName = "items";

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:work_tracker/classes/debug_model.dart';
 import 'package:work_tracker/classes/doc_dir.dart';
+import 'package:work_tracker/classes/init_get.dart';
 import 'package:work_tracker/classes/work_item.dart';
-import 'package:work_tracker/classes/work_kind.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -21,6 +21,12 @@ class DebugPage extends StatefulWidget {
 }
 
 class DebugPageState extends State<DebugPage> {
+  @override
+  void initState() {
+    super.initState();
+    model = getIt<DebugModel>();
+  }
+
   Widget createColumnDir(DirData data) {
     var items = data.toList();
     var res = ListView.builder(
@@ -50,18 +56,20 @@ class DebugPageState extends State<DebugPage> {
     );
   }
 
-  Widget createKindList(List<WorkKind> items) {
+  Widget createKindList(List<WorkKindToday> items) {
     return ListView.builder(
       padding: const EdgeInsets.all(10.0),
       itemCount: items.length,
       itemBuilder: (ctx, i) {
         return ListTile(
-            title: Text(items[i].title), subtitle: Text("id:${items[i].key}"));
+            title: Text(items[i].kind.title),
+            subtitle: Text(
+                "id:${items[i].kind.kindId} count:${items[i].todayWork?.length}"));
       },
     );
   }
 
-  DebugModel model = DebugModel();
+  late DebugModel model;
   int? dbItemsUpgraded;
 
   List<Widget> createSwipes(BuildContext context) {
@@ -83,8 +91,8 @@ class DebugPageState extends State<DebugPage> {
       Column(children: [
         Flexible(
             flex: 9,
-            child: FutureBuilder<List<WorkKind>>(
-              future: workModel.loadKinds(),
+            child: FutureBuilder<List<WorkKindToday>>(
+              future: model.groupByKinds(),
               builder: (c, s) => s.hasData
                   ? createKindList(s.data!)
                   : const CircularProgressIndicator(),
