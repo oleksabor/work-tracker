@@ -1,3 +1,7 @@
+### 1.1.0
+- group items by id on debug page
+- showWhenLocked and turnScreenOn were removed from manifest
+
 ### 1.0.1
 - upgrade db result fixed
 - semantic labels on +- icons
