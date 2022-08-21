@@ -16,12 +16,9 @@ WorkItem addWI(WorkKind kind, DateTime created) {
 }
 
 class WorkKindTest extends WorkKind {
-  int _kid;
-  @override
-  int get kindId => _kid;
-  set kindId(i) => _kid;
-
-  WorkKindTest(this._kid);
+  WorkKindTest(int id) {
+    super.kindId = id;
+  }
 }
 
 int id = 0;

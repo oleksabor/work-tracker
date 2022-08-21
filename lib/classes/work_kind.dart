@@ -10,8 +10,10 @@ class WorkKind extends HiveObject {
   @HiveField(1)
   int parentHash = 0;
 
+  int? _okey;
   // wrapper over HiveObject.key
-  int get kindId => key;
+  int get kindId => _okey ?? key ?? -1;
+  set kindId(i) => _okey = i; // artificial setter
 
   WorkKind();
   WorkKind.m(this.title);
