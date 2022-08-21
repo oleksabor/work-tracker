@@ -1,3 +1,6 @@
+### 1.1.1
+- turnScreenOn was added to manifest
+
 ### 1.1.0
 - group items by id on debug page
 - showWhenLocked and turnScreenOn were removed from manifest
