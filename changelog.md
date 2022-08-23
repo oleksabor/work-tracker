@@ -1,3 +1,6 @@
+### 1.1.2
+- showWhenLocked was added to manifest
+
 ### 1.1.1
 - turnScreenOn was added to manifest
 
