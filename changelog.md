@@ -1,3 +1,7 @@
+### 1.1.3
+- notification volume 
+- SET_ALARM permission
+
 ### 1.1.2
 - showWhenLocked was added to manifest
 
