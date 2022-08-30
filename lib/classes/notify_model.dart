@@ -16,7 +16,7 @@ class NotifyModel {
   void Function(bool)? _onPlayingChanged;
 
   void init(Config config, {void Function(bool value)? opc}) {
-    _isScheduled = _isPlaying = false;
+    _isPlaying = false;
 
     releasePlayingChanged();
     _onPlayingChanged = opc;
@@ -28,7 +28,6 @@ class NotifyModel {
 
   bool _isPlaying = false;
   static const int helloAlarmID = 0;
-  static bool _isScheduled = false;
 
   /// schedules to play notification sound
   /// after [ConfigNotify.delay] seconds.
@@ -45,8 +44,7 @@ class NotifyModel {
         exact: true, wakeup: true, alarmClock: true, allowWhileIdle: true)) {
       logger.warning("failed to set the alarm for $dr");
     } else {
-      _isScheduled = true;
-      logger.fine("scheduled alarm for $dr");
+      logger.fine("scheduled alarm for $dr, notification ${config.kind}");
     }
   }
 
@@ -86,10 +84,12 @@ class NotifyModel {
   /// alarm manager handler to start sound playing
   /// is executed as isolate by AlarmManager
   static void playAlarm() async {
-    if (!_isScheduled) {
-      _isScheduled = true;
-      playImpl(await loadShared());
-      _isScheduled = false;
+    try {
+      var config = await loadShared();
+      playImpl(config);
+    } catch (e) {
+      print("failed to play notification");
+      print(e);
     }
   }
 
@@ -97,6 +97,7 @@ class NotifyModel {
     if (config == null) {
       return;
     }
+    print("playing ${config.kind}");
     switch (config.kind) {
       case NotificationKind.inbuilt:
         await FlutterRingtonePlayer.play(
@@ -108,6 +109,7 @@ class NotifyModel {
         await FlutterRingtonePlayer.playNotification(asAlarm: config.asAlarm);
         break;
     }
+    print("done ${config.kind}");
   }
 
   void playTest(ConfigNotify config) {
