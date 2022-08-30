@@ -101,12 +101,17 @@ class NotifyModel {
     switch (config.kind) {
       case NotificationKind.inbuilt:
         await FlutterRingtonePlayer.play(
-            fromAsset: 'assets/${config.notification}',
-            asAlarm: config.asAlarm);
+          fromAsset: 'assets/${config.notification}',
+          asAlarm: config.asAlarm,
+          volume: config.volume,
+        );
         break;
       case NotificationKind.system:
       default:
-        await FlutterRingtonePlayer.playNotification(asAlarm: config.asAlarm);
+        await FlutterRingtonePlayer.playNotification(
+          asAlarm: config.asAlarm,
+          volume: config.volume,
+        );
         break;
     }
     print("done ${config.kind}");
