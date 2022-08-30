@@ -1,12 +1,21 @@
 # work_tracker
 
-Test Flutter project to track my street workouts results.
+My pet project to track street workouts results.
 
 ## Features
 * stores log of exercises.
   Data stored: kind, quantity, additional weight (optional), date and time.
 * shows graph for recent six month.
 * additional weight can be used as quantity multiplication coeficient according to the body weight value.
+* excercise type can be added, renamed or removed.
+  Excercise type name is in English by default and is not localizable (however it may be adjusted manually)
+
+Android 6 (API level 23) has 
+[Doze](https://developer.android.com/training/monitoring-device-state/doze-standby)
+ power saving mode implemented.
+This prevents apps to set alarm `more than once per 9 minutes, per app.` as documented.
+
+This may be a problem if exercises are short and pauses between exercises are less than 9 minutes.
 
 ## Programming
 
