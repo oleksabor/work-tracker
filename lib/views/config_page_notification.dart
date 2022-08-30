@@ -9,6 +9,7 @@ extension ConfigPageNotification on ConfigPageState {
 
 // those controls are arranged in a column
   List<Widget> notificationControls(AppLocalizations t, ConfigNotify notify) {
+    var volumeInt = (notify.volume * 100).toInt();
     List<Widget> res = [
       const SizedBox(height: 5),
       Row(children: [Text(t.pauseExerciseLabel)]),
@@ -35,6 +36,10 @@ extension ConfigPageNotification on ConfigPageState {
                       incrementContent: t.incrementLabel),
                 ),
               ])),
+      Row(children: [Text(t.volumeLabel)]),
+      sliderContainer('$volumeInt %', notify.volume, (v) {
+        notify.volume = v.toDouble();
+      }),
       Row(children: [
         Expanded(
             child: RadioListTile<NotificationKind>(
@@ -51,8 +56,8 @@ extension ConfigPageNotification on ConfigPageState {
           groupValue: notify.kind,
           onChanged: (v) => setState(() => notificationKindChanged(notify, v)),
           contentPadding: EdgeInsets.zero),
+      const SizedBox(height: 5),
     ];
-    var volumeInt = (notify.volume * 100).toInt();
     switch (notify.kind) {
       case NotificationKind.system:
         break;
@@ -74,11 +79,6 @@ extension ConfigPageNotification on ConfigPageState {
                         DropdownMenuItem<String>(value: s, child: Text(s)))
                     .toList())
           ]),
-          const SizedBox(height: 5),
-          Row(children: [Text(t.volumeLabel)]),
-          sliderContainer('$volumeInt %', notify.volume, (v) {
-            notify.volume = v.toDouble();
-          }),
         ]);
     }
     return res;
