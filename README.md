@@ -17,6 +17,16 @@ This prevents apps to set alarm `more than once per 9 minutes, per app.` as docu
 
 This may be a problem if exercises are short and pauses between exercises are less than 9 minutes.
 
+### Usage
+I've found that there is a way to get notifications each five minutes between exercises.
+
+I add new result and leave an application running foreground. 
+Then I lock screen and put the phone to a pocket.
+
+This makes notifications running each five minutes e.g.
+
+However the notification is not raised in time when I minimize the application and lock the screen.
+
 ## Programming
 
 ### Data storage
