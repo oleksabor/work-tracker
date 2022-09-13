@@ -17,6 +17,8 @@ This prevents apps to set alarm `more than once per 9 minutes, per app.` as docu
 
 This may be a problem if exercises are short and pauses between exercises are less than 9 minutes.
 
+This may be resolved by turning a battery optimization off (Settings - Battery) however this may cause a battery drain.
+
 ### Usage
 I've found that there is a way to get notifications each five minutes between exercises.
 
