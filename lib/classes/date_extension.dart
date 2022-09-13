@@ -7,8 +7,15 @@ extension DateMethods on DateTime {
   }
 
   String smartString({DateTime? from}) {
+    // requires a locale initialization using the initializeDateFromatting()
     var now = from ?? DateTime.now();
     var diff = now.difference(this);
+
+    if (now.day - day == 1) {
+      var format = DateFormat.jm(localeStr);
+      return "Yesterday at ${format.format(this)}";
+    }
+
     if (diff.inHours < 24) {
       if (diff.inMinutes > 59) {
         return diff.inHours.toString() + ' hours ago';
@@ -16,11 +23,6 @@ extension DateMethods on DateTime {
         return diff.inMinutes.toString() + ' minutes ago';
       }
     }
-    if (now.day - day == 1) {
-      var format = DateFormat.jm(localeStr);
-      return 'Yesterday at ' + format.format(this);
-    }
-
     var format = now.year != year
         ? DateFormat.yMd(localeStr)
         : DateFormat.MMMMd(localeStr);
@@ -29,9 +31,8 @@ extension DateMethods on DateTime {
   }
 
   String asStringTime({DateFormat? fmt}) {
-    return (fmt ?? DateFormat.yMd(localeStr)).format(this) +
-        " " +
-        timeFormat.format(this);
+    var p = (fmt ?? DateFormat.yMd(localeStr)).format(this);
+    return "$p ${timeFormat.format(this)}";
   }
 
   static Locale? locale;
