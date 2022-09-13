@@ -51,55 +51,54 @@ class ChartItemsViewState extends State<ChartItemsView> {
         appBar: AppBar(
           title: Text(t!.titleWinChart),
         ),
-        body: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              createRadio(),
-              getChartFuture(getChartData(getAggr(), getMeasure()))
-            ]));
+        body: Column(children: [
+          createRadio(),
+          getChartFuture(getChartData(getAggr(), getMeasure()))
+        ]));
+  }
+
+  Widget createRadioItem(
+    String title,
+    GroupChart value,
+  ) {
+    return Flexible(
+        child: RadioListTile<GroupChart>(
+      contentPadding: EdgeInsets.zero,
+      title: Text(title),
+      value: value,
+      groupValue: groupChart,
+      onChanged: (GroupChart? value) {
+        setState(() {
+          groupChart = value;
+        });
+      },
+    ));
+  }
+
+  Widget createRadioItem2(
+    String title,
+    GroupChart value,
+  ) {
+    return ListTile(
+      title: Expanded(child: Text(title)),
+      contentPadding: EdgeInsets.zero,
+      leading: Radio<GroupChart>(
+        value: value,
+        groupValue: groupChart,
+        onChanged: (GroupChart? value) {
+          setState(() {
+            groupChart = value;
+          });
+        },
+      ),
+    );
   }
 
   Widget createRadio() {
     return Row(children: <Widget>[
-      Expanded(
-          child: ListTile(
-        title: const Text('Max'),
-        leading: Radio<GroupChart>(
-          value: GroupChart.max,
-          groupValue: groupChart,
-          onChanged: (GroupChart? value) {
-            setState(() {
-              groupChart = value;
-            });
-          },
-        ),
-      )),
-      Expanded(
-          child: ListTile(
-        title: const Text('Avg'),
-        leading: Radio<GroupChart>(
-          value: GroupChart.avg,
-          groupValue: groupChart,
-          onChanged: (GroupChart? value) {
-            setState(() {
-              groupChart = value;
-            });
-          },
-        ),
-      )),
-      Expanded(
-          child: ListTile(
-        title: const Text('Sum'),
-        leading: Radio<GroupChart>(
-          value: GroupChart.sum,
-          groupValue: groupChart,
-          onChanged: (GroupChart? value) {
-            setState(() {
-              groupChart = value;
-            });
-          },
-        ),
-      )),
+      createRadioItem('Max', GroupChart.max),
+      createRadioItem('Avg', GroupChart.avg),
+      createRadioItem('Sum', GroupChart.sum),
     ]);
   }
 
