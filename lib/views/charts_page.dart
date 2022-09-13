@@ -36,9 +36,17 @@ class ChartItemsViewState extends State<ChartItemsView> {
     configModel = getIt<ConfigModel>();
   }
 
+  /// screen size to calculate legend columns
+  late Size screen;
+  late double pixelRatio;
+
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
+    var mediaQuery = MediaQuery.of(context);
+    screen = mediaQuery.size;
+    pixelRatio = mediaQuery.devicePixelRatio;
+
     return Scaffold(
         appBar: AppBar(
           title: Text(t!.titleWinChart),
@@ -142,14 +150,28 @@ class ChartItemsViewState extends State<ChartItemsView> {
             }));
   }
 
+  final defaultColumns = 3;
+  final columnWidth = 107;
+
+  int getColumns(Size screen) {
+    // should it use pixelRatio also ?
+    var columns = screen.width ~/ columnWidth;
+    if (columns < defaultColumns) {
+      columns = defaultColumns;
+    }
+    return columns;
+  }
+
   Widget getChart(List<flcharts.Series<ChartData, num>> data) {
     return flcharts.LineChart(
       data,
       animate: true,
-      behaviors: [flcharts.SeriesLegend()],
+      behaviors: [flcharts.SeriesLegend(desiredMaxColumns: getColumns(screen))],
       defaultRenderer: flcharts.LineRendererConfig(includeArea: true),
     );
   }
+
+  final daysBack = 180;
 
   Future<List<flcharts.Series<ChartData, num>>> getChartData(
       List<ChartData> Function(ChartViewModel, List<WorkItem>, ConfigGraph)
@@ -157,7 +179,7 @@ class ChartItemsViewState extends State<ChartItemsView> {
       num? Function(ChartData, num?) measure) async {
     var config = await configModel.load();
     var items = await widget.data.loadItems();
-    var itemsData = charts.loadItemsFor(180, items);
+    var itemsData = charts.loadItemsFor(daysBack, items);
     var kinds = await widget.data.loadKinds();
 
     var kindsData = itemsData.groupBy((i) => i.kindId).entries;
