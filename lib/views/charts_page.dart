@@ -75,25 +75,6 @@ class ChartItemsViewState extends State<ChartItemsView> {
     ));
   }
 
-  Widget createRadioItem2(
-    String title,
-    GroupChart value,
-  ) {
-    return ListTile(
-      title: Expanded(child: Text(title)),
-      contentPadding: EdgeInsets.zero,
-      leading: Radio<GroupChart>(
-        value: value,
-        groupValue: groupChart,
-        onChanged: (GroupChart? value) {
-          setState(() {
-            groupChart = value;
-          });
-        },
-      ),
-    );
-  }
-
   Widget createRadio() {
     return Row(children: <Widget>[
       createRadioItem('Max', GroupChart.max),
