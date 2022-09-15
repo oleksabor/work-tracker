@@ -1,3 +1,7 @@
+### 1.2.0
+- chart legend captions rows are calculated according screen width
+- check for midnight adjusted in smart date to string
+
 ### 1.1.3
 - notification volume 
 - SET_ALARM permission
