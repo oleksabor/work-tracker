@@ -17,7 +17,7 @@ This prevents apps to set alarm `more than once per 9 minutes, per app.` as docu
 
 This may be a problem if exercises are short and pauses between exercises are less than 9 minutes.
 
-This may be resolved by turning a battery optimization off (Settings - Battery) however this may cause a battery drain.
+This may be resolved by turning a battery optimization off (`Settings - Battery`) however this may cause a battery drain.
 
 ### Usage
 I've found that there is a way to get notifications each five minutes between exercises.
@@ -28,6 +28,30 @@ Then I lock screen and put the phone to a pocket.
 This makes notifications running each five minutes e.g.
 
 However the notification is not raised in time when I minimize the application and lock the screen.
+
+#### How it looks like
+
+The application interface is pretty simple.
+It has main screen, new item screen, settings and charts pages.
+
+Main screen has the list of exercise kinds and latest data per exercise.
+
+![main application screen](assets/image/screenMain.gif)
+
+New exersice results is registered when **+** button is pressed.
+Quantity and additional weight (if any) should be specified here.
+
+![new item screen](assets/image/screenNewItem.gif)
+
+The exercise history is available by single click on the row.
+You can browse the exercise history by day using _Back_ and _Forward_ buttons in the left bottom corner.
+
+![history screen](assets/image/screenHistory.gif)
+
+The chart page is available by context menu (three dots in the upper right part of the screen)
+
+![context menu](assets/image/screenContext.gif)
+![chart page](assets/image/screenChart.gif)
 
 ## Programming
 
