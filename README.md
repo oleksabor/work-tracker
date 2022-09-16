@@ -39,8 +39,7 @@ Main screen has the list of exercise kinds and latest data per exercise.
 New exersice results is registered when **+** button is pressed.
 Quantity and additional weight (if any) should be specified here.
 
-![main application screen](assets/image/screenMain.gif)
-
+![main application screen](assets/image/screenMain.gif) 
 ![new item screen](assets/image/screenNewItem.gif)
 
 The exercise history is available by single click on the row.
