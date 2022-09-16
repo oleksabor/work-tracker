@@ -50,8 +50,7 @@ You can browse the exercise history by day using _Back_ and _Forward_ buttons in
 
 The chart page is available by context menu (three dots in the upper right part of the screen)
 
-![context menu](assets/image/screenContext.gif)
-![chart page](assets/image/screenChart.gif)
+![context menu](assets/image/screenContext.gif) ![chart page](assets/image/screenChart.gif)
 
 ## Programming
 
