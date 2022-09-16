@@ -5,4 +5,5 @@ class HiveTypesEnum {
   static const int configGraph = 3;
   static const int configLog = 4;
   static const int configNotify = 5;
+  static const int weightBody = 6;
 }

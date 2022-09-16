@@ -1,6 +1,5 @@
 import 'package:work_tracker/classes/hive_type_values.dart';
 import 'package:hive/hive.dart';
-import 'hive_type_values.dart';
 
 part 'work_item.g.dart';
 
