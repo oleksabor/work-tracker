@@ -36,10 +36,10 @@ It has main screen, new item screen, settings and charts pages.
 
 Main screen has the list of exercise kinds and latest data per exercise.
 
-![main application screen](assets/image/screenMain.gif)
-
 New exersice results is registered when **+** button is pressed.
 Quantity and additional weight (if any) should be specified here.
+
+![main application screen](assets/image/screenMain.gif)
 
 ![new item screen](assets/image/screenNewItem.gif)
 
