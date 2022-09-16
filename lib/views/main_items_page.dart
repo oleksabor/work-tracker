@@ -46,7 +46,8 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     }
     var res = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (ctx) => WorkItemPage(item: wi)),
+      MaterialPageRoute(
+          builder: (ctx) => WorkItemPage(item: wi, title: kToday.kind.title)),
     );
     if (res != null) {
       var item = _model.store(res);
