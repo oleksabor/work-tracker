@@ -5,6 +5,7 @@ import 'package:work_tracker/classes/config.dart';
 import 'package:work_tracker/classes/config_graph.dart';
 import 'package:work_tracker/classes/config_log.dart';
 import 'package:work_tracker/classes/config_notify.dart';
+import 'package:work_tracker/classes/weight_body.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
 import 'package:hive/hive.dart';
@@ -92,6 +93,8 @@ class DbLoader {
       var hiveDb = await findDbFile(getDbFolders());
       _initDBMemoizer.runOnce(() {
         Hive.init(hiveDb);
+        // child adapter WeightBodyAdapter should be registered before parent
+        Hive.registerAdapter(WeightBodyAdapter());
         //flutter packages pub run build_runner build --delete-conflicting-outputs
         Hive.registerAdapter(WorkItemAdapter());
         Hive.registerAdapter(WorkKindAdapter());

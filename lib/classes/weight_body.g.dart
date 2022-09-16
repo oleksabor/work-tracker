@@ -1,37 +1,39 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'config_graph.dart';
+part of 'weight_body.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class ConfigGraphAdapter extends TypeAdapter<ConfigGraph> {
+class WeightBodyAdapter extends TypeAdapter<WeightBody> {
   @override
-  final int typeId = 3;
+  final int typeId = 6;
 
   @override
-  ConfigGraph read(BinaryReader reader) {
+  WeightBody read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return ConfigGraph()
-      ..weight4graph = fields[0] as bool
-      ..bodyWeight = fields[1] as double
-      ..bodyWeightList = (fields[2] as List).cast<WeightBody>();
+    var res = WeightBody();
+    if (fields[0] != null) {
+      res.date = fields[0] as DateTime;
+    }
+    if (fields[1] != null) {
+      res.weight = fields[1] as double;
+    }
+    return res;
   }
 
   @override
-  void write(BinaryWriter writer, ConfigGraph obj) {
+  void write(BinaryWriter writer, WeightBody obj) {
     writer
-      ..writeByte(3)
-      ..writeByte(0)
-      ..write(obj.weight4graph)
-      ..writeByte(1)
-      ..write(obj.bodyWeight)
       ..writeByte(2)
-      ..write(obj.bodyWeightList);
+      ..writeByte(0)
+      ..write(obj.date)
+      ..writeByte(1)
+      ..write(obj.weight);
   }
 
   @override
@@ -40,7 +42,7 @@ class ConfigGraphAdapter extends TypeAdapter<ConfigGraph> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ConfigGraphAdapter &&
+      other is WeightBodyAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
