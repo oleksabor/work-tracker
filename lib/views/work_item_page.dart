@@ -7,7 +7,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 /// [item] edit view
 class WorkItemPage extends StatelessWidget {
   /// [item] edit view
-  const WorkItemPage({Key? key, required this.item}) : super(key: key);
+  const WorkItemPage({Key? key, required this.item, this.title = ""})
+      : super(key: key);
+
+  final String title;
 
   // Declare a field that holds the Item.
   final WorkItem item;
@@ -25,7 +28,7 @@ class WorkItemPage extends StatelessWidget {
     var t = AppLocalizations.of(context)!;
     return Scaffold(
         appBar: AppBar(
-          title: Text(item.kind),
+          title: Text(title),
         ),
         body: Builder(builder: (context) {
           var rows = buildRows(item, t);
