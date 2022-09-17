@@ -1,3 +1,7 @@
+### 1.3.0
+- body weight history is preserved (if adjusted)
+- new item title fixed
+
 ### 1.2.0
 - chart legend captions rows are calculated according screen width
 - check for midnight adjusted in smart date to string
