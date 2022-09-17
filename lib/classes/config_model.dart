@@ -30,12 +30,11 @@ class ConfigModel {
       return box.values.first;
     } catch (e, st) {
       print(e);
-      //db.clearBox("config");
       return Config();
     }
   }
 
-  save(Config? value) async {
+  saveImpl(Config? value) async {
     if (value != null) {
       setWeight(value.graph, DateTime.now());
       if (value.isInBox) {
@@ -45,6 +44,22 @@ class ConfigModel {
         box.add(value);
         box.close(); // like commit
       }
+    }
+  }
+
+  save(Config? value) async {
+    try {
+      await saveImpl(value);
+    } catch (e) {
+      print("failed to save configuration");
+      print(e);
+      try {
+        await db.clearBox(configBox); // clear broken configuration box
+      } catch (e2) {
+        print("failed to delete box $configBox");
+        print(e2);
+      }
+      await saveImpl(value);
     }
   }
 
