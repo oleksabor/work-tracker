@@ -16,10 +16,13 @@ class ConfigGraphAdapter extends TypeAdapter<ConfigGraph> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return ConfigGraph()
-      ..weight4graph = fields[0] as bool
-      ..bodyWeight = fields[1] as double
-      ..bodyWeightList = (fields[2] as List).cast<WeightBody>();
+    var r = ConfigGraph();
+    r.weight4graph = fields[0] as bool;
+    r.bodyWeight = fields[1] as double;
+    if (fields[2] != null) {
+      r.bodyWeightList = (fields[2] as List).cast<WeightBody>();
+    }
+    return r;
   }
 
   @override

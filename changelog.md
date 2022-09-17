@@ -1,3 +1,7 @@
+### 1.3.1
+- old config reading fixed 
+  [#97](https://github.com/oleksabor/work-tracker/issues/97) 
+
 ### 1.3.0
 - body weight history is preserved (if adjusted)
 - new item title fixed
