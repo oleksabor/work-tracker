@@ -55,5 +55,20 @@
   "confirmRemoval": "Підтвердіть видалення",
   "incrementLabel": "збільшити",
   "decrementLabel": "зменшити",
-  "addNewItem": "додати новий елемент"
+  "addNewItem": "додати новий елемент",
+  "notificationScheduled": "Нотифікацію заплановано через {min}:{sec}",
+  "@notificationScheduled": {
+    "placeholders": {
+      "min": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "123"
+      },
+      "sec": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "123"
+      }
+    }
+  }
 }

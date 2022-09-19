@@ -55,5 +55,20 @@
   "confirmRemoval": "Confirm delete",
   "incrementLabel": "increment",
   "decrementLabel": "decrement",
-  "addNewItem": "add new item"
+  "addNewItem": "add new item",
+  "notificationScheduled": "The notification has been scheduled for {min}:{sec}",
+  "@notificationScheduled": {
+    "placeholders": {
+      "min": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "123"
+      },
+      "sec": {
+        "type": "int",
+        "format": "decimalPattern",
+        "example": "123"
+      }
+    }
+  }
 }
