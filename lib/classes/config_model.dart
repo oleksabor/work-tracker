@@ -27,7 +27,8 @@ class ConfigModel {
       if (box.values.isEmpty) {
         throw "no config value was loaded";
       }
-      return box.values.first;
+      var last = box.values.last;
+      return last;
     } catch (e, st) {
       print(e);
       return Config();
@@ -41,8 +42,9 @@ class ConfigModel {
         await value.save();
       } else {
         var box = await db.openBox<Config>(configBox);
-        box.add(value);
-        box.close(); // like commit
+        await box.clear(); // there should be only one config value
+        await box.add(value);
+        await box.flush(); // like commit
       }
     }
   }
