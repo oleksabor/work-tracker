@@ -21,6 +21,7 @@ import 'debug_page.dart';
 import 'lifecycle_watcher_state.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:simple_logger/simple_logger.dart';
+import 'package:overlay_support/overlay_support.dart';
 
 part 'main_items_context_menu.dart';
 
@@ -36,6 +37,8 @@ class MainItemsPage extends StatefulWidget {
 class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
   final WorkViewModel _model = WorkViewModel();
   Timer? timer;
+
+  late ThemeData? themeData;
 
   void workItemAdd(BuildContext context, WorkKindToday kToday) async {
     var wi = WorkItem.i(kToday.kind.key);
@@ -55,15 +58,23 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
       setState(() {
         kToday.todayWork?.add(item);
       });
-      notify();
+      await notify();
     }
   }
 
-  void notify() async {
+  Future notify() async {
     var configModel = getIt<ConfigModel>();
     var config = await configModel.load();
     if (config.notify.playAfterNewResult) {
       NotifyModel.playSchedule(config.notify);
+      var min = config.notify.delay / 60;
+      var sec = config.notify.delay % 60;
+
+      showSimpleNotification(
+        Text(t.notificationScheduled(min.toInt(), sec)),
+        background: themeData?.primaryColor ?? Colors.blue,
+        position: NotificationPosition.bottom,
+      );
     }
   }
 
@@ -72,6 +83,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     if (kind.todayWork != null && kind.todayWork!.isNotEmpty) {
       d = kind.todayWork!.last.created;
     }
+
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -126,12 +138,15 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
   static const tagDelete = "delete";
   static const tagAddKind = "addKind";
   final logger = SimpleLogger();
+  late AppLocalizations t;
 
   @override
   Widget build(BuildContext context) {
     DateMethods.locale = Localizations.localeOf(context);
     DateMethods.mediaQueryData = MediaQuery.of(context);
-    var t = AppLocalizations.of(context)!;
+    themeData = Theme.of(context);
+
+    t = AppLocalizations.of(context)!;
     final menuTags = {
       tagAddKind: t.menuAddKind,
       tagChart: t.menuCharts,
