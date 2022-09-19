@@ -1,3 +1,6 @@
+### 1.3.2
+- config box is cleared on save
+
 ### 1.3.1
 - old config reading fixed 
   [#97](https://github.com/oleksabor/work-tracker/issues/97) 
