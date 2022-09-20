@@ -1,3 +1,6 @@
+### 1.3.4
+- debuggable test build
+
 ### 1.3.3
 - error notification
   [#99](https://github.com/oleksabor/work-tracker/issues/99) 
