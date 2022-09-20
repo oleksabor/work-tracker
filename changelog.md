@@ -1,3 +1,7 @@
+### 1.3.3
+- error notification
+  [#99](https://github.com/oleksabor/work-tracker/issues/99) 
+
 ### 1.3.2
 - config box is cleared on save
 
