@@ -84,10 +84,13 @@ extension ConfigPageNotification on ConfigPageState {
     return res;
   }
 
+  void playOrStop(bool isPlaying, ConfigNotify config) {
+    isPlaying ? notifyModel.stop() : notifyModel.playTest(config);
+  }
+
   void Function()? onPlayClick(ConfigNotify config) {
     onClick() {
-      setState(
-          () => isPlaying ? notifyModel.stop() : notifyModel.playTest(config));
+      setState(() => playOrStop(isPlaying, config));
     }
 
     switch (config.kind) {
@@ -95,6 +98,8 @@ extension ConfigPageNotification on ConfigPageState {
         return onClick;
       case NotificationKind.inbuilt:
         return config.notification.isEmpty ? null : onClick;
+      default:
+        return null;
     }
   }
 
