@@ -10,8 +10,18 @@ mmp=$(echo $json | jq '.MajorMinorPatch' | xargs)
 echo 'MajorMinorPatch: ' $mmp
 
 # major=11
-# minor=2
-# patch=4
+#minor=2
+#patch=100
+
+if (( minor > 99 )); then
+echo "minor version number out of range $minor";
+exit -1;
+fi
+
+if (( patch > 99 )); then
+echo "patch version number out of range $patch";
+exit -1;
+fi
 
 # formats build number using concatenation of
 # major value, two digits minor number, two digits patch
