@@ -96,21 +96,30 @@ class NotifyModel {
   /// alarm manager handler to start sound playing
   /// is executed as isolate by AlarmManager
   static void playAlarm() async {
-    try {
-      var config = await loadShared();
-      playImpl(config);
-    } catch (e) {
-      print("failed to play notification");
-      print(e);
+    if (kDebugMode) {
+      print("reading config");
     }
-    _scheduled = false;
+    var config = await loadShared();
+    if (kDebugMode) {
+      print("has read config");
+    }
+    playImpl(config)
+        .then((_) => _scheduled = false)
+        .onError((error, stackTrace) {
+      print("failed to play notification");
+      print(error);
+      return true;
+    });
   }
 
   static Future<void> playImpl(ConfigNotify? config) async {
     if (config == null) {
+      print("no config instance to playImpl");
       return;
     }
-    print("playing ${config.kind}");
+    if (kDebugMode) {
+      print("playing ${config.kind}");
+    }
     switch (config.kind) {
       case NotificationKind.inbuilt:
         await FlutterRingtonePlayer.play(
@@ -127,11 +136,14 @@ class NotifyModel {
         );
         break;
     }
-    print("done ${config.kind}");
+    if (kDebugMode) {
+      print("done ${config.kind}");
+    }
   }
 
   void playTest(ConfigNotify config) {
     if (isPlaying) {
+      print("playing already");
       return;
     }
     _isPlaying = true;
