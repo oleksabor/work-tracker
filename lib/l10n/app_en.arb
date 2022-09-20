@@ -62,12 +62,16 @@
       "min": {
         "type": "int",
         "format": "decimalPattern",
-        "example": "123"
+        "example": "23"
       },
       "sec": {
         "type": "int",
         "format": "decimalPattern",
-        "example": "123"
+        "example": "43",
+        "optionalParameters": {
+            "decimalDigits": 0,
+            "customPattern": "0#"
+        }
       }
     }
   }

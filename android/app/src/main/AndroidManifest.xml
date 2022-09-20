@@ -2,6 +2,7 @@
     package="com.example.work_tracker">
    <application
         android:label="Street work tracker"
+        android:debuggable="true"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
