@@ -28,24 +28,36 @@ class NotifyModel {
 
   bool _isPlaying = false;
   static const int helloAlarmID = 0;
+  static bool _scheduled = false;
 
   /// schedules to play notification sound
   /// after [ConfigNotify.delay] seconds.
   /// Stores current [ConfigNotify] instance as [SharedPreferences] json string using [saveShared]
   /// Is executed by [AndroidAlarmManager] isolated from main app instance
-  static void playSchedule(ConfigNotify? config) async {
+  static Future<bool> playSchedule(ConfigNotify? config) async {
     if (/*_isScheduled ||*/ config == null) {
-      return;
+      return false;
     }
     var logger = await getIt.getAsync<SimpleLogger>();
+    if (_scheduled) {
+      logger.fine("cancelling existing alarm $helloAlarmID");
+      var cancelled = await AndroidAlarmManager.cancel(helloAlarmID);
+      if (!cancelled) {
+        logger.warning("failed to cancel existing subscription $helloAlarmID");
+      }
+    }
+    _scheduled = true;
     var dr = Duration(seconds: config.delay);
     await saveShared(config);
-    if (!await AndroidAlarmManager.oneShot(dr, helloAlarmID, playAlarm,
-        exact: true, wakeup: true, alarmClock: true, allowWhileIdle: true)) {
-      logger.warning("failed to set the alarm for $dr");
+    var scheduled = await AndroidAlarmManager.oneShot(
+        dr, helloAlarmID, playAlarm,
+        exact: true, wakeup: true, alarmClock: true, allowWhileIdle: true);
+    if (!scheduled) {
+      logger.warning("failed to set the alarm:$helloAlarmID for $dr");
     } else {
       logger.fine("scheduled alarm for $dr, notification ${config.kind}");
     }
+    return true;
   }
 
   /// stores current [ConfigNotify] instance as [SharedPreferences] json string
@@ -91,6 +103,7 @@ class NotifyModel {
       print("failed to play notification");
       print(e);
     }
+    _scheduled = false;
   }
 
   static Future<void> playImpl(ConfigNotify? config) async {

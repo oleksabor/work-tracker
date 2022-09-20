@@ -66,13 +66,20 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     var configModel = getIt<ConfigModel>();
     var config = await configModel.load();
     if (config.notify.playAfterNewResult) {
-      NotifyModel.playSchedule(config.notify);
+      var scheduled = await NotifyModel.playSchedule(config.notify);
       var min = config.notify.delay / 60;
       var sec = config.notify.delay % 60;
+      var colorTheme = themeData?.primaryTextTheme.titleMedium;
+      var colorTxt = colorTheme?.color ?? colorTheme?.foreground?.color;
+      colorTxt = colorTxt ?? Colors.grey;
+
+      var colorBack =
+          scheduled ? themeData?.primaryColor : themeData?.errorColor;
 
       showSimpleNotification(
         Text(t.notificationScheduled(min.toInt(), sec)),
-        background: themeData?.primaryColor ?? Colors.blue,
+        background: colorBack,
+        foreground: colorTxt,
         position: NotificationPosition.bottom,
       );
     }
