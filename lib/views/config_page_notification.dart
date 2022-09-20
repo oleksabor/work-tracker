@@ -111,26 +111,30 @@ extension ConfigPageNotification on ConfigPageState {
     List<Widget> children = [
       const SizedBox(height: 5),
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(t.playSoundLabel),
-        Switch(
-          value: notify.playAfterNewResult,
-          onChanged: (v) {
-            setState(() {
-              notify.playAfterNewResult = v;
-              logger?.fine("playing: $v");
-            });
-          },
-        )
+        Expanded(flex: 3, child: Text(t.playSoundLabel)),
+        Expanded(
+            flex: 1,
+            child: Switch(
+              value: notify.playAfterNewResult,
+              onChanged: (v) {
+                setState(() {
+                  notify.playAfterNewResult = v;
+                  logger?.fine("playing: $v");
+                });
+              },
+            ))
       ]),
       const SizedBox(height: 5),
       Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(t.playAsAlarmLabel),
-        Switch(
-          value: notify.asAlarm,
-          onChanged: (v) {
-            setState(() => notify.asAlarm = v);
-          },
-        )
+        Expanded(flex: 3, child: Text(t.playAsAlarmLabel)),
+        Expanded(
+            flex: 1,
+            child: Switch(
+              value: notify.asAlarm,
+              onChanged: (v) {
+                setState(() => notify.asAlarm = v);
+              },
+            ))
       ]),
     ];
     children.addAll(notificationControls(t, config.notify));
