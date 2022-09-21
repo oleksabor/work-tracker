@@ -1,3 +1,7 @@
+### 1.3.5
+- release build (no debug)
+- notification settings expanded for text labels
+
 ### 1.3.4
 - debuggable test build
 
