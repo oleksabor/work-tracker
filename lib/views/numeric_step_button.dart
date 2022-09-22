@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:work_tracker/views/numeric_edit.dart';
 
 // https://stackoverflow.com/a/65271573/940182
 class NumericStepButton extends StatefulWidget {
@@ -122,15 +123,17 @@ class _NumericStepButtonState extends State<NumericStepButton> {
       children: [
         buildIcon((i, {int count = 0}) => decrement(i, count: count),
             Icons.remove, widget.decrementContent),
-        Text(
-          '$counter',
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            // color: Colors.black87,
-            fontSize: 18.0,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
+        NumericEdit(
+          null,
+          counter.toDouble(),
+          min: widget.minValue?.toDouble(),
+          max: widget.maxValue?.toDouble(),
+          onChanged: (p0) {
+            counter = p0.toInt();
+            widget.onChanged(counter);
+            setState(() {});
+          },
+        )..fraction = 0,
         buildIcon((i, {int count = 0}) => increment(i, count: count), Icons.add,
             widget.incrementContent),
       ],
