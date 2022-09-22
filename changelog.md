@@ -1,3 +1,8 @@
+### 1.4.0
+- export import data as json
+- editing numbers from keyboard
+- two digits minutes value when is notified 
+
 ### 1.3.5
 - release build (no debug)
 - notification settings expanded for text labels
