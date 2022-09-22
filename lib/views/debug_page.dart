@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:work_tracker/classes/date_extension.dart';
@@ -9,6 +10,7 @@ import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:math';
+import 'package:intl/intl.dart';
 
 class DebugPage extends StatefulWidget {
   final WorkViewModel model;
@@ -127,49 +129,73 @@ class DebugPageState extends State<DebugPage> {
         TextButton(
           onPressed: () async {
             if (await Permission.storage.request().isGranted) {
-              await model.moveDb();
+              var downloads = await DirData.getDownloads();
+              if (downloads == null) return;
+              await showBusy(context, () async {
+                //var fn = DateFormat("yyyyMMdd-kkmm").format(DateTime.now());
+                var src = await model.groupByKinds();
+                var fileName = "$downloads/streetWorkoutsExport.json";
+                await model.exportJson(fileName, src);
+                await model.share(fileName);
+              }, title: "export data");
             }
           },
-          child: Text(t.moveDb2ExtCap),
-        ),
-        TextButton(
-          onPressed: () => model.closeDb(workModel),
-          child: Text("close db"),
+          child: Text("export to ..."),
         ),
         TextButton(
           onPressed: () async {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return Column(children: const [
-                    Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                    Center(child: Text("please wait")),
-                  ]);
-                });
-            dbItemsUpgraded = await model.upgradeDb(workModel);
-            if (kDebugMode) {
-              await Future.delayed(const Duration(seconds: 1));
+            if (await Permission.storage.request().isGranted) {
+              var downloads = await FilePicker.platform
+                  .pickFiles(initialDirectory: await DirData.getDownloads());
+              // var downloads = await DirData.getDownloads();
+              if (downloads == null) return;
+              // downloads = "$downloads/streetWorkoutsExport.json";
+              await showBusy(context, () async {
+                //var fn = DateFormat("yyyyMMdd-kkmm").format(DateTime.now());
+                var res = await model.importJson(downloads!.files.single.path!);
+                await model.import2db(res);
+              }, title: "importing");
             }
-            if (!mounted) return;
-            Navigator.pop(context);
-            setState(() {});
           },
-          child: Text("upgrade db ($dbItemsUpgraded)"),
+          child: Text("import from ..."),
         ),
+        // TextButton(
+        //   onPressed: () async {
+        //     if (await Permission.storage.request().isGranted) {
+        //       await model.moveDb();
+        //     }
+        //   },
+        //   child: Text(t.moveDb2ExtCap),
+        // ),
+        // TextButton(
+        //   onPressed: () => model.closeDb(workModel),
+        //   child: Text("close db"),
+        // ),
+        // TextButton(
+        //   onPressed: () async {
+        //     showDialog(
+        //         context: context,
+        //         builder: (BuildContext context) {
+        //           return Column(children: const [
+        //             Center(
+        //               child: CircularProgressIndicator(),
+        //             ),
+        //             Center(child: Text("please wait")),
+        //           ]);
+        //         });
+        //     dbItemsUpgraded = await model.upgradeDb(workModel);
+        //     if (kDebugMode) {
+        //       await Future.delayed(const Duration(seconds: 1));
+        //     }
+        //     if (!mounted) return;
+        //     Navigator.pop(context);
+        //     setState(() {});
+        //   },
+        //   child: Text("upgrade db ($dbItemsUpgraded)"),
+        // ),
         TextButton(
           onPressed: () async {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return Column(children: const [
-                    Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                    Center(child: Text("please wait")),
-                  ]);
-                });
+            showDialogIndicator(context);
             await seedDummyData(workModel);
             if (kDebugMode) {
               await Future.delayed(const Duration(seconds: 3));
@@ -180,6 +206,29 @@ class DebugPageState extends State<DebugPage> {
         ),
       ]),
     ];
+  }
+
+  Future showBusy(BuildContext context, Future Function() action,
+      {String title = "please wait"}) async {
+    showDialogIndicator(context, title: title);
+    try {
+      await action();
+    } finally {
+      Navigator.pop(context);
+    }
+  }
+
+  showDialogIndicator(BuildContext context, {String title = "please wait"}) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Column(children: [
+            Center(
+              child: CircularProgressIndicator(),
+            ),
+            Center(child: Text(title)),
+          ]);
+        });
   }
 
   Future<void> seedDummyData(WorkViewModel model) async {

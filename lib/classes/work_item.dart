@@ -31,6 +31,14 @@ class WorkItem extends HiveObject {
     res.weight = src.weight;
     return res;
   }
+
+  WorkItem.fromJson(Map<String, dynamic> data)
+      : created = DateTime.parse(data['created']),
+        qty = data['qty'],
+        weight = data['weight']; // there is no need to store kindId
+
+  Map<String, dynamic> toJson() =>
+      {'created': created.toIso8601String(), 'weight': weight, 'qty': qty};
 }
 
     // if (numOfFields < 5) {
