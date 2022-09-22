@@ -3,13 +3,13 @@ import 'package:flutter/services.dart';
 
 /// contains Row with [title] and [value]
 class NumericEdit extends StatefulWidget {
-  String title;
+  final String? title;
   double value;
   int fraction = 2;
   Function(double)? onChanged;
   Function(double)? onSubmitted;
-  double? min;
-  double? max;
+  final double? min;
+  final double? max;
 
   NumericEdit(this.title, this.value,
       {this.onChanged, this.onSubmitted, this.min, this.max, Key? key})
@@ -45,11 +45,11 @@ class _NumericEditState extends State<NumericEdit> {
   Widget build(BuildContext context) {
     TextEditingController textController = TextEditingController(
         text: widget.value.toStringAsFixed(widget.fraction));
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-      Text(widget.title),
+    var children = <Widget>[
       SizedBox(
           width: 50,
           child: TextFormField(
+            textAlign: TextAlign.center,
             controller: textController,
             validator: validateText,
             keyboardType: const TextInputType.numberWithOptions(
@@ -78,6 +78,11 @@ class _NumericEditState extends State<NumericEdit> {
               }),
             ],
           ))
-    ]);
+    ];
+    if (widget.title != null) {
+      children.insert(0, Text(widget.title!));
+    }
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround, children: children);
   }
 }
