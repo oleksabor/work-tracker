@@ -25,7 +25,8 @@ _i1.GetIt $initGetIt(_i1.GetIt get,
   gh.factory<_i4.NotifyModel>(() => _i4.NotifyModel());
   gh.factory<_i5.WorkViewModel>(() => _i5.WorkViewModel());
   gh.factory<_i6.ConfigModel>(() => _i6.ConfigModel(get<_i3.DbLoader>()));
-  gh.factory<_i7.DebugModel>(() => _i7.DebugModel(get<_i5.WorkViewModel>()));
+  gh.factory<_i7.DebugModel>(
+      () => _i7.DebugModel(get<_i5.WorkViewModel>(), get<_i3.DbLoader>()));
   gh.factoryAsync<_i8.SimpleLogger>(
       () => logWrapper.getLog(get<_i6.ConfigModel>()));
   return get;

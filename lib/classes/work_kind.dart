@@ -35,4 +35,12 @@ class WorkKind extends HiveObject {
     parentHash = item.parentHash;
     return this;
   }
+
+  WorkKind.fromJson(Map<String, dynamic> data)
+      : _okey = data['kindId'],
+        title = data['title'],
+        parentHash = data['parentHash']; // there is no need to store kindId
+
+  Map<String, dynamic> toJson() =>
+      {'kindId': kindId, 'title': title, 'parentHash': parentHash};
 }

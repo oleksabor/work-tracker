@@ -1,3 +1,5 @@
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'package:simple_logger/simple_logger.dart';
@@ -27,6 +29,12 @@ class DirData extends Iterable<DirEntry> {
       logger.warning(e);
       return null;
     }
+  }
+
+  static Future<String?> getDownloads() async {
+    var result = await getApplicationDocumentsDirectory();
+
+    return result.path;
   }
 
   static Future<DirData> loadDirectories() async {

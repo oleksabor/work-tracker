@@ -53,7 +53,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
           builder: (ctx) => WorkItemPage(item: wi, title: kToday.kind.title)),
     );
     if (res != null) {
-      var item = _model.store(res);
+      var item = await _model.store(res);
       kToday.todayWork ??= [];
       setState(() {
         kToday.todayWork?.add(item);

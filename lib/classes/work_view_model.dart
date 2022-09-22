@@ -13,8 +13,8 @@ import 'package:work_tracker/classes/db_loader.dart';
 @injectable
 class WorkViewModel {
   final boxName = "workData";
-  final itemsName = "items";
-  final kindsName = "kinds";
+  static const String itemsName = "items";
+  static const String kindsName = "kinds";
   DbLoader db = DbLoader();
 
   Box<WorkItem>? openedBox;
@@ -103,10 +103,9 @@ class WorkViewModel {
   }
 
   ///appends [item] to the [openedBox]
-  WorkItem store(WorkItem item) {
-    if (openedBox != null) {
-      openedBox?.add(item);
-    }
+  Future<WorkItem> store(WorkItem item) async {
+    openedBox ??= await db.openBox<WorkItem>(itemsName);
+    await openedBox?.add(item);
     return item;
   }
 
@@ -122,23 +121,31 @@ class WorkViewModel {
     }
   }
 
-  void dispose() {
+  Future flush() async {
     if (openedBox != null) {
-      openedBox?.close();
-      openedBox = null;
+      await openedBox?.flush();
     }
     if (_boxKinds != null) {
-      _boxKinds?.close();
-      _boxKinds = null;
+      await _boxKinds?.flush();
     }
   }
 
-  Future<void> updateKind(WorkKind item) async {
+  void dispose() {
+    flush().then((f) {
+      openedBox = null;
+      _boxKinds = null;
+    });
+  }
+
+  Future<WorkKind> updateKind(WorkKind item) async {
     if (item.isInBox) {
       await item.save();
+      return item;
     } else {
       var b = await boxKinds();
-      await b.add(item);
+      var id = await b.add(item);
+      item.kindId = id;
+      return item;
       //TODO check case when item is being added and then removed
     }
   }

@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:work_tracker/classes/db_loader.dart';
 import 'package:work_tracker/classes/debug_model.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
@@ -7,7 +8,7 @@ import 'work_view_model_test.dart';
 
 void main() {
   test('upgradeDbImpl', () async {
-    var sut = DebugModel(WorkViewModel());
+    var sut = DebugModel(WorkViewModel(), DbLoader());
     var kinds = [WorkKindTest(1)..title = "11"];
     var wi = WorkItem.k("11");
     expect(wi.kindId, -1, reason: "default value violated");
@@ -37,11 +38,49 @@ void main() {
       WorkItem.k("k12"),
     ];
     var wm = WVMDebug(kinds, items);
-    var dm = DebugModel(wm);
+    var dm = DebugModel(wm, DbLoader());
     var grouped = await dm.groupByKinds();
     expect(grouped.length, 4);
     expect(firstW(grouped, 11).todayWork?.length, 1);
     expect(firstW(grouped, 10).todayWork?.length, 2);
+  });
+  test('export|import work items and kinds as json', () {
+    var kinds = [
+      WorkKindTest(11)..title = "t11",
+      WorkKindTest(12)..title = "t12",
+    ];
+    var items = [
+      WorkItem.i(12)
+        ..kind = "k10"
+        ..created = DateTime.now()
+        ..qty = 22
+        ..weight = 2,
+      WorkItem.i(12)
+        ..kind = "k10"
+        ..created = DateTime.now()
+        ..qty = 33
+        ..weight = 3,
+    ];
+    var items2 = [
+      WorkItem.i(11)
+        ..kind = "k11"
+        ..created = DateTime.now()
+        ..qty = 11
+        ..weight = 1,
+    ];
+    var wkToday = [
+      WorkKindToday(kinds[0], todayWork: items2),
+      WorkKindToday(kinds[1], todayWork: items)
+    ];
+    var wm = WVMDebug(kinds, items);
+    var dm = DebugModel(wm, DbLoader());
+    var json = dm.exportAsJson(wkToday);
+    var res = dm.importAsJson(json);
+
+    expect(res.length, 2);
+    expect(res[0].todayWork!.length, 1);
+    expect(res[1].todayWork!.length, 2);
+    expect(res[0].todayWork![0].qty, wkToday[0].todayWork![0].qty);
   });
 }
 
