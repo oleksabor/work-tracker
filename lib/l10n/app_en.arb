@@ -69,5 +69,6 @@
         "example": "43"
       }
     }
-  }
+  },
+  "scheduleFailed": "Failed to schedule notification"
 }

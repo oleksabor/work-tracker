@@ -46,18 +46,16 @@ class NotifyModel {
         logger.warning("failed to cancel existing subscription $helloAlarmID");
       }
     }
-    _scheduled = true;
     var dr = Duration(seconds: config.delay);
     await saveShared(config);
-    var scheduled = await AndroidAlarmManager.oneShot(
-        dr, helloAlarmID, playAlarm,
+    _scheduled = await AndroidAlarmManager.oneShot(dr, helloAlarmID, playAlarm,
         exact: true, wakeup: true, alarmClock: true, allowWhileIdle: true);
-    if (!scheduled) {
+    if (!_scheduled) {
       logger.warning("failed to set the alarm:$helloAlarmID for $dr");
     } else {
       logger.fine("scheduled alarm for $dr, notification ${config.kind}");
     }
-    return true;
+    return _scheduled;
   }
 
   /// stores current [ConfigNotify] instance as [SharedPreferences] json string
