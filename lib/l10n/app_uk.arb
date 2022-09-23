@@ -65,13 +65,8 @@
         "example": "123"
       },
       "sec": {
-        "type": "int",
-        "format": "decimalPattern",
-        "example": "123",
-        "optionalParameters": {
-            "decimalDigits": 0,
-            "customPattern": "0#"
-        }
+        "type": "String",
+        "example": "43"
       }
     }
   }

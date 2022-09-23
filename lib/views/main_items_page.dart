@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 import 'package:work_tracker/classes/config_model.dart';
 import 'package:work_tracker/classes/init_get.dart';
 import 'package:work_tracker/classes/notify_model.dart';
@@ -77,13 +78,15 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
           scheduled ? themeData?.primaryColor : themeData?.errorColor;
 
       showSimpleNotification(
-        Text(t.notificationScheduled(min.toInt(), sec)),
+        Text(t.notificationScheduled(min.toInt(), twoDig.format(sec))),
         background: colorBack,
         foreground: colorTxt,
         position: NotificationPosition.bottom,
       );
     }
   }
+
+  var twoDig = NumberFormat("00");
 
   void workItemsView(BuildContext context, WorkKindToday kind) async {
     var d = DateTime.now();
