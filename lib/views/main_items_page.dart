@@ -76,9 +76,11 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
 
       var colorBack =
           scheduled ? themeData?.primaryColor : themeData?.errorColor;
-
+      var message = scheduled
+          ? t.notificationScheduled(min.toInt(), twoDig.format(sec))
+          : t.scheduleFailed;
       showSimpleNotification(
-        Text(t.notificationScheduled(min.toInt(), twoDig.format(sec))),
+        Text(message),
         background: colorBack,
         foreground: colorTxt,
         position: NotificationPosition.bottom,
