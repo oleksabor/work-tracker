@@ -1,3 +1,6 @@
+### 1.4.1
+- notification result according to oneShot method
+
 ### 1.4.0
 - export import data as json
 - editing numbers from keyboard
