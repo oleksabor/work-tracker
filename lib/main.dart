@@ -9,7 +9,6 @@ import 'package:overlay_support/overlay_support.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await AndroidAlarmManager.initialize();
   //https://stackoverflow.com/a/68911879/940182
   await findSystemLocale();
   configureDependencies();

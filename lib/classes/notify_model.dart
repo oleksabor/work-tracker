@@ -30,11 +30,15 @@ class NotifyModel {
   static const int helloAlarmID = 0;
   static bool _scheduled = false;
 
+  static bool? _initialized;
+
   /// schedules to play notification sound
   /// after [ConfigNotify.delay] seconds.
   /// Stores current [ConfigNotify] instance as [SharedPreferences] json string using [saveShared]
   /// Is executed by [AndroidAlarmManager] isolated from main app instance
   static Future<bool> playSchedule(ConfigNotify? config) async {
+    _initialized ??= await AndroidAlarmManager.initialize();
+
     if (/*_isScheduled ||*/ config == null) {
       return false;
     }
