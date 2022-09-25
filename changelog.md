@@ -1,3 +1,7 @@
+### 1.4.2
+- UI notification from AlarmManager.oneShot
+- new Flutter 3.3.2 version
+
 ### 1.4.1
 - notification result according to oneShot method
 
