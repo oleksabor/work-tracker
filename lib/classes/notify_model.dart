@@ -54,10 +54,7 @@ class NotifyModel {
     }
     var dr = Duration(seconds: config.delay);
     await saveShared(config);
-    // _scheduled = await AndroidAlarmManager.oneShot(dr, helloAlarmID, playAlarm,
-    //     exact: true, wakeup: true, alarmClock: true, allowWhileIdle: true);
-    _scheduled = await AndroidAlarmManager.oneShot(
-        Duration(seconds: config.delay), testAlarmID, testAlarm,
+    _scheduled = await AndroidAlarmManager.oneShot(dr, helloAlarmID, playAlarm,
         exact: true, wakeup: true, alarmClock: true, allowWhileIdle: true);
     if (!_scheduled) {
       logger.warning("failed to set the alarm:$helloAlarmID for $dr");
@@ -65,10 +62,6 @@ class NotifyModel {
       logger.fine("scheduled alarm for $dr, notification ${config.kind}");
     }
     return _scheduled;
-  }
-
-  static void testAlarm() {
-    Communicator.send("testAlarm has fired");
   }
 
   /// stores current [ConfigNotify] instance as [SharedPreferences] json string
@@ -110,12 +103,10 @@ class NotifyModel {
     if (kDebugMode) {
       print("reading config");
     }
-    Communicator.send("executing playAlarm");
     var config = await loadShared();
     if (kDebugMode) {
       print("has read config");
     }
-    Communicator.send("executing playAlarm config ${config?.kind}");
     playImpl(config)
         .then((_) => _scheduled = false)
         .onError((error, stackTrace) {
@@ -135,9 +126,9 @@ class NotifyModel {
     if (kDebugMode) {
       print("playing ${config.kind}");
     }
+    Communicator.send("alarm [${NotificationKind.system}]");
     switch (config.kind) {
       case NotificationKind.inbuilt:
-        Communicator.send("inbuilt");
         await FlutterRingtonePlayer.play(
           fromAsset: 'assets/${config.notification}',
           asAlarm: config.asAlarm,
@@ -146,7 +137,6 @@ class NotifyModel {
         break;
       case NotificationKind.system:
       default:
-        Communicator.send("system ${NotificationKind.system}");
         await FlutterRingtonePlayer.playNotification(
           asAlarm: config.asAlarm,
           volume: config.volume,
