@@ -1,3 +1,24 @@
+### 1.4.9
+- export import data as json
+- editing numbers from keyboard
+- two digits minutes value when is notified 
+- notification result according to oneShot method
+- UI notification from AlarmManager.oneShot
+- Flutter 3.0.5
+- AlarmManager 2.0.6
+
+### 1.4.8
+- back to AlarmManager 2.0.5
+
+### 1.4.7
+- back to Flutter 3.0.1
+
+### 1.4.6
+- back to android_alarm_manager_plus: 2.0.6
+
+### 1.4.5 
+- back to Flutter 3.0.5
+
 ### 1.4.2
 - UI notification from AlarmManager.oneShot
 - new Flutter 3.3.2 version
