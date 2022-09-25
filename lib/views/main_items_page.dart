@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:work_tracker/classes/communicator.dart';
 import 'package:work_tracker/classes/config_model.dart';
 import 'package:work_tracker/classes/init_get.dart';
 import 'package:work_tracker/classes/notify_model.dart';
@@ -70,22 +71,26 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
       var scheduled = await NotifyModel.playSchedule(config.notify);
       var min = config.notify.delay / 60;
       var sec = config.notify.delay % 60;
-      var colorTheme = themeData?.primaryTextTheme.titleMedium;
-      var colorTxt = colorTheme?.color ?? colorTheme?.foreground?.color;
-      colorTxt = colorTxt ?? Colors.grey;
 
-      var colorBack =
-          scheduled ? themeData?.primaryColor : themeData?.errorColor;
       var message = scheduled
           ? t.notificationScheduled(min.toInt(), twoDig.format(sec))
           : t.scheduleFailed;
-      showSimpleNotification(
-        Text(message),
-        background: colorBack,
-        foreground: colorTxt,
-        position: NotificationPosition.bottom,
-      );
+      showNotification(scheduled, message);
     }
+  }
+
+  void showNotification(bool success, String message) {
+    var colorTheme = themeData?.primaryTextTheme.titleMedium;
+    var colorTxt = colorTheme?.color ?? colorTheme?.foreground?.color;
+    colorTxt = colorTxt ?? Colors.grey;
+
+    var colorBack = success ? themeData?.primaryColor : themeData?.errorColor;
+    showSimpleNotification(
+      Text(message),
+      background: colorBack,
+      foreground: colorTxt,
+      position: NotificationPosition.bottom,
+    );
   }
 
   var twoDig = NumberFormat("00");
@@ -116,18 +121,33 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     initializeDateFormatting(systemLocale, null);
   }
 
+  Communicator com = Communicator();
+
+  comNotification(dynamic data) {
+    var message = "a notification";
+    if (data is String) {
+      message = data;
+    }
+    if (kDebugMode) {
+      print("comNotification: $message");
+    }
+    showNotification(true, message);
+  }
+
   @override
   void initState() {
     setCurrentLocale();
     timer = Timer.periodic(
         const Duration(seconds: 30), (Timer t) => setState(() {}));
     todayWork = loadWorkFor(DateTime.now());
+    com.init(comNotification);
     super.initState();
   }
 
   @override
   void dispose() {
     _model.dispose();
+    com.close();
     if (timer != null) timer!.cancel();
     super.dispose();
   }
@@ -191,6 +211,14 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
                         );
                 },
               )),
+          Row(children: [
+            TextButton(
+              child: const Text("communicator test"),
+              onPressed: () {
+                Communicator.send("test from UI");
+              },
+            )
+          ]),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [getVersionText(), const SizedBox(width: 10)],

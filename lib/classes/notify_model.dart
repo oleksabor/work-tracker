@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_logger/simple_logger.dart';
+import 'package:work_tracker/classes/communicator.dart';
 import 'package:work_tracker/classes/config.dart';
 import 'package:work_tracker/classes/config_model.dart';
 import 'package:work_tracker/classes/config_notify.dart';
@@ -30,11 +31,15 @@ class NotifyModel {
   static const int helloAlarmID = 0;
   static bool _scheduled = false;
 
+  static bool? _initialized;
+
   /// schedules to play notification sound
   /// after [ConfigNotify.delay] seconds.
   /// Stores current [ConfigNotify] instance as [SharedPreferences] json string using [saveShared]
   /// Is executed by [AndroidAlarmManager] isolated from main app instance
   static Future<bool> playSchedule(ConfigNotify? config) async {
+    _initialized ??= await AndroidAlarmManager.initialize();
+
     if (/*_isScheduled ||*/ config == null) {
       return false;
     }
@@ -120,6 +125,7 @@ class NotifyModel {
     }
     switch (config.kind) {
       case NotificationKind.inbuilt:
+        Communicator.send("inbuilt");
         await FlutterRingtonePlayer.play(
           fromAsset: 'assets/${config.notification}',
           asAlarm: config.asAlarm,
@@ -128,6 +134,7 @@ class NotifyModel {
         break;
       case NotificationKind.system:
       default:
+        Communicator.send("system ${NotificationKind.system}");
         await FlutterRingtonePlayer.playNotification(
           asAlarm: config.asAlarm,
           volume: config.volume,
