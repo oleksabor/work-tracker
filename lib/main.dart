@@ -1,4 +1,3 @@
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:work_tracker/classes/init_get.dart';
 import 'package:work_tracker/views/main_items_page.dart';
 import 'package:flutter/material.dart';

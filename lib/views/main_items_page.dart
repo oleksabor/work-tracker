@@ -211,14 +211,14 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
                         );
                 },
               )),
-          Row(children: [
-            TextButton(
-              child: const Text("communicator test"),
-              onPressed: () {
-                Communicator.send("test from UI");
-              },
-            )
-          ]),
+          // Row(children: [
+          //   TextButton(
+          //     child: const Text("communicator test"),
+          //     onPressed: () {
+          //       Communicator.send("test from UI");
+          //     },
+          //   )
+          // ]),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [getVersionText(), const SizedBox(width: 10)],
