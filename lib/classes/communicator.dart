@@ -1,6 +1,8 @@
 import 'dart:isolate';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
+
 class Communicator {
   /// The name associated with the UI isolate's [SendPort].
   static const String isolateName = 'isolate';
@@ -24,6 +26,9 @@ class Communicator {
   static void send(String data) {
     uiSendPort ??= IsolateNameServer.lookupPortByName(isolateName);
     uiSendPort?.send(data);
+    if (uiSendPort == null && kDebugMode) {
+      print("Communicator no uiSendPort instance");
+    }
   }
 
   void close() {
