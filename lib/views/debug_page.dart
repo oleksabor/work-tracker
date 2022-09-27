@@ -74,21 +74,37 @@ class DebugPageState extends State<DebugPage> {
   late DebugModel model;
   int? dbItemsUpgraded;
 
-  List<Widget> createSwipes(BuildContext context) {
-    var workModel = WorkViewModel();
-    var t = AppLocalizations.of(context);
-    // three columns for three tabs (swipes)
+  Future exportTo() async {
+    if (await Permission.storage.request().isGranted) {
+      var downloads = await DirData.getDownloads();
+      if (downloads == null) return;
+      await showBusy(context, () async {
+        var fn = DateFormat("yyyyMMdd-kkmm").format(DateTime.now());
+        var src = await model.groupByKinds();
+        var fileName = "$downloads/streetWorkouts$fn.json";
+        await model.exportJson(fileName, src);
+        await model.share(fileName);
+      }, title: "export data");
+    }
+  }
+
+  Future importFrom() async {
+    if (await Permission.storage.request().isGranted) {
+      var downloads = await FilePicker.platform
+          .pickFiles(initialDirectory: await DirData.getDownloads());
+      // var downloads = await DirData.getDownloads();
+      if (downloads == null) return;
+      // downloads = "$downloads/streetWorkoutsExport.json";
+      await showBusy(context, () async {
+        //var fn = DateFormat("yyyyMMdd-kkmm").format(DateTime.now());
+        var res = await model.importJson(downloads!.files.single.path!);
+        await model.import2db(res);
+      }, title: "importing");
+    }
+  }
+
+  List<Widget> createTabKinds(BuildContext context, WorkViewModel workModel) {
     return <Widget>[
-      // directories
-      Column(children: [
-        Expanded(
-            child: FutureBuilder<DirData>(
-          future: DirData.loadDirectories(),
-          builder: (c, s) => s.hasData
-              ? createColumnDir(s.data!)
-              : const CircularProgressIndicator(),
-        ))
-      ]),
       // kinds
       Column(children: [
         Flexible(
@@ -99,6 +115,20 @@ class DebugPageState extends State<DebugPage> {
                   ? createKindList(s.data!)
                   : const CircularProgressIndicator(),
             )),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+          TextButton(
+            onPressed: () async {
+              await exportTo();
+            },
+            child: Text("export to ..."),
+          ),
+          TextButton(
+            onPressed: () async {
+              await importFrom();
+            },
+            child: Text("import from ..."),
+          ),
+        ]),
         Flexible(
             flex: 1,
             child: FutureBuilder<List<WorkItem>>(
@@ -114,6 +144,27 @@ class DebugPageState extends State<DebugPage> {
                   : const CircularProgressIndicator(),
             )),
       ]),
+    ];
+  }
+
+  List<Widget> createTabDirs() {
+    return <Widget>[
+      // directories
+      Column(children: [
+        Expanded(
+            child: FutureBuilder<DirData>(
+          future: DirData.loadDirectories(),
+          builder: (c, s) => s.hasData
+              ? createColumnDir(s.data!)
+              : const CircularProgressIndicator(),
+        ))
+      ]),
+    ];
+  }
+
+  List<Widget> createTabFormats(WorkViewModel workModel) {
+    var t = AppLocalizations.of(context);
+    return <Widget>[
       //formats
       Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
         Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
@@ -126,39 +177,6 @@ class DebugPageState extends State<DebugPage> {
           const SizedBox(width: 50),
           Text(DateTime.now().asStringTime())
         ]),
-        TextButton(
-          onPressed: () async {
-            if (await Permission.storage.request().isGranted) {
-              var downloads = await DirData.getDownloads();
-              if (downloads == null) return;
-              await showBusy(context, () async {
-                //var fn = DateFormat("yyyyMMdd-kkmm").format(DateTime.now());
-                var src = await model.groupByKinds();
-                var fileName = "$downloads/streetWorkoutsExport.json";
-                await model.exportJson(fileName, src);
-                await model.share(fileName);
-              }, title: "export data");
-            }
-          },
-          child: Text("export to ..."),
-        ),
-        TextButton(
-          onPressed: () async {
-            if (await Permission.storage.request().isGranted) {
-              var downloads = await FilePicker.platform
-                  .pickFiles(initialDirectory: await DirData.getDownloads());
-              // var downloads = await DirData.getDownloads();
-              if (downloads == null) return;
-              // downloads = "$downloads/streetWorkoutsExport.json";
-              await showBusy(context, () async {
-                //var fn = DateFormat("yyyyMMdd-kkmm").format(DateTime.now());
-                var res = await model.importJson(downloads!.files.single.path!);
-                await model.import2db(res);
-              }, title: "importing");
-            }
-          },
-          child: Text("import from ..."),
-        ),
         // TextButton(
         //   onPressed: () async {
         //     if (await Permission.storage.request().isGranted) {
@@ -238,7 +256,7 @@ class DebugPageState extends State<DebugPage> {
       n,
       n.add(Duration(days: -4)),
       n.add(Duration(days: -8)),
-      n.add(Duration(days: 14))
+      n.add(Duration(days: -14))
     ];
 
     var repeat = 3;
@@ -259,24 +277,35 @@ class DebugPageState extends State<DebugPage> {
     }
   }
 
+  late Map<String, List<Widget>> tabs;
+
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
+    var workModel = WorkViewModel();
+    tabs = {
+      "Data": createTabKinds(context, workModel),
+      "Dirs": createTabDirs()
+    };
+    if (kDebugMode) {
+      tabs["Formats"] = createTabFormats(workModel);
+    }
 
+    var tabTitles = tabs.keys.map((c) => Text(c)).cast<Widget>().toList();
+    var tabPages = <Widget>[];
+    for (var p in tabs.values) {
+      tabPages.addAll(p);
+    }
     return DefaultTabController(
-        length: 3,
+        length: tabs.length,
         child: Scaffold(
           appBar: AppBar(
             title: Text(t!.titleWinDebug),
-            bottom: const TabBar(
-              tabs: [
-                Tab(text: "Dirs"),
-                Tab(text: "Items"),
-                Tab(text: "Formats"),
-              ],
+            bottom: TabBar(
+              tabs: tabTitles,
             ),
           ),
-          body: TabBarView(children: createSwipes(context)),
+          body: TabBarView(children: tabPages),
         ));
   }
 }
