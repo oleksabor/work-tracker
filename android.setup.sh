@@ -35,3 +35,5 @@ sudo apt-get install openjdk-11-jdk
 #reset network if fails
 sudo nmcli networking on
 
+git branch -D $(git branch | grep 3.2*)
+
