@@ -91,3 +91,9 @@ flutter gen-l10n --template-arb-file=app_en.arb
 
 where `app_en.arb` is the resource file name.
 
+### Troubleshooting
+
+Android alarm manager notifications 
+[are not fired](https://github.com/fluttercommunity/plus_plugins/issues/1077) 
+with Flutter 3.3.2 and android_alarm_manager_plus 2.0.7 plugin
+
