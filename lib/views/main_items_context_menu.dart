@@ -88,6 +88,7 @@ extension WorkItemsContext on _MainItemsPageState {
           context,
           MaterialPageRoute(builder: (ctx) => DebugPage.m(model: _model)),
         );
+        setState(() => loadWork());
         break;
       case _MainItemsPageState.tagChart:
         await Navigator.push(
