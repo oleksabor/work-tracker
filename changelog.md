@@ -1,3 +1,7 @@
+### 1.4.10
+- import|export buttons adjusted
+- data are refreshed after debug page closes
+
 ### 1.4.9
 - export import data as json
 - editing numbers from keyboard
