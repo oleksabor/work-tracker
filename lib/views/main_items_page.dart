@@ -139,9 +139,13 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     setCurrentLocale();
     timer = Timer.periodic(
         const Duration(seconds: 30), (Timer t) => setState(() {}));
-    todayWork = loadWorkFor(DateTime.now());
+    loadWork();
     com.init(comNotification);
     super.initState();
+  }
+
+  void loadWork() {
+    todayWork = loadWorkFor(DateTime.now());
   }
 
   @override
@@ -302,7 +306,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
   @override
   void onResumed() {
     setState(() {
-      todayWork = loadWorkFor(DateTime.now());
+      loadWork();
     });
   }
 }
