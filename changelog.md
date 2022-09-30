@@ -1,3 +1,7 @@
+### 1.4.12
+- debug page is refreshed when data are imported
+- storage access permissions are checked twice 
+
 ### 1.4.10
 - import|export buttons adjusted
 - data are refreshed after debug page closes
