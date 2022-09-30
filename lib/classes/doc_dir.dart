@@ -31,7 +31,7 @@ class DirData extends Iterable<DirEntry> {
     }
   }
 
-  static Future<String?> getDownloads() async {
+  static Future<String?> getAppDocumentsPath() async {
     var result = await getApplicationDocumentsDirectory();
 
     return result.path;

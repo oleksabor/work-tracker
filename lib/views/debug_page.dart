@@ -60,6 +60,7 @@ class DebugPageState extends State<DebugPage> {
 
   Widget createKindList(List<WorkKindToday> items) {
     return ListView.builder(
+      scrollDirection: Axis.vertical,
       padding: const EdgeInsets.all(10.0),
       itemCount: items.length,
       itemBuilder: (ctx, i) {
@@ -75,32 +76,44 @@ class DebugPageState extends State<DebugPage> {
   int? dbItemsUpgraded;
 
   Future exportTo() async {
-    if (await Permission.storage.request().isGranted) {
-      var downloads = await DirData.getDownloads();
-      if (downloads == null) return;
-      await showBusy(context, () async {
-        var fn = DateFormat("yyyyMMdd-kkmm").format(DateTime.now());
-        var src = await model.groupByKinds();
-        var fileName = "$downloads/streetWorkouts$fn.json";
-        await model.exportJson(fileName, src);
-        await model.share(fileName);
-      }, title: "export data");
+    if (!await requestStoragePermission()) return;
+    var downloads = await DirData.getAppDocumentsPath();
+    if (downloads == null) return;
+    await showBusy(context, () async {
+      var fn = DateFormat("yyyyMMdd-kkmm").format(DateTime.now());
+      var src = await model.groupByKinds();
+      var fileName = "$downloads/streetWorkouts$fn.json";
+      await model.exportJson(fileName, src);
+      await model.share(fileName);
+    }, title: "export data");
+  }
+
+  Future<bool> requestStoragePermission() async {
+    var permission = Permission.storage;
+    var status = await permission.status;
+    debugPrint("storage permission: $status");
+    if (status != PermissionStatus.granted) {
+      await permission.request();
+      if (!await permission.status.isGranted) {
+        debugPrint("no permission has been granted");
+        return false;
+      }
     }
+    return true;
   }
 
   Future importFrom() async {
-    if (await Permission.storage.request().isGranted) {
-      var downloads = await FilePicker.platform
-          .pickFiles(initialDirectory: await DirData.getDownloads());
-      // var downloads = await DirData.getDownloads();
-      if (downloads == null) return;
-      // downloads = "$downloads/streetWorkoutsExport.json";
-      await showBusy(context, () async {
-        //var fn = DateFormat("yyyyMMdd-kkmm").format(DateTime.now());
-        var res = await model.importJson(downloads!.files.single.path!);
-        await model.import2db(res);
-      }, title: "importing");
-    }
+    if (!await requestStoragePermission()) return;
+    var downloads = await FilePicker.platform
+        .pickFiles(initialDirectory: await DirData.getAppDocumentsPath());
+    // var downloads = await DirData.getDownloads();
+    if (downloads == null || !await requestStoragePermission()) return;
+    // downloads = "$downloads/streetWorkoutsExport.json";
+    await showBusy(context, () async {
+      //var fn = DateFormat("yyyyMMdd-kkmm").format(DateTime.now());
+      var res = await model.importJson(downloads!.files.single.path!);
+      await model.import2db(res);
+    }, title: "importing");
   }
 
   List<Widget> createTabKinds(BuildContext context, WorkViewModel workModel) {
@@ -125,6 +138,7 @@ class DebugPageState extends State<DebugPage> {
           TextButton(
             onPressed: () async {
               await importFrom();
+              setState(() {}); // should re-read items has been exported
             },
             child: Text("import from ..."),
           ),
@@ -216,7 +230,7 @@ class DebugPageState extends State<DebugPage> {
             showDialogIndicator(context);
             await seedDummyData(workModel);
             if (kDebugMode) {
-              await Future.delayed(const Duration(seconds: 3));
+              await Future.delayed(const Duration(seconds: 1));
             }
             Navigator.pop(context);
           },
