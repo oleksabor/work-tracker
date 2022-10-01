@@ -35,5 +35,10 @@ sudo apt-get install openjdk-11-jdk
 #reset network if fails
 sudo nmcli networking on
 
+# delete git branch by mask
 git branch -D $(git branch | grep 3.2*)
+
+# downgrade flutter version
+cd ~/snap/flutter/common/flutter
+git checkout 3.0.5
 
