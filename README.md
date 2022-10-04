@@ -9,6 +9,11 @@ My pet project to track street workouts results.
 * additional weight can be used as quantity multiplication coeficient according to the body weight value.
 * excercise type can be added, renamed or removed.
   Excercise type name is in English by default and is not localizable (however it may be adjusted manually)
+* has `export` and `import` feature 
+  (despite the fact that Pixel 4a copied data from an old phone).
+  
+  `Export to` can share exercises results using the `share` standard Android dialog.
+  I export data to `Google Disk` storage using this feature.  
 
 Android 6 (API level 23) has 
 [Doze](https://developer.android.com/training/monitoring-device-state/doze-standby)
