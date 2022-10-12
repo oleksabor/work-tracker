@@ -24,8 +24,15 @@ class NumericEdit extends StatefulWidget {
 class _NumericEditState extends State<NumericEdit> {
   @override
   void dispose() {
-    // textController.dispose();
+    textController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    textController = TextEditingController(
+        text: widget.value.toStringAsFixed(widget.fraction));
+    super.initState();
   }
 
   String? validateText(String? v) {
@@ -41,10 +48,10 @@ class _NumericEditState extends State<NumericEdit> {
     return null;
   }
 
+  late TextEditingController textController;
+
   @override
   Widget build(BuildContext context) {
-    TextEditingController textController = TextEditingController(
-        text: widget.value.toStringAsFixed(widget.fraction));
     var children = <Widget>[
       SizedBox(
           width: 50,

@@ -1,3 +1,6 @@
+- text editing controller is created once
+  [#123](https://github.com/oleksabor/work-tracker/issues/123) 
+
 ### 1.4.12
 - debug page is refreshed when data are imported
 - storage access permissions are checked twice 
