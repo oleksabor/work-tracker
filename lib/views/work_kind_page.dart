@@ -26,11 +26,24 @@ class WorkKindViewState extends State<WorkKindView> {
     return false;
   }
 
+  late TextEditingController kindController;
+
+  @override
+  void initState() {
+    kindController = TextEditingController(text: widget.kind.title);
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    kindController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context)!;
-
-    var kindController = TextEditingController(text: widget.kind.title);
 
     return Form(
         key: _formKey,
