@@ -1,3 +1,4 @@
+### 1.4.13
 - text editing controller is created once
   [#123](https://github.com/oleksabor/work-tracker/issues/123) 
 
