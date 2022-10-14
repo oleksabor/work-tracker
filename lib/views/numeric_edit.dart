@@ -28,10 +28,12 @@ class _NumericEditState extends State<NumericEdit> {
     super.dispose();
   }
 
+  String get widgetValueAsString =>
+      widget.value.toStringAsFixed(widget.fraction);
+
   @override
   void initState() {
-    textController = TextEditingController(
-        text: widget.value.toStringAsFixed(widget.fraction));
+    textController = TextEditingController(text: widgetValueAsString);
     super.initState();
   }
 
@@ -89,6 +91,7 @@ class _NumericEditState extends State<NumericEdit> {
     if (widget.title != null) {
       children.insert(0, Text(widget.title!));
     }
+    textController.text = widgetValueAsString;
     return Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround, children: children);
   }
