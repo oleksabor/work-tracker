@@ -91,7 +91,8 @@ class _NumericEditState extends State<NumericEdit> {
     if (widget.title != null) {
       children.insert(0, Text(widget.title!));
     }
-    textController.text = widgetValueAsString;
+    textController.value =
+        textController.value.copyWith(text: widgetValueAsString);
     return Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround, children: children);
   }
