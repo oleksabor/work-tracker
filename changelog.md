@@ -1,3 +1,6 @@
+### 1.5.0
+- flutter 3.3.0 and AndroidAlarmManager plus 2.0.7
+
 ### 1.4.14
 - text value is adjusted using + - icons
   [#125](https://github.com/oleksabor/work-tracker/issues/125) 
