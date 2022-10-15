@@ -99,6 +99,7 @@ class NotifyModel {
 
   /// alarm manager handler to start sound playing
   /// is executed as isolate by AlarmManager
+  @pragma('vm:entry-point')
   static void playAlarm() async {
     if (kDebugMode) {
       print("reading config");
