@@ -3,10 +3,10 @@ import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 
-WorkItem addWI(WorkKind kind, DateTime created) {
+WorkItem addWI(WorkKind kind, DateTime created, {int? qty}) {
   var res = WorkItem();
   res.created = created;
-  res.qty = ++id;
+  res.qty = qty ?? ++id;
   res.kind = kind.title;
   if (kind.kindId >= 0) {
     // res.kindId is -1 by default so it is not getting value from kind.kindId
