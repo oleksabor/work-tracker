@@ -185,16 +185,18 @@ class WorkItemsViewState extends State<WorkItemsView> {
   }
 
   void editItem(BuildContext context, WorkItem item) async {
-    var res = await Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (ctx) => WorkItemPage(item: WorkItem.from(item))),
-    );
-    if (res != null) {
-      item.qty = res.qty;
-      item.weight = res.weight;
-      model.updateItem(item);
-      setState(() {});
-    }
+    WorkItemPage.route(kind, item);
+
+    // var res = await Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //       builder: (ctx) => WorkItemPage(item: )),
+    // );
+    // if (res != null) {
+    //   item.qty = res.qty;
+    //   item.weight = res.weight;
+    //   model.updateItem(item);
+    //   setState(() {});
+    // }
   }
 }

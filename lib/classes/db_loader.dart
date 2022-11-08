@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:async/async.dart';
-import 'package:injectable/injectable.dart';
 import 'package:work_tracker/classes/config.dart';
 import 'package:work_tracker/classes/config_graph.dart';
 import 'package:work_tracker/classes/config_log.dart';
@@ -12,7 +11,6 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as Path;
 
-@singleton
 class DbLoader {
   static bool initialized = false;
 

@@ -1,10 +1,10 @@
 import 'package:charts_flutter/flutter.dart' as flcharts;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:work_tracker/classes/chart_data.dart';
 import 'package:work_tracker/classes/chart_view_model.dart';
 import 'package:work_tracker/classes/config_graph.dart';
 import 'package:work_tracker/classes/config_model.dart';
-import 'package:work_tracker/classes/init_get.dart';
 import 'package:work_tracker/classes/iterable_extension.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
@@ -33,7 +33,7 @@ class ChartItemsViewState extends State<ChartItemsView> {
   @override
   void initState() {
     super.initState();
-    configModel = getIt<ConfigModel>();
+    configModel = RepositoryProvider.of<ConfigModel>(context);
   }
 
   /// screen size to calculate legend columns

@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:work_tracker/classes/communicator.dart';
 import 'package:work_tracker/classes/config_model.dart';
-import 'package:work_tracker/classes/init_get.dart';
 import 'package:work_tracker/classes/notify_model.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
@@ -49,35 +49,40 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
       wi.qty = todayWork.last.qty;
       wi.weight = todayWork.last.weight;
     }
-    var res = await Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (ctx) => WorkItemPage(item: wi, title: kToday.kind.title)),
-    );
-    if (res != null) {
-      var item = await _model.store(res);
-      kToday.todayWork ??= [];
-      setState(() {
-        kToday.todayWork?.add(item);
-      });
-      await notify();
-    }
+    var vm = RepositoryProvider.of<WorkViewModel>(context);
+    await Navigator.of(context).push(WorkItemPage.route(kToday.kind, wi));
+    //TODO restore notification
+
+    // var res = await Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //       builder: (ctx) => WorkItemPage(item: wi, title: kToday.kind.title)),
+    // );
+    // if (res != null) {
+    //   var item = await _model.store(res);
+    //   kToday.todayWork ??= [];
+    //   setState(() {
+    //     kToday.todayWork?.add(item);
+    //   });
+    //   await notify();
+    // }
   }
 
-  Future notify() async {
-    var configModel = getIt<ConfigModel>();
-    var config = await configModel.load();
-    if (config.notify.playAfterNewResult) {
-      var scheduled = await NotifyModel.playSchedule(config.notify);
-      var min = config.notify.delay / 60;
-      var sec = config.notify.delay % 60;
+// TODO get config model from context
+  // Future notify() async {
+  //   var configModel = getIt<ConfigModel>();
+  //   var config = await configModel.load();
+  //   if (config.notify.playAfterNewResult) {
+  //     var scheduled = await NotifyModel.playSchedule(config.notify);
+  //     var min = config.notify.delay / 60;
+  //     var sec = config.notify.delay % 60;
 
-      var message = scheduled
-          ? t.notificationScheduled(min.toInt(), twoDig.format(sec))
-          : t.scheduleFailed;
-      showNotification(scheduled, message);
-    }
-  }
+  //     var message = scheduled
+  //         ? t.notificationScheduled(min.toInt(), twoDig.format(sec))
+  //         : t.scheduleFailed;
+  //     showNotification(scheduled, message);
+  //   }
+  // }
 
   void showNotification(bool success, String message) {
     var colorTheme = themeData?.primaryTextTheme.titleMedium;
@@ -137,6 +142,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
   @override
   void initState() {
     setCurrentLocale();
+    var vm = RepositoryProvider.of<WorkViewModel>(context);
     timer = Timer.periodic(
         const Duration(seconds: 30), (Timer t) => setState(() {}));
     loadWork();

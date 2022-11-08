@@ -1,10 +1,10 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:work_tracker/classes/debug_model.dart';
 import 'package:work_tracker/classes/doc_dir.dart';
-import 'package:work_tracker/classes/init_get.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -26,7 +26,7 @@ class DebugPageState extends State<DebugPage> {
   @override
   void initState() {
     super.initState();
-    model = getIt<DebugModel>();
+    model = RepositoryProvider.of<DebugModel>(context);
   }
 
   Widget createColumnDir(DirData data) {
