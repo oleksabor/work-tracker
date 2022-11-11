@@ -16,10 +16,10 @@ class Bootstrapper {
   // gh.factoryAsync<_i8.SimpleLogger>(
   //     () => logWrapper.getLog(get<_i6.ConfigModel>()));
 
-  static List<RepositoryProvider> providers() {
-    final workModel = WorkViewModel();
+  static dynamic getProviders() {
     final notify = NotifyModel();
     final dbLoader = DbLoader();
+    final workModel = WorkViewModel(dbLoader);
     return [
       RepositoryProvider(create: (_) => dbLoader),
       RepositoryProvider(create: (_) => workModel),

@@ -1,51 +1,39 @@
 part of 'main_items_page.dart';
 
 extension WorkItemsContext on _MainItemsPageState {
-  Future<void> addKind(WorkKindToday item, BuildContext context) async {
-    var res = await _doRoute(item, context);
-    if (res != null) {
-      _model.updateKind(item.kind);
-      onResumed();
-    }
-  }
+  static Future<void> _doRoute(WorkKindToday item, BuildContext context) async {
+    await Navigator.of(context).push(WorkKindView.route(item.kind));
 
-  Future<dynamic> _doRoute(WorkKindToday item, BuildContext context) async {
-    var res = await Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (ctx) => WorkKindView(WorkKind().assignFrom(item.kind))),
-    );
-    if (res != null) {
-      item.kind.assignFrom(res);
-    }
-    return res;
+    // var res = await Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //       builder: (ctx) => WorkKindView(WorkKind().assignFrom(item.kind))),
+    // );
+    // if (res != null) {
+    //   item.kind.assignFrom(res);
+    // }
+    // return res;
   }
 
   Future<void> editKind(BuildContext context, WorkKindToday item) async {
     var res = await _doRoute(item, context);
-    if (res != null) {
-      await _model.updateKind(item.kind);
-      onResumed();
-    }
+    // if (res != null) {
+    //   await _model.updateKind(item.kind);
+    //   onResumed();
+    // }
   }
 
-  void deleteKind(BuildContext context, WorkKindToday item) async {
-    var res = true;
-    if (item.todayWork != null && item.todayWork!.isNotEmpty) {
-      var t = AppLocalizations.of(context)!;
-      res = await showConfirmationDialog(
-              res, t.confirmRemoval, t.itemsExist(item.todayWork!.length)) ??
-          false;
-    }
-    if (res) {
-      await _model.removeKind(item.kind, item.todayWork);
-      onResumed();
-    }
+  Future<void> addKind(BuildContext context) async {
+    var res = await _doRoute(WorkKindToday(WorkKind()), context);
+    // if (res != null) {
+    //   await _model.updateKind(item.kind);
+    //   onResumed();
+    // }
   }
 
   // https://api.flutter.dev/flutter/material/AlertDialog-class.html
-  Future<T?> showConfirmationDialog<T>(
-      T okValue, String title, String description) async {
+  static Future<T?> showConfirmationDialog<T>(
+      T okValue, String title, String description, BuildContext context) async {
     var t = AppLocalizations.of(context)!;
     return await showDialog<T>(
         context: context,
@@ -65,9 +53,11 @@ extension WorkItemsContext on _MainItemsPageState {
             ));
   }
 
-  PopupMenuButton<String> getMainContext(Map<String, String> menu) {
+  PopupMenuButton<String> getMainContext(
+      Map<String, String> menu, BuildContext context) {
+    var bloc = context.read<ListBloc>();
     return PopupMenuButton<String>(
-        onSelected: handleClick,
+        onSelected: (t) => handleClick(t, context),
         itemBuilder: (BuildContext context) {
           return menu.entries.map((e) {
             return PopupMenuItem<String>(
@@ -78,22 +68,24 @@ extension WorkItemsContext on _MainItemsPageState {
         });
   }
 
-  void handleClick(String tag) async {
+  void handleClick(String tag, BuildContext ctx) async {
     if (kDebugMode) {
       logger.fine('menu $tag');
     }
     switch (tag) {
       case _MainItemsPageState.tagDebug:
+        var bloc = ctx.read<ListBloc>();
         await Navigator.push(
           context,
-          MaterialPageRoute(builder: (ctx) => DebugPage.m(model: _model)),
+          MaterialPageRoute(builder: (ctx) => DebugPage()),
         );
-        setState(() => loadWork());
+        bloc.add(LoadListEvent());
+        // setState(() => loadWork());
         break;
       case _MainItemsPageState.tagChart:
         await Navigator.push(
           context,
-          MaterialPageRoute(builder: (ctx) => ChartItemsView(_model)),
+          MaterialPageRoute(builder: (ctx) => ChartItemsView()),
         );
         break;
       case _MainItemsPageState.tagSettings:
@@ -103,7 +95,7 @@ extension WorkItemsContext on _MainItemsPageState {
         );
         break;
       case _MainItemsPageState.tagAddKind:
-        await addKind(WorkKindToday(WorkKind()), context);
+        await addKind(context);
         break;
     }
   }

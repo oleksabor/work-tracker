@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:work_tracker/classes/db_loader.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
@@ -25,7 +26,7 @@ int id = 0;
 
 void main() async {
   test('items should be filtered', () async {
-    var sut = WorkViewModel();
+    var sut = WorkViewModel(DbLoader());
     var dt1 = DateTime(2021, 11, 20, 18, 08);
     var dt2 = DateTime(2021, 11, 15, 18, 08);
     var dt3 = DateTime(2021, 11, 5, 18, 08);
@@ -53,7 +54,7 @@ void main() async {
     expect(items.length, 1);
   });
   test('items without kindId value', () async {
-    var sut = WorkViewModel();
+    var sut = WorkViewModel(DbLoader());
     var dt1 = DateTime(2021, 11, 20, 18, 08);
     var dt2 = DateTime(2021, 11, 15, 18, 08);
     var dt3 = DateTime(2021, 11, 5, 18, 08);

@@ -1,16 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:work_tracker/classes/edit_item_status.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
-
-enum EditItemStatus { initial, loading, saving, success, failure }
-
-extension EditItemStatusX on EditItemStatus {
-  bool get isLoadingOrSuccess => [
-        EditItemStatus.loading,
-        EditItemStatus.saving,
-        EditItemStatus.success,
-      ].contains(this);
-}
 
 class EditItemState extends Equatable {
   const EditItemState({

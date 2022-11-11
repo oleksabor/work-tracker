@@ -7,14 +7,14 @@ import 'package:work_tracker/classes/debug_model.dart';
 import 'package:work_tracker/classes/doc_dir.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
+import 'package:work_tracker/classes/work_kind_today.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:math';
 import 'package:intl/intl.dart';
 
 class DebugPage extends StatefulWidget {
-  final WorkViewModel model;
-  const DebugPage.m({Key? key, required this.model}) : super(key: key);
+  const DebugPage({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -296,7 +296,7 @@ class DebugPageState extends State<DebugPage> {
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
-    var workModel = WorkViewModel();
+    var workModel = RepositoryProvider.of<WorkViewModel>(context);
     tabs = {
       "Data": createTabKinds(context, workModel),
       "Dirs": createTabDirs()

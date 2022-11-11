@@ -4,15 +4,16 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:work_tracker/classes/communicator.dart';
-import 'package:work_tracker/classes/config_model.dart';
+import 'package:work_tracker/classes/items_list/list_bloc.dart';
 import 'package:work_tracker/classes/notify_model.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
+import 'package:work_tracker/classes/work_kind_today.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:work_tracker/views/charts_page.dart';
 import 'package:work_tracker/views/config_page.dart';
-import 'package:work_tracker/views/pop_menu_data.dart';
+import 'package:work_tracker/views/items_list_view.dart';
 import 'package:work_tracker/views/work_item_page.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -37,52 +38,10 @@ class MainItemsPage extends StatefulWidget {
 
 /// main app page state
 class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
-  final WorkViewModel _model = WorkViewModel();
+  // final WorkViewModel _model = WorkViewModel();
   Timer? timer;
 
   late ThemeData? themeData;
-
-  void workItemAdd(BuildContext context, WorkKindToday kToday) async {
-    var wi = WorkItem.i(kToday.kind.key);
-    var todayWork = kToday.todayWork;
-    if (todayWork != null && todayWork.isNotEmpty) {
-      wi.qty = todayWork.last.qty;
-      wi.weight = todayWork.last.weight;
-    }
-    var vm = RepositoryProvider.of<WorkViewModel>(context);
-    await Navigator.of(context).push(WorkItemPage.route(kToday.kind, wi));
-    //TODO restore notification
-
-    // var res = await Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //       builder: (ctx) => WorkItemPage(item: wi, title: kToday.kind.title)),
-    // );
-    // if (res != null) {
-    //   var item = await _model.store(res);
-    //   kToday.todayWork ??= [];
-    //   setState(() {
-    //     kToday.todayWork?.add(item);
-    //   });
-    //   await notify();
-    // }
-  }
-
-// TODO get config model from context
-  // Future notify() async {
-  //   var configModel = getIt<ConfigModel>();
-  //   var config = await configModel.load();
-  //   if (config.notify.playAfterNewResult) {
-  //     var scheduled = await NotifyModel.playSchedule(config.notify);
-  //     var min = config.notify.delay / 60;
-  //     var sec = config.notify.delay % 60;
-
-  //     var message = scheduled
-  //         ? t.notificationScheduled(min.toInt(), twoDig.format(sec))
-  //         : t.scheduleFailed;
-  //     showNotification(scheduled, message);
-  //   }
-  // }
 
   void showNotification(bool success, String message) {
     var colorTheme = themeData?.primaryTextTheme.titleMedium;
@@ -100,24 +59,10 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
 
   var twoDig = NumberFormat("00");
 
-  void workItemsView(BuildContext context, WorkKindToday kind) async {
-    var d = DateTime.now();
-    if (kind.todayWork != null && kind.todayWork!.isNotEmpty) {
-      d = kind.todayWork!.last.created;
-    }
-
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (ctx) =>
-              WorkItemsView(date: d, kind: kind.kind, model: _model)),
-    );
-  }
-
   late String systemLocale;
   late List<Locale> currentSystemLocales;
 
-  late Future<List<WorkKindToday>> todayWork;
+  //late Future<List<WorkKindToday>> todayWork;
 
   // Here we read the current locale values
   void setCurrentLocale() {
@@ -145,26 +90,26 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     var vm = RepositoryProvider.of<WorkViewModel>(context);
     timer = Timer.periodic(
         const Duration(seconds: 30), (Timer t) => setState(() {}));
-    loadWork();
+    // loadWork();
     com.init(comNotification);
     super.initState();
   }
 
-  void loadWork() {
-    todayWork = loadWorkFor(DateTime.now());
-  }
+  // void loadWork() {
+  //   todayWork = loadWorkFor(DateTime.now());
+  // }
 
   @override
   void dispose() {
-    _model.dispose();
+    // _model.dispose();
     com.close();
     if (timer != null) timer!.cancel();
     super.dispose();
   }
 
-  Future<List<WorkKindToday>> loadWorkFor(DateTime when) async {
-    return _model.loadWork(when);
-  }
+  // Future<List<WorkKindToday>> loadWorkFor(DateTime when) async {
+  //   return _model.loadWork(when);
+  // }
 
   Future<String> getAppVersion() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -176,8 +121,6 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
   static const tagDebug = "Debug";
   static const tagChart = "Charts";
   static const tagSettings = "Settings";
-  static const tagEdit = "edit";
-  static const tagDelete = "delete";
   static const tagAddKind = "addKind";
   final logger = SimpleLogger();
   late AppLocalizations t;
@@ -196,31 +139,13 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
       tagSettings: t.menuSettings
     };
 
-    kindPopup = MenuContext<String, WorkKindToday>([
-      PopupMenuData(tagEdit, t.menuEdit, icon: Icons.edit, onClick: editKind),
-      PopupMenuData(tagDelete, t.menuDelete,
-          icon: Icons.delete, onClick: deleteKind)
-    ]);
-
     return Scaffold(
         appBar: AppBar(
           title: Text(t.titleWin),
-          actions: <Widget>[getMainContext(menuTags)],
+          actions: <Widget>[getMainContext(menuTags, context)],
         ),
         body: Column(mainAxisSize: MainAxisSize.max, children: [
-          Flexible(
-              flex: 9,
-              child: FutureBuilder<List>(
-                future: todayWork,
-                initialData: [],
-                builder: (context, snapshot) {
-                  return snapshot.hasData
-                      ? getItemsListView(snapshot.data)
-                      : const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                },
-              )),
+          Flexible(flex: 9, child: ItemsListView()),
           // Row(children: [
           //   TextButton(
           //     child: const Text("communicator test"),
@@ -236,24 +161,6 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
         ]));
   }
 
-  ListView getItemsListView(List<dynamic>? items) {
-    return ListView.builder(
-      scrollDirection: Axis.vertical,
-      padding: const EdgeInsets.all(10.0),
-      itemCount: items!.length,
-      itemBuilder: (ctx, i) {
-        return GestureDetector(
-            onLongPress: () =>
-                kindPopup.show(ctx, items[i], kindPopup.tapPosition),
-            onTapDown: kindPopup.storePosition,
-            onTap: () => workItemsView(ctx, items[i]),
-            child: _buildRow(ctx, items[i]));
-      },
-    );
-  }
-
-  late MenuContext<String, WorkKindToday> kindPopup;
-
   FutureBuilder<String> getVersionText() {
     return FutureBuilder<String>(
         future: getAppVersion(),
@@ -265,33 +172,6 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
                       TextStyle(color: Theme.of(context).colorScheme.primary))
               : const Center(child: CircularProgressIndicator());
         });
-  }
-
-  String dateAsString(DateTime? value) {
-    if (value == null) {
-      return "-";
-    }
-    return value.smartString();
-  }
-
-  Widget _buildRow(BuildContext ctx, WorkKindToday i) {
-    var tw = i.todayWork;
-    var last = tw != null && tw.isNotEmpty ? tw.last : null;
-
-    var dateStr = dateAsString(last?.created);
-
-    var subtitle = last == null ? "-" : '$dateStr [${last.qty}]';
-
-    return ListTile(
-        title: Text(i.kind.title),
-        subtitle: Text(subtitle),
-        trailing: IconButton(
-          onPressed: () {
-            workItemAdd(ctx, i);
-          },
-          color: Theme.of(context).iconTheme.color,
-          icon: const Icon(Icons.add),
-        ));
   }
 
   @override
@@ -312,7 +192,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
   @override
   void onResumed() {
     setState(() {
-      loadWork();
+      //loadWork();
     });
   }
 }

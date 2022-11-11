@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
+import 'package:work_tracker/classes/edit_item_status.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_item/item_event.dart';
 import 'package:work_tracker/classes/work_item/item_state.dart';

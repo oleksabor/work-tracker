@@ -3,6 +3,7 @@ import 'package:work_tracker/bootstrapper.dart';
 import 'package:work_tracker/classes/config_model.dart';
 import 'package:work_tracker/classes/db_loader.dart';
 import 'package:work_tracker/classes/debug_model.dart';
+import 'package:work_tracker/classes/items_list/list_bloc.dart';
 import 'package:work_tracker/classes/log_wrapper.dart';
 import 'package:work_tracker/classes/notify_model.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
-        providers: getProviders(),
+        providers: Bootstrapper.getProviders(),
         child: OverlaySupport.global(
             child: MaterialApp(
           //  theme: ThemeData(),
@@ -41,22 +42,10 @@ class MyApp extends StatelessWidget {
           onGenerateTitle: (ctgt) {
             return AppLocalizations.of(ctgt)?.titleApp ?? "failed to localize";
           },
-          home: const MainItemsPage(),
+          home: BlocProvider(
+              create: (ctxt) =>
+                  ListBloc(ctxt.read<WorkViewModel>())..add(LoadListEvent()),
+              child: const MainItemsPage()),
         )));
-  }
-
-  static dynamic getProviders() {
-    final workModel = WorkViewModel();
-    final notify = NotifyModel();
-    final dbLoader = DbLoader();
-    return [
-      RepositoryProvider(create: (_) => dbLoader),
-      RepositoryProvider(create: (_) => workModel),
-      RepositoryProvider(create: (_) => notify),
-      RepositoryProvider(create: (_) => ConfigModel(dbLoader)),
-      RepositoryProvider(create: (_) => DebugModel(workModel, dbLoader)),
-      RepositoryProvider(
-          create: (_) => LogWrapper.getLog(ConfigModel(dbLoader))),
-    ];
   }
 }
