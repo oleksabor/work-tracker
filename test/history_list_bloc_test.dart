@@ -20,7 +20,7 @@ HistoryListBloc buildBloc() {
 }
 
 void main() {
-  test('history bloc items on date', () async {
+  group('HistoryLoadBloc', () {
     blocTest<HistoryListBloc, HistoryListState>("loading data on date",
         build: buildBloc,
         act: (bloc) =>
