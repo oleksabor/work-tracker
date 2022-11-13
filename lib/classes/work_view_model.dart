@@ -101,7 +101,11 @@ class WorkViewModel {
   ///appends [item] to the [openedBox]
   Future<WorkItem> store(WorkItem item) async {
     openedBox ??= await db.openBox<WorkItem>(itemsName);
-    await openedBox?.add(item);
+    if (item.isInBox) {
+      await item.save();
+    } else {
+      await openedBox?.add(item);
+    }
     return item;
   }
 

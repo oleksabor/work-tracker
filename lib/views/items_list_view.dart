@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:work_tracker/classes/communicator.dart';
 import 'package:work_tracker/classes/config_model.dart';
+import 'package:work_tracker/classes/history_list/history_list_bloc.dart';
+import 'package:work_tracker/classes/history_model.dart';
+import 'package:work_tracker/classes/item_list_status.dart';
 import 'package:work_tracker/classes/items_list/list_bloc.dart';
 import 'package:work_tracker/classes/notify_model.dart';
 import 'package:work_tracker/classes/work_item.dart';
@@ -18,7 +21,7 @@ import 'package:work_tracker/views/main_items_page.dart';
 import 'package:work_tracker/views/pop_menu_data.dart';
 import 'package:work_tracker/views/work_item_page.dart';
 import 'package:work_tracker/classes/date_extension.dart';
-import 'package:work_tracker/views/work_items_view.dart';
+import 'package:work_tracker/views/history_view.dart';
 import 'package:work_tracker/views/work_kind_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -167,12 +170,9 @@ class ItemsListView extends StatelessWidget {
     if (kind.todayWork != null && kind.todayWork!.isNotEmpty) {
       d = kind.todayWork!.last.created;
     }
-
-    // await Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //       builder: (ctx) =>
-    //           WorkItemsView(date: d, kind: kind.kind, model: _model)),
-    // );
+    await Navigator.push(
+      context,
+      HistoryView.route(d, kind, context),
+    );
   }
 }

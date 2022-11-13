@@ -13,7 +13,7 @@ class HistoryModel {
   HistoryModel(this.model, this.kind, this.date);
 
   /// date to get items on
-  DateTime date;
+  final DateTime date;
 
   String asDate(DateTime value, AppLocalizations? t) {
     var diff = value.difference(DateTime.now());
@@ -43,7 +43,7 @@ class HistoryModel {
     adate = DateTime(adate.year, adate.month, adate.day);
     var prevItems = await getItems((wi) => wi.created.isBefore(adate));
     if (prevItems.isNotEmpty) {
-      date = prevItems.last.created;
+      var date = prevItems.last.created;
       prevItems = prevItems.where((i) => i.created.isSameDay(date)).toList();
       return prevItems;
     }
@@ -55,27 +55,21 @@ class HistoryModel {
         .add(const Duration(days: 1));
     var prevItems = await getItems((wi) => wi.created.isAfter(adate));
     if (prevItems.isNotEmpty) {
-      date = prevItems.first.created;
+      var date = prevItems.first.created;
       prevItems = prevItems.where((i) => i.created.isSameDay(date)).toList();
       return prevItems;
     }
     return [];
   }
 
-  Future<List<WorkItem>> delete(
-      WorkItem i, Future<List<WorkItem>> items) async {
+  Future<List<WorkItem>> delete(WorkItem i, List<WorkItem> items) async {
     await i.delete();
-    _cache = null;
-    (await items).remove(i);
+    resetCache();
+    items.remove(i);
     return items;
   }
-}
 
-class HistoryResult {
-  List<WorkItem> items;
-  bool isAnyBefore;
-  bool isAnyAfter;
-  DateTime date;
-
-  HistoryResult(this.items, this.date, this.isAnyBefore, this.isAnyAfter);
+  void resetCache() {
+    _cache = null;
+  }
 }

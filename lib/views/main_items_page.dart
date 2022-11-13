@@ -17,7 +17,7 @@ import 'package:work_tracker/views/items_list_view.dart';
 import 'package:work_tracker/views/work_item_page.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:work_tracker/views/work_items_view.dart';
+import 'package:work_tracker/views/history_view.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:work_tracker/views/work_kind_page.dart';
 import 'debug_page.dart';

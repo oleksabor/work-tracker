@@ -1,22 +1,7 @@
 part of 'list_bloc.dart';
 
-enum ItemListStatus { initial, loading, success, failure }
-
-extension ItemListStatusX on ItemListStatus {
-  bool get isLoadingOrSuccess => [
-        ItemListStatus.loading,
-        ItemListStatus.success,
-      ].contains(this);
-}
-
-class ListState extends Equatable {
-  ListState(this.status, this.data);
-  ItemListStatus status;
-
-  @override
-  List<Object?> get props => [status];
-
-  List<WorkKindToday> data;
+class ListState extends ListStateBase<WorkKindToday> {
+  ListState(super.status, super.data);
 
   ListState copyWith(
       {ItemListStatus Function()? status,
