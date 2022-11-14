@@ -57,8 +57,6 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     );
   }
 
-  var twoDig = NumberFormat("00");
-
   late String systemLocale;
   late List<Locale> currentSystemLocales;
 
@@ -87,10 +85,8 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
   @override
   void initState() {
     setCurrentLocale();
-    var vm = RepositoryProvider.of<WorkViewModel>(context);
     timer = Timer.periodic(
         const Duration(seconds: 30), (Timer t) => setState(() {}));
-    // loadWork();
     com.init(comNotification);
     super.initState();
   }

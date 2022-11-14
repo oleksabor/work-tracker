@@ -124,7 +124,7 @@ class NotifyModel {
     if (kDebugMode) {
       print("playing ${config.kind}");
     }
-    Communicator.send("alarm [${NotificationKind.system}]");
+    Communicator.send("alarm [${config.kind}]");
     switch (config.kind) {
       case NotificationKind.inbuilt:
         await FlutterRingtonePlayer.play(

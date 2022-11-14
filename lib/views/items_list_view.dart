@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:work_tracker/classes/communicator.dart';
 import 'package:work_tracker/classes/config_model.dart';
 import 'package:work_tracker/classes/history_list/history_list_bloc.dart';
@@ -131,39 +132,29 @@ class ItemsListView extends StatelessWidget {
       wi.qty = todayWork.last.qty;
       wi.weight = todayWork.last.weight;
     }
-    await Navigator.of(context).push(WorkItemPage.route(kToday.kind, wi));
-    //TODO restore notification
-
-    // var res = await Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //       builder: (ctx) => WorkItemPage(item: wi, title: kToday.kind.title)),
-    // );
-    // if (res != null) {
-    //   var item = await _model.store(res);
-    //   kToday.todayWork ??= [];
-    //   setState(() {
-    //     kToday.todayWork?.add(item);
-    //   });
-    //   await notify();
-    // }
+    var res =
+        await Navigator.of(context).push(WorkItemPage.route(kToday.kind, wi));
+    if (res ?? false) {
+      context.read<ListBloc>().add(LoadListEvent());
+      await notifyUI(RepositoryProvider.of<ConfigModel>(context));
+    }
   }
 
-// TODO get config model from context
-  // Future notify() async {
-  //   var configModel = getIt<ConfigModel>();
-  //   var config = await configModel.load();
-  //   if (config.notify.playAfterNewResult) {
-  //     var scheduled = await NotifyModel.playSchedule(config.notify);
-  //     var min = config.notify.delay / 60;
-  //     var sec = config.notify.delay % 60;
+  Future notifyUI(ConfigModel configModel) async {
+    var config = await configModel.load();
+    if (config.notify.playAfterNewResult) {
+      var scheduled = await NotifyModel.playSchedule(config.notify);
+      var min = config.notify.delay / 60;
+      var sec = config.notify.delay % 60;
 
-  //     var message = scheduled
-  //         ? t.notificationScheduled(min.toInt(), twoDig.format(sec))
-  //         : t.scheduleFailed;
-  //     showNotification(scheduled, message);
-  //   }
-  // }
+      var message = scheduled
+          ? t.notificationScheduled(min.toInt(), twoDig.format(sec))
+          : t.scheduleFailed;
+      Communicator.send(message);
+    }
+  }
+
+  var twoDig = NumberFormat("00");
 
   void workItemsView(BuildContext context, WorkKindToday kind) async {
     var d = DateTime.now();

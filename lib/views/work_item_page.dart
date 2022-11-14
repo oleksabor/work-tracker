@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:work_tracker/classes/edit_item_status.dart';
+import 'package:work_tracker/classes/items_list/list_bloc.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:flutter/material.dart';
 import 'package:work_tracker/classes/work_item/item_bloc.dart';
@@ -16,7 +17,7 @@ class WorkItemPage extends StatelessWidget {
   /// [item] edit view
   const WorkItemPage({Key? key}) : super(key: key);
 
-  static Route<void> route(WorkKind kind, WorkItem? item) {
+  static Route<bool> route(WorkKind kind, WorkItem? item) {
     return MaterialPageRoute(
         fullscreenDialog: true,
         builder: (ctx) {
