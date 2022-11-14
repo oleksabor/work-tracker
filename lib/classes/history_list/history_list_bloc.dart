@@ -1,7 +1,7 @@
 import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:work_tracker/classes/history_model.dart';
 import 'package:work_tracker/classes/item_list_status.dart';
@@ -19,6 +19,8 @@ class HistoryListBloc extends Bloc<HistoryListEvent, HistoryListState> {
     on<HistoryLoadListEvent>(_onLoadListRequest);
     on<HistoryBackEvent>(_onBack);
     on<HistoryForwardEvent>(_onForward);
+    on<HistoryItemRemoved>(_onRemoved);
+    on<HistoryItemAdjusted>(_onAdjusted);
   }
 
   Future<void> populate(
@@ -62,10 +64,15 @@ class HistoryListBloc extends Bloc<HistoryListEvent, HistoryListState> {
     HistoryBackEvent event,
     Emitter<HistoryListState> emitter,
   ) async {
+    var adate = event.when ?? state.when;
+    if (kDebugMode) {
+      print('loading backward $adate');
+    }
     await populate(
       emitter,
-      () => model.getItemsBefore(state.when),
+      () => model.getItemsBefore(adate),
       defData: () => state.data,
+      defWhen: () => adate,
     );
   }
 
@@ -73,10 +80,29 @@ class HistoryListBloc extends Bloc<HistoryListEvent, HistoryListState> {
     HistoryForwardEvent event,
     Emitter<HistoryListState> emitter,
   ) async {
+    var adate = event.when ?? state.when;
+    if (kDebugMode) {
+      print('loading backward $adate');
+    }
     await populate(
       emitter,
-      () => model.getItemsAfter(state.when),
+      () => model.getItemsAfter(adate),
       defData: () => state.data,
+      defWhen: () => adate,
     );
+  }
+
+  Future<void> _onRemoved(
+    HistoryItemRemoved event,
+    Emitter<HistoryListState> emitter,
+  ) async {
+    await populate(emitter, () => getItems(state.when));
+  }
+
+  Future<void> _onAdjusted(
+    HistoryItemAdjusted event,
+    Emitter<HistoryListState> emitter,
+  ) async {
+    await populate(emitter, () => getItems(state.when));
   }
 }

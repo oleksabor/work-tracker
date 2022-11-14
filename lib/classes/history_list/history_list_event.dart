@@ -28,3 +28,11 @@ class HistoryItemRemoved extends HistoryListEvent {
   @override
   List<Object?> get props => [item];
 }
+
+class HistoryItemAdjusted extends HistoryListEvent {
+  HistoryItemAdjusted(this.item);
+  WorkItem item;
+
+  @override
+  List<Object?> get props => [item];
+}

@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:work_tracker/classes/item_list_status.dart';
+import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind_today.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:work_tracker/classes/list_state_base.dart';

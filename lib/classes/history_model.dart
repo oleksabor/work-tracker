@@ -30,9 +30,12 @@ class HistoryModel {
   List<WorkItem>? _cache;
 
   Future<List<WorkItem>> getItems(bool Function(WorkItem wi) filter) async {
-    _cache = _cache ?? await model.loadItems();
-    var all = await model.filterItemsByKind(_cache, kind, null);
-    var itemsPrev = all.where((i) => filter(i));
+    if (_cache == null) {
+      _cache =
+          await model.filterItemsByKind(await model.loadItems(), kind, null);
+      _cache!.sort((i1, i2) => i1.created.compareTo(i2.created));
+    }
+    var itemsPrev = _cache!.where((i) => filter(i));
     if (itemsPrev.isNotEmpty) {
       return itemsPrev.toList();
     }
@@ -40,8 +43,10 @@ class HistoryModel {
   }
 
   Future<List<WorkItem>> getItemsBefore(DateTime adate) async {
-    adate = DateTime(adate.year, adate.month, adate.day);
-    var prevItems = await getItems((wi) => wi.created.isBefore(adate));
+    var dateBefore = DateTime(adate.year, adate.month, adate.day)
+        .subtract(const Duration(days: 1));
+    var prevItems =
+        await getItems((wi) => wi.created.compareTo(dateBefore) <= 0);
     if (prevItems.isNotEmpty) {
       var date = prevItems.last.created;
       prevItems = prevItems.where((i) => i.created.isSameDay(date)).toList();
@@ -51,9 +56,9 @@ class HistoryModel {
   }
 
   Future<List<WorkItem>> getItemsAfter(DateTime adate) async {
-    adate = DateTime(adate.year, adate.month, adate.day)
+    var nextDate = DateTime(adate.year, adate.month, adate.day)
         .add(const Duration(days: 1));
-    var prevItems = await getItems((wi) => wi.created.isAfter(adate));
+    var prevItems = await getItems((wi) => wi.created.compareTo(nextDate) >= 0);
     if (prevItems.isNotEmpty) {
       var date = prevItems.first.created;
       prevItems = prevItems.where((i) => i.created.isSameDay(date)).toList();
