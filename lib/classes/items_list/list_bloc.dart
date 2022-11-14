@@ -1,6 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:work_tracker/classes/item_list_status.dart';
+import 'package:work_tracker/classes/work_item.dart';
+import 'package:work_tracker/classes/work_kind.dart';
 import 'package:work_tracker/classes/work_kind_today.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:work_tracker/classes/list_state_base.dart';
@@ -13,6 +15,13 @@ class ListBloc extends Bloc<ListEvent, ListState> {
   ListBloc(this._workModel)
       : super(ListState(ItemListStatus.initial, <WorkKindToday>[])) {
     on<LoadListEvent>(_onLoadListRequest);
+    on<KindDeleted>(_onDeleted);
+  }
+
+  void _onDeleted(KindDeleted event, Emitter<ListState> emit) async {
+    emit(state.copyWith(status: () => ItemListStatus.loading));
+    _workModel.removeKind(event.kind, event.items);
+    emit(state.copyWith(status: () => ItemListStatus.success));
   }
 
   Future<void> _onLoadListRequest(

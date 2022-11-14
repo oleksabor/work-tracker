@@ -38,7 +38,6 @@ class MainItemsPage extends StatefulWidget {
 
 /// main app page state
 class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
-  // final WorkViewModel _model = WorkViewModel();
   Timer? timer;
 
   late ThemeData? themeData;
@@ -59,8 +58,6 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
 
   late String systemLocale;
   late List<Locale> currentSystemLocales;
-
-  //late Future<List<WorkKindToday>> todayWork;
 
   // Here we read the current locale values
   void setCurrentLocale() {
@@ -91,10 +88,6 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     super.initState();
   }
 
-  // void loadWork() {
-  //   todayWork = loadWorkFor(DateTime.now());
-  // }
-
   @override
   void dispose() {
     // _model.dispose();
@@ -102,10 +95,6 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     if (timer != null) timer!.cancel();
     super.dispose();
   }
-
-  // Future<List<WorkKindToday>> loadWorkFor(DateTime when) async {
-  //   return _model.loadWork(when);
-  // }
 
   Future<String> getAppVersion() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -142,14 +131,6 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
         ),
         body: Column(mainAxisSize: MainAxisSize.max, children: [
           Flexible(flex: 9, child: ItemsListView()),
-          // Row(children: [
-          //   TextButton(
-          //     child: const Text("communicator test"),
-          //     onPressed: () {
-          //       Communicator.send("test from UI");
-          //     },
-          //   )
-          // ]),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [getVersionText(), const SizedBox(width: 10)],

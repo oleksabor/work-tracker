@@ -10,3 +10,13 @@ class LoadListEvent extends ListEvent {
   @override
   List<Object?> get props => [when];
 }
+
+class KindDeleted extends ListEvent {
+  WorkKind kind;
+  List<WorkItem>? items;
+
+  KindDeleted(this.kind, {this.items});
+
+  @override
+  List<Object?> get props => [kind, items];
+}

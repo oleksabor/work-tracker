@@ -16,13 +16,6 @@ class KindAdded extends KindAdjusted {}
 
 class KindUpdated extends KindAdjusted {}
 
-class KindDeleted extends KindEvent {
-  WorkKind kind;
-  List<WorkItem>? items;
-
-  KindDeleted(this.kind, {this.items});
-}
-
 class KindTitleChanged extends KindEvent {
   final String title;
   KindTitleChanged(this.title);

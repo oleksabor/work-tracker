@@ -3,16 +3,6 @@ part of 'main_items_page.dart';
 extension WorkItemsContext on _MainItemsPageState {
   static Future<void> _doRoute(WorkKindToday item, BuildContext context) async {
     await Navigator.of(context).push(WorkKindView.route(item.kind));
-
-    // var res = await Navigator.push(
-    //   context,
-    //   MaterialPageRoute(
-    //       builder: (ctx) => WorkKindView(WorkKind().assignFrom(item.kind))),
-    // );
-    // if (res != null) {
-    //   item.kind.assignFrom(res);
-    // }
-    // return res;
   }
 
   Future<void> editKind(BuildContext context, WorkKindToday item) async {
@@ -55,7 +45,6 @@ extension WorkItemsContext on _MainItemsPageState {
 
   PopupMenuButton<String> getMainContext(
       Map<String, String> menu, BuildContext context) {
-    var bloc = context.read<ListBloc>();
     return PopupMenuButton<String>(
         onSelected: (t) => handleClick(t, context),
         itemBuilder: (BuildContext context) {
@@ -76,11 +65,10 @@ extension WorkItemsContext on _MainItemsPageState {
       case _MainItemsPageState.tagDebug:
         var bloc = ctx.read<ListBloc>();
         await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (ctx) => DebugPage()),
+          ctx,
+          MaterialPageRoute(builder: (c) => DebugPage()),
         );
-        bloc.add(LoadListEvent());
-        // setState(() => loadWork());
+        bloc.add(LoadListEvent()); // in case if data were exported
         break;
       case _MainItemsPageState.tagChart:
         await Navigator.push(

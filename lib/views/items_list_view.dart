@@ -75,8 +75,9 @@ class ItemsListView extends StatelessWidget {
           false;
     }
     if (res) {
-      var bloc = context.read<EditKindBloc>();
+      var bloc = context.read<ListBloc>();
       bloc.add(KindDeleted(item.kind, items: item.todayWork));
+      bloc.add(LoadListEvent());
     }
   }
 

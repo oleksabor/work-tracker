@@ -22,19 +22,12 @@ class EditKindBloc extends Bloc<KindEvent, EditKindState> {
     on<KindAdjusted>(_onSubmitted);
     on<KindUpdated>(_onSubmitted);
     on<KindTitleChanged>(_onTitle);
-    on<KindDeleted>(_onDeleted);
   }
 
   final WorkViewModel _itemsRepository;
 
   void _onTitle(KindTitleChanged event, Emitter<EditKindState> emit) {
     emit(state.copyWith(title: event.title));
-  }
-
-  void _onDeleted(KindDeleted event, Emitter<EditKindState> emit) async {
-    emit(state.copyWith(status: EditItemStatus.saving));
-    _itemsRepository.removeKind(event.kind, event.items);
-    emit(state.copyWith(status: EditItemStatus.success, initialItem: null));
   }
 
   Future<void> _onSubmitted(
