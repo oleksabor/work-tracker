@@ -59,6 +59,17 @@ class HistoryViewState extends State<HistoryView> {
     }
   }
 
+  Widget getTitle(String title, String subtitle, ThemeData theme) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(title,
+          style:
+              TextStyle(fontSize: theme.appBarTheme.titleTextStyle?.fontSize)),
+      Text(subtitle,
+          style:
+              TextStyle(fontSize: theme.primaryTextTheme.bodyMedium?.fontSize)),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context)!;
@@ -66,6 +77,7 @@ class HistoryViewState extends State<HistoryView> {
     return BlocBuilder<HistoryListBloc, HistoryListState>(
         builder: (ctx, state) {
       var bloc = ctx.read<HistoryListBloc>();
+      var theme = Theme.of(context);
       var history = bloc.model;
       var body = state.data.isEmpty
           ? emptyDataPlaceholder(state.status, t)
@@ -75,12 +87,10 @@ class HistoryViewState extends State<HistoryView> {
 
       return Scaffold(
           appBar: AppBar(
-            title: Text("${kind.title}"),
-            // TODO use scheme color for bottom text
-            bottom: PreferredSize(
-              preferredSize: Size.zero,
-              child: Text("${t.onCap} ${history.asDate(bloc.state.when, t)}",
-                  style: TextStyle(color: Colors.white)),
+            title: getTitle(
+              kind.title,
+              "${t.onCap} ${history.asDate(bloc.state.when, t)}",
+              theme,
             ),
           ),
           body: Column(children: <Widget>[
