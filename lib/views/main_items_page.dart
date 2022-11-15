@@ -2,22 +2,17 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:work_tracker/classes/communicator.dart';
 import 'package:work_tracker/classes/items_list/list_bloc.dart';
-import 'package:work_tracker/classes/notify_model.dart';
-import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
 import 'package:work_tracker/classes/work_kind_today.dart';
-import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:work_tracker/views/calendar_view.dart';
 import 'package:work_tracker/views/charts_page.dart';
 import 'package:work_tracker/views/config_page.dart';
 import 'package:work_tracker/views/items_list_view.dart';
-import 'package:work_tracker/views/work_item_page.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:work_tracker/views/history_view.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:work_tracker/views/work_kind_page.dart';
 import 'debug_page.dart';
@@ -131,6 +126,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
         ),
         body: Column(mainAxisSize: MainAxisSize.max, children: [
           Flexible(flex: 9, child: ItemsListView()),
+          const CalendarView(),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [getVersionText(), const SizedBox(width: 10)],

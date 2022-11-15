@@ -5,6 +5,21 @@ import 'package:collection/collection.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 
 void main() async {
+  test('calendar items by kind', () {
+    var sut = Calendar();
+
+    var wk1 = WorkKindTest(123)..title = "ttt";
+    var wk2 = WorkKindTest(456)..title = "yyy";
+
+    var k1 = sut.getKind([wk1, wk2], 123);
+    expect(k1.kindId, 123);
+    var k2 = sut.getKind([wk1, wk2], 456);
+    expect(k2.kindId, 456);
+
+    var k3 = sut.getKind([wk1, wk2], 1);
+    expect(k3.kindId, -1);
+  });
+
   test('calendar days from work items', () {
     var wk1 = WorkKindTest(123)..title = "ttt";
     var wk2 = WorkKindTest(456)..title = "yyy";

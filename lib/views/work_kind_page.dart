@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:work_tracker/classes/edit_item_status.dart';
-import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
 import 'package:work_tracker/classes/work_kind/kind_bloc.dart';
 import 'package:work_tracker/classes/work_kind/kind_state.dart';
@@ -17,7 +15,7 @@ class WorkKindView extends StatefulWidget {
     return WorkKindViewState();
   }
 
-  static Route<void> route(WorkKind? kind) {
+  static Route<bool> route(WorkKind? kind) {
     return MaterialPageRoute(
         fullscreenDialog: true,
         builder: (ctx) {
@@ -58,7 +56,7 @@ class WorkKindViewState extends State<WorkKindView> {
     state = context.select(
       (EditKindBloc bloc) => bloc.state,
     );
-    kindController.value = TextEditingValue(text: state.title);
+    kindController.value = kindController.value.copyWith(text: state.title);
     return BlocListener<EditKindBloc, EditKindState>(
       listenWhen: (p, c) {
         return c.status == EditItemStatus.success;

@@ -1,4 +1,5 @@
 import 'package:work_tracker/classes/date_extension.dart';
+import 'package:work_tracker/classes/iterable_extension.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
 
@@ -34,8 +35,29 @@ class Calendar {
     return kinds.firstWhere((element) => element.kindId == id,
         orElse: () => WorkKind.m("unknown"));
   }
+
+  List<CalendarData> getData(
+      List<WorkItem> items, List<WorkKind> kinds, DateTime now, int daysBack) {
+    var res = <CalendarData>[];
+    for (var q = daysBack; q >= 0; q--) {
+      var d = now.subtract(Duration(days: q));
+      var work = items.where((_) => _.created.isSameDay(d));
+      var kinded = work.groupBy((_) => _.kindId).map((key, value) =>
+          MapEntry(kinds.firstWhere((_) => _.kindId == key), value));
+      res.add(CalendarData(d, kinded.keys.toList()));
+    }
+    return res;
+  }
 }
 
+class CalendarData {
+  DateTime date;
+  List<WorkKind> items;
+
+  CalendarData(this.date, this.items);
+}
+
+/// helper class used to display calendar
 class Day {
   DateTime date;
   Day(this.date);
@@ -44,6 +66,7 @@ class Day {
   List<Result>? result;
 }
 
+/// helper class used to display calendar
 class Result {
   int qty;
   int kindId;

@@ -1,24 +1,27 @@
 part of 'main_items_page.dart';
 
 extension WorkItemsContext on _MainItemsPageState {
-  static Future<void> _doRoute(WorkKindToday item, BuildContext context) async {
-    await Navigator.of(context).push(WorkKindView.route(item.kind));
+  static Future<bool> _doRoute(WorkKindToday item, BuildContext context) async {
+    var res = await Navigator.of(context).push(WorkKindView.route(item.kind));
+    return res ?? false;
   }
 
-  Future<void> editKind(BuildContext context, WorkKindToday item) async {
+  Future<bool> editKind(BuildContext context, WorkKindToday item) async {
     var res = await _doRoute(item, context);
     // if (res != null) {
     //   await _model.updateKind(item.kind);
     //   onResumed();
     // }
+    return res;
   }
 
-  Future<void> addKind(BuildContext context) async {
+  Future<bool> addKind(BuildContext context) async {
     var res = await _doRoute(WorkKindToday(WorkKind()), context);
     // if (res != null) {
     //   await _model.updateKind(item.kind);
     //   onResumed();
     // }
+    return res;
   }
 
   // https://api.flutter.dev/flutter/material/AlertDialog-class.html
@@ -66,7 +69,7 @@ extension WorkItemsContext on _MainItemsPageState {
         var bloc = ctx.read<ListBloc>();
         await Navigator.push(
           ctx,
-          MaterialPageRoute(builder: (c) => DebugPage()),
+          MaterialPageRoute(builder: (c) => const DebugPage()),
         );
         bloc.add(LoadListEvent()); // in case if data were exported
         break;
@@ -83,7 +86,10 @@ extension WorkItemsContext on _MainItemsPageState {
         );
         break;
       case _MainItemsPageState.tagAddKind:
-        await addKind(context);
+        var bloc = ctx.read<ListBloc>();
+        if (await addKind(context)) {
+          bloc.add(LoadListEvent()); // in case if data were exported
+        }
         break;
     }
   }
