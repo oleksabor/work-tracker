@@ -13,7 +13,6 @@ import 'package:work_tracker/views/config_page.dart';
 import 'package:work_tracker/views/items_list_view.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:work_tracker/views/work_kind_page.dart';
 import 'debug_page.dart';
 import 'lifecycle_watcher_state.dart';
@@ -91,13 +90,6 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
     super.dispose();
   }
 
-  Future<String> getAppVersion() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    String version = packageInfo.version;
-
-    return version;
-  }
-
   static const tagDebug = "Debug";
   static const tagChart = "Charts";
   static const tagSettings = "Settings";
@@ -128,24 +120,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
           Flexible(flex: 9, child: ItemsListView()),
           Text(t.calendar),
           const CalendarView(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [getVersionText(), const SizedBox(width: 10)],
-          )
         ]));
-  }
-
-  FutureBuilder<String> getVersionText() {
-    return FutureBuilder<String>(
-        future: getAppVersion(),
-        initialData: "version",
-        builder: (context, snapshot) {
-          return snapshot.hasData
-              ? Text(snapshot.data!,
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.primary))
-              : const Center(child: CircularProgressIndicator());
-        });
   }
 
   @override
