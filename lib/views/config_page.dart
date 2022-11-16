@@ -8,6 +8,7 @@ import 'package:work_tracker/classes/config_notify.dart';
 import 'package:work_tracker/classes/notify_model.dart';
 import 'package:work_tracker/views/numeric_step_button.dart';
 import 'package:simple_logger/simple_logger.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 part 'config_page_notification.dart';
 
@@ -87,10 +88,22 @@ class ConfigPageState extends State<ConfigPage> {
                               tabs:
                                   tabs.keys.map((c) => Tab(text: c)).toList()),
                         ),
-                        body: TabBarView(
-                            children: tabs.values
-                                .map((v) => buildTab<Config>(configRead, v))
-                                .toList())),
+                        body: Column(children: [
+                          Flexible(
+                              flex: 9,
+                              child: TabBarView(
+                                  children: tabs.values
+                                      .map((v) =>
+                                          buildTab<Config>(configRead, v))
+                                      .toList())),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              getVersionText(),
+                              const SizedBox(width: 10),
+                            ],
+                          )
+                        ])),
                   );
                 })));
   }
@@ -145,6 +158,26 @@ class ConfigPageState extends State<ConfigPage> {
         )
       ]),
     ]);
+  }
+
+  Future<String> getAppVersion() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String version = packageInfo.version;
+
+    return version;
+  }
+
+  FutureBuilder<String> getVersionText() {
+    return FutureBuilder<String>(
+        future: getAppVersion(),
+        initialData: "version",
+        builder: (context, snapshot) {
+          return snapshot.hasData
+              ? Text(snapshot.data!,
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.primary))
+              : const Center(child: CircularProgressIndicator());
+        });
   }
 
   Widget buildChartsTab(BuildContext context, Config? config) {
