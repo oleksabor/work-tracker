@@ -1,3 +1,7 @@
+### 1.16.0
+- calendar introduced on main screen
+- version number moved from the main screen to config page
+
 ### 1.5.0
 - flutter 3.3.0 and AndroidAlarmManager plus 2.0.7
 
