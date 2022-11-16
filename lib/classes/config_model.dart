@@ -1,11 +1,9 @@
-import 'package:injectable/injectable.dart';
 import 'package:work_tracker/classes/config.dart';
 import 'package:work_tracker/classes/config_graph.dart';
 import 'package:work_tracker/classes/db_loader.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:work_tracker/classes/weight_body.dart';
 
-@injectable
 class ConfigModel {
   ConfigModel(this.db);
   DbLoader db;

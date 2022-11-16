@@ -3,16 +3,6 @@ import 'package:work_tracker/classes/chart_view_model.dart';
 import 'package:work_tracker/classes/config_graph.dart';
 import 'package:work_tracker/classes/work_item.dart';
 
-WorkItem addWI(String kind, DateTime created) {
-  var res = WorkItem();
-  res.created = created;
-  res.qty = ++id;
-  res.kind = kind;
-  return res;
-}
-
-int id = 0;
-
 WorkItem create(int q, DateTime d, {String kind = "t1", double weight = 0}) {
   var w = WorkItem();
   w.qty = q;

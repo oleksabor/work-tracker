@@ -2,17 +2,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/foundation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_logger/simple_logger.dart';
 import 'package:work_tracker/classes/communicator.dart';
 import 'package:work_tracker/classes/config.dart';
 import 'package:work_tracker/classes/config_model.dart';
 import 'package:work_tracker/classes/config_notify.dart';
-import 'package:work_tracker/classes/init_get.dart';
 import 'package:flutter_ringtone_player/flutter_ringtone_player.dart';
 
-@injectable
 class NotifyModel {
   void Function(bool)? _onPlayingChanged;
 
@@ -44,33 +41,33 @@ class NotifyModel {
     if (/*_isScheduled ||*/ config == null) {
       return false;
     }
-    var logger = await getIt.getAsync<SimpleLogger>();
+    // var logger = await getIt.getAsync<SimpleLogger>();
     if (_scheduled) {
-      logger.fine("cancelling existing alarm $helloAlarmID");
+      // logger.fine("cancelling existing alarm $helloAlarmID");
       var cancelled = await AndroidAlarmManager.cancel(helloAlarmID);
-      if (!cancelled) {
-        logger.warning("failed to cancel existing subscription $helloAlarmID");
-      }
+      // if (!cancelled) {
+      //   logger.warning("failed to cancel existing subscription $helloAlarmID");
+      // }
     }
     var dr = Duration(seconds: config.delay);
     await saveShared(config);
     _scheduled = await AndroidAlarmManager.oneShot(dr, helloAlarmID, playAlarm,
         exact: true, wakeup: true, alarmClock: true, allowWhileIdle: true);
     if (!_scheduled) {
-      logger.warning("failed to set the alarm:$helloAlarmID for $dr");
+      // logger.warning("failed to set the alarm:$helloAlarmID for $dr");
     } else {
-      logger.fine("scheduled alarm for $dr, notification ${config.kind}");
+      // logger.fine("scheduled alarm for $dr, notification ${config.kind}");
     }
     return _scheduled;
   }
 
   /// stores current [ConfigNotify] instance as [SharedPreferences] json string
   static Future<void> saveShared(ConfigNotify? config) async {
-    var logger = await getIt.getAsync<SimpleLogger>();
+    // var logger = await getIt.getAsync<SimpleLogger>();
     if (config == null) return;
     final prefs = await SharedPreferences.getInstance();
     var str = jsonEncode(config);
-    logger.fine('configNotify saving as $str');
+    // logger.fine('configNotify saving as $str');
     if (prefs.containsKey(configNotifyName)) {
       await prefs.remove(configNotifyName);
     }
@@ -127,7 +124,7 @@ class NotifyModel {
     if (kDebugMode) {
       print("playing ${config.kind}");
     }
-    Communicator.send("alarm [${NotificationKind.system}]");
+    Communicator.send("alarm [${config.kind}]");
     switch (config.kind) {
       case NotificationKind.inbuilt:
         await FlutterRingtonePlayer.play(

@@ -1,21 +1,17 @@
-import 'dart:io';
-import 'package:async/async.dart';
-import 'package:injectable/injectable.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
+import 'package:work_tracker/classes/work_kind_today.dart';
 import 'package:hive/hive.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:work_tracker/classes/date_extension.dart';
-import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as Path;
 import 'package:work_tracker/classes/db_loader.dart';
 
-@injectable
 class WorkViewModel {
   final boxName = "workData";
   static const String itemsName = "items";
   static const String kindsName = "kinds";
-  DbLoader db = DbLoader();
+  DbLoader db;
+  WorkViewModel(this.db);
 
   Box<WorkItem>? openedBox;
   Box<WorkKind>? _boxKinds;
@@ -105,7 +101,11 @@ class WorkViewModel {
   ///appends [item] to the [openedBox]
   Future<WorkItem> store(WorkItem item) async {
     openedBox ??= await db.openBox<WorkItem>(itemsName);
-    await openedBox?.add(item);
+    if (item.isInBox) {
+      await item.save();
+    } else {
+      await openedBox?.add(item);
+    }
     return item;
   }
 
@@ -160,10 +160,4 @@ class WorkViewModel {
       }
     }
   }
-}
-
-class WorkKindToday {
-  WorkKind kind;
-  List<WorkItem>? todayWork;
-  WorkKindToday(this.kind, {this.todayWork});
 }

@@ -1,10 +1,10 @@
 import 'package:charts_flutter/flutter.dart' as flcharts;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:work_tracker/classes/chart_data.dart';
 import 'package:work_tracker/classes/chart_view_model.dart';
 import 'package:work_tracker/classes/config_graph.dart';
 import 'package:work_tracker/classes/config_model.dart';
-import 'package:work_tracker/classes/init_get.dart';
 import 'package:work_tracker/classes/iterable_extension.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
@@ -13,10 +13,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// items list on day
 class ChartItemsView extends StatefulWidget {
-  final WorkViewModel data;
-
-  ChartItemsView(this.data);
-
   @override
   State<StatefulWidget> createState() {
     return ChartItemsViewState();
@@ -33,7 +29,7 @@ class ChartItemsViewState extends State<ChartItemsView> {
   @override
   void initState() {
     super.initState();
-    configModel = getIt<ConfigModel>();
+    configModel = RepositoryProvider.of<ConfigModel>(context);
   }
 
   /// screen size to calculate legend columns
@@ -46,14 +42,14 @@ class ChartItemsViewState extends State<ChartItemsView> {
     var mediaQuery = MediaQuery.of(context);
     screen = mediaQuery.size;
     pixelRatio = mediaQuery.devicePixelRatio;
-
+    var wm = RepositoryProvider.of<WorkViewModel>(context);
     return Scaffold(
         appBar: AppBar(
           title: Text(t!.titleWinChart),
         ),
         body: Column(children: [
           createRadio(),
-          getChartFuture(getChartData(getAggr(), getMeasure()))
+          getChartFuture(getChartData(getAggr(), getMeasure(), wm))
         ]));
   }
 
@@ -154,13 +150,14 @@ class ChartItemsViewState extends State<ChartItemsView> {
   final daysBack = 180;
 
   Future<List<flcharts.Series<ChartData, num>>> getChartData(
-      List<ChartData> Function(ChartViewModel, List<WorkItem>, ConfigGraph)
-          aggr,
-      num? Function(ChartData, num?) measure) async {
+    List<ChartData> Function(ChartViewModel, List<WorkItem>, ConfigGraph) aggr,
+    num? Function(ChartData, num?) measure,
+    WorkViewModel wm,
+  ) async {
     var config = await configModel.load();
-    var items = await widget.data.loadItems();
+    var items = await wm.loadItems();
     var itemsData = charts.loadItemsFor(daysBack, items);
-    var kinds = await widget.data.loadKinds();
+    var kinds = await wm.loadKinds();
 
     var kindsData = itemsData.groupBy((i) => i.kindId).entries;
     var res = kindsData

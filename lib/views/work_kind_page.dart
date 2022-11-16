@@ -1,36 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:work_tracker/classes/edit_item_status.dart';
 import 'package:work_tracker/classes/work_kind.dart';
+import 'package:work_tracker/classes/work_kind/kind_bloc.dart';
+import 'package:work_tracker/classes/work_kind/kind_state.dart';
+import 'package:work_tracker/classes/work_view_model.dart';
+import 'package:work_tracker/views/work_kind_form.dart';
 
 class WorkKindView extends StatefulWidget {
-  final WorkKind kind;
-  const WorkKindView(this.kind, {Key? key}) : super(key: key);
+  const WorkKindView({super.key});
 
   @override
   State<StatefulWidget> createState() {
     return WorkKindViewState();
   }
+
+  static Route<bool> route(WorkKind? kind) {
+    return MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (ctx) {
+          return BlocProvider(
+            create: (context) => EditKindBloc(
+              itemsRepository: RepositoryProvider.of<WorkViewModel>(context),
+              //context.read<WorkViewModel>(),
+              initialItem: kind,
+            ),
+            child: const WorkKindView(),
+          );
+        });
+  }
 }
 
 class WorkKindViewState extends State<WorkKindView> {
-  void changedTitle(String v) {
-    widget.kind.title = v;
-  }
-
   final _formKey = GlobalKey<FormState>();
-
-  Future<bool> onWillPop() async {
-    if (_formKey.currentState == null || _formKey.currentState!.validate()) {
-      return true;
-    }
-    return false;
-  }
 
   late TextEditingController kindController;
 
   @override
   void initState() {
-    kindController = TextEditingController(text: widget.kind.title);
+    kindController = TextEditingController();
 
     super.initState();
   }
@@ -41,48 +49,20 @@ class WorkKindViewState extends State<WorkKindView> {
     super.dispose();
   }
 
+  late EditKindState state;
+
   @override
   Widget build(BuildContext context) {
-    var t = AppLocalizations.of(context)!;
-
-    return Form(
-        key: _formKey,
-        child: Scaffold(
-            appBar: AppBar(
-              title: Text(t.workKindTitle),
-            ),
-            body: Column(children: [
-              Row(
-                children: [
-                  Expanded(flex: 3, child: Text(t.workKindTitle)),
-                  Expanded(
-                      flex: 7,
-                      child: TextFormField(
-                        validator: (v) => validateNotEmpty(v, t),
-                        controller: kindController,
-                        onChanged: changedTitle,
-                        onFieldSubmitted: changedTitle,
-                      ))
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    if (await onWillPop()) {
-                      Navigator.pop(context, widget.kind);
-                    }
-                  },
-                  child: Text(t.okCap),
-                ),
-              )
-            ])));
-  }
-
-  String? validateNotEmpty(String? v, AppLocalizations t) {
-    if (v == null || v.isEmpty) {
-      return t.titleEmptyValidation;
-    }
-    return null;
+    state = context.select(
+      (EditKindBloc bloc) => bloc.state,
+    );
+    kindController.value = kindController.value.copyWith(text: state.title);
+    return BlocListener<EditKindBloc, EditKindState>(
+      listenWhen: (p, c) {
+        return c.status == EditItemStatus.success;
+      },
+      listener: (context, state) => Navigator.of(context).pop(true),
+      child: WorkKindForm(_formKey, kindController),
+    );
   }
 }

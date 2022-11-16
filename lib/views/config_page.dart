@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:work_tracker/classes/config.dart';
 import 'package:work_tracker/classes/config_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:work_tracker/classes/config_notify.dart';
-import 'package:work_tracker/classes/init_get.dart';
 import 'package:work_tracker/classes/notify_model.dart';
 import 'package:work_tracker/views/numeric_step_button.dart';
 import 'package:simple_logger/simple_logger.dart';
@@ -23,14 +23,17 @@ class ConfigPage extends StatefulWidget {
 class ConfigPageState extends State<ConfigPage> {
   late ConfigModel configModel;
   final _formKey = GlobalKey<FormState>();
-  final loggerF = getIt.getAsync<SimpleLogger>();
+  late Future<SimpleLogger> loggerF; // = getIt.getAsync<SimpleLogger>();
   SimpleLogger? logger;
-  final notifyModel = getIt.get<NotifyModel>();
+  late NotifyModel notifyModel; // = getIt.get<NotifyModel>();
 
   @override
   void initState() {
     super.initState();
-    configModel = getIt<ConfigModel>();
+
+    loggerF = RepositoryProvider.of<Future<SimpleLogger>>(context);
+    notifyModel = RepositoryProvider.of<NotifyModel>(context);
+    configModel = RepositoryProvider.of<ConfigModel>(context);
     configRead = configModel.load().then((c) {
       initConfig(c);
 

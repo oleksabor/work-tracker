@@ -1,4 +1,7 @@
-import 'package:work_tracker/classes/init_get.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:work_tracker/bootstrapper.dart';
+import 'package:work_tracker/classes/items_list/list_bloc.dart';
+import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:work_tracker/views/main_items_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -10,7 +13,6 @@ void main() async {
 
   //https://stackoverflow.com/a/68911879/940182
   await findSystemLocale();
-  configureDependencies();
   runApp(MyApp());
 }
 
@@ -20,20 +22,25 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return OverlaySupport.global(
-        child: MaterialApp(
-      //  theme: ThemeData(),
-      darkTheme: ThemeData.dark(), // standard dark theme
-      themeMode: ThemeMode.system, // device controls theme
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
-      onGenerateTitle: (ctgt) {
-        return AppLocalizations.of(ctgt)?.titleApp ?? "failed to localize";
-      },
-      home: const MainItemsPage(),
-    ));
+    return MultiRepositoryProvider(
+        providers: Bootstrapper.getProviders(),
+        child: OverlaySupport.global(
+            child: MaterialApp(
+          //  theme: ThemeData(),
+          darkTheme: ThemeData.dark(), // standard dark theme
+          themeMode: ThemeMode.system, // device controls theme
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          onGenerateTitle: (ctgt) {
+            return AppLocalizations.of(ctgt)?.titleApp ?? "failed to localize";
+          },
+          home: BlocProvider(
+              create: (ctxt) =>
+                  ListBloc(ctxt.read<WorkViewModel>())..add(LoadListEvent()),
+              child: const MainItemsPage()),
+        )));
   }
 }

@@ -1,18 +1,17 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:work_tracker/classes/config_model.dart';
 import 'package:work_tracker/classes/db_loader.dart';
 import 'package:work_tracker/classes/export.dart';
 import 'package:work_tracker/classes/iterable_extension.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
+import 'package:work_tracker/classes/work_kind_today.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'dart:convert';
 import 'package:share_plus/share_plus.dart';
 
-@injectable
 class DebugModel {
   final WorkViewModel _model;
   final DbLoader dbLoader;

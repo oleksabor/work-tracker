@@ -13,7 +13,7 @@ class HistoryModel {
   HistoryModel(this.model, this.kind, this.date);
 
   /// date to get items on
-  DateTime date;
+  final DateTime date;
 
   String asDate(DateTime value, AppLocalizations? t) {
     var diff = value.difference(DateTime.now());
@@ -30,9 +30,12 @@ class HistoryModel {
   List<WorkItem>? _cache;
 
   Future<List<WorkItem>> getItems(bool Function(WorkItem wi) filter) async {
-    _cache = _cache ?? await model.loadItems();
-    var all = await model.filterItemsByKind(_cache, kind, null);
-    var itemsPrev = all.where((i) => filter(i));
+    if (_cache == null) {
+      _cache =
+          await model.filterItemsByKind(await model.loadItems(), kind, null);
+      _cache!.sort((i1, i2) => i1.created.compareTo(i2.created));
+    }
+    var itemsPrev = _cache!.where((i) => filter(i));
     if (itemsPrev.isNotEmpty) {
       return itemsPrev.toList();
     }
@@ -40,10 +43,12 @@ class HistoryModel {
   }
 
   Future<List<WorkItem>> getItemsBefore(DateTime adate) async {
-    adate = DateTime(adate.year, adate.month, adate.day);
-    var prevItems = await getItems((wi) => wi.created.isBefore(adate));
+    var dateBefore = DateTime(adate.year, adate.month, adate.day)
+        .subtract(const Duration(days: 1));
+    var prevItems =
+        await getItems((wi) => wi.created.compareTo(dateBefore) <= 0);
     if (prevItems.isNotEmpty) {
-      date = prevItems.last.created;
+      var date = prevItems.last.created;
       prevItems = prevItems.where((i) => i.created.isSameDay(date)).toList();
       return prevItems;
     }
@@ -51,31 +56,25 @@ class HistoryModel {
   }
 
   Future<List<WorkItem>> getItemsAfter(DateTime adate) async {
-    adate = DateTime(adate.year, adate.month, adate.day)
+    var nextDate = DateTime(adate.year, adate.month, adate.day)
         .add(const Duration(days: 1));
-    var prevItems = await getItems((wi) => wi.created.isAfter(adate));
+    var prevItems = await getItems((wi) => wi.created.compareTo(nextDate) >= 0);
     if (prevItems.isNotEmpty) {
-      date = prevItems.first.created;
+      var date = prevItems.first.created;
       prevItems = prevItems.where((i) => i.created.isSameDay(date)).toList();
       return prevItems;
     }
     return [];
   }
 
-  Future<List<WorkItem>> delete(
-      WorkItem i, Future<List<WorkItem>> items) async {
+  Future<List<WorkItem>> delete(WorkItem i, List<WorkItem> items) async {
     await i.delete();
-    _cache = null;
-    (await items).remove(i);
+    resetCache();
+    items.remove(i);
     return items;
   }
-}
 
-class HistoryResult {
-  List<WorkItem> items;
-  bool isAnyBefore;
-  bool isAnyAfter;
-  DateTime date;
-
-  HistoryResult(this.items, this.date, this.isAnyBefore, this.isAnyAfter);
+  void resetCache() {
+    _cache = null;
+  }
 }

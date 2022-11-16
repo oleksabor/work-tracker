@@ -24,6 +24,7 @@ class WorkItem extends HiveObject {
   WorkItem.k(this.kind);
   WorkItem.i(this.kindId);
   WorkItem();
+
   factory WorkItem.from(WorkItem src) {
     var res = WorkItem.i(src.kindId);
     res.created = src.created;
@@ -39,6 +40,15 @@ class WorkItem extends HiveObject {
 
   Map<String, dynamic> toJson() =>
       {'created': created.toIso8601String(), 'weight': weight, 'qty': qty};
+
+  WorkItem copyWith(
+      {int? qty, DateTime? created, double? weight, int? kindId}) {
+    return WorkItem()
+      ..created = created ?? this.created
+      ..kindId = kindId ?? this.kindId
+      ..qty = qty ?? this.qty
+      ..weight = weight ?? this.weight;
+  }
 }
 
     // if (numOfFields < 5) {

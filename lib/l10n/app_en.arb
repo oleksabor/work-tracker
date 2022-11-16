@@ -70,5 +70,6 @@
       }
     }
   },
-  "scheduleFailed": "Failed to schedule notification"
+  "scheduleFailed": "Failed to schedule notification",
+  "calendar": "Calendar"
 }

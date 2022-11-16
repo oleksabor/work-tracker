@@ -3,12 +3,14 @@ import 'package:work_tracker/classes/db_loader.dart';
 import 'package:work_tracker/classes/debug_model.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
+import 'package:work_tracker/classes/work_kind_today.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'work_view_model_test.dart';
 
 void main() {
   test('upgradeDbImpl', () async {
-    var sut = DebugModel(WorkViewModel(), DbLoader());
+    var dbl = DbLoader();
+    var sut = DebugModel(WorkViewModel(dbl), dbl);
     var kinds = [WorkKindTest(1)..title = "11"];
     var wi = WorkItem.k("11");
     expect(wi.kindId, -1, reason: "default value violated");
@@ -37,7 +39,7 @@ void main() {
       WorkItem.i(12)..kind = "k12",
       WorkItem.k("k12"),
     ];
-    var wm = WVMDebug(kinds, items);
+    var wm = WVMDebug(kinds, items, DbLoader());
     var dm = DebugModel(wm, DbLoader());
     var grouped = await dm.groupByKinds();
     expect(grouped.length, 4);
@@ -72,7 +74,7 @@ void main() {
       WorkKindToday(kinds[0], todayWork: items2),
       WorkKindToday(kinds[1], todayWork: items)
     ];
-    var wm = WVMDebug(kinds, items);
+    var wm = WVMDebug(kinds, items, DbLoader());
     var dm = DebugModel(wm, DbLoader());
     var json = dm.exportAsJson(wkToday);
     var res = dm.importAsJson(json);
@@ -94,6 +96,7 @@ class WVMDebug extends WorkViewModel {
   WVMDebug(
     this.kinds,
     this.items,
+    super.db,
   );
   @override
   Future<List<WorkKind>> loadKinds() async {

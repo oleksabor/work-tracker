@@ -1,20 +1,21 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:work_tracker/classes/debug_model.dart';
 import 'package:work_tracker/classes/doc_dir.dart';
-import 'package:work_tracker/classes/init_get.dart';
+import 'package:work_tracker/classes/items_list/list_bloc.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
+import 'package:work_tracker/classes/work_kind_today.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:math';
 import 'package:intl/intl.dart';
 
 class DebugPage extends StatefulWidget {
-  final WorkViewModel model;
-  const DebugPage.m({Key? key, required this.model}) : super(key: key);
+  const DebugPage({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -26,7 +27,7 @@ class DebugPageState extends State<DebugPage> {
   @override
   void initState() {
     super.initState();
-    model = getIt<DebugModel>();
+    model = RepositoryProvider.of<DebugModel>(context);
   }
 
   Widget createColumnDir(DirData data) {
@@ -296,7 +297,7 @@ class DebugPageState extends State<DebugPage> {
   @override
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context);
-    var workModel = WorkViewModel();
+    var workModel = RepositoryProvider.of<WorkViewModel>(context);
     tabs = {
       "Data": createTabKinds(context, workModel),
       "Dirs": createTabDirs()
