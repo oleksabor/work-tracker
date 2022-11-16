@@ -1,11 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:work_tracker/bootstrapper.dart';
-import 'package:work_tracker/classes/config_model.dart';
-import 'package:work_tracker/classes/db_loader.dart';
-import 'package:work_tracker/classes/debug_model.dart';
 import 'package:work_tracker/classes/items_list/list_bloc.dart';
-import 'package:work_tracker/classes/log_wrapper.dart';
-import 'package:work_tracker/classes/notify_model.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
 import 'package:work_tracker/views/main_items_page.dart';
 import 'package:flutter/material.dart';
