@@ -24,9 +24,9 @@ extension DateMethods on DateTime {
 
     if (diff.inHours < 24) {
       if (diff.inMinutes > 59) {
-        return diff.inHours.toString() + ' hours ago';
+        return "${diff.inHours} hours ago";
       } else {
-        return diff.inMinutes.toString() + ' minutes ago';
+        return "${diff.inMinutes} minutes ago";
       }
     }
     var format = now.year != year
