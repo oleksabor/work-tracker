@@ -6,6 +6,12 @@ extension DateMethods on DateTime {
     return day == value.day && month == value.month && year == value.year;
   }
 
+  String getMonthABBR() {
+    // requires a locale initialization using the initializeDateFromatting()
+    var res = DateFormat.MMM(localeStr).format(this);
+    return res;
+  }
+
   String smartString({DateTime? from}) {
     // requires a locale initialization using the initializeDateFromatting()
     var now = from ?? DateTime.now();
@@ -36,7 +42,7 @@ extension DateMethods on DateTime {
   }
 
   static Locale? locale;
-  static String get localeStr => locale?.toString() ?? "uk_UA";
+  static String get localeStr => locale?.toString() ?? "en_US";
 
   static DateFormat timeFormat = DateFormat("kk:mm", localeStr);
 

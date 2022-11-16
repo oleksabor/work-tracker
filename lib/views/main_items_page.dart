@@ -126,6 +126,7 @@ class _MainItemsPageState extends LifecycleWatcherState<MainItemsPage> {
         ),
         body: Column(mainAxisSize: MainAxisSize.max, children: [
           Flexible(flex: 9, child: ItemsListView()),
+          Text(t.calendar),
           const CalendarView(),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,

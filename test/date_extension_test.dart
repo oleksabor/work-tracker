@@ -35,4 +35,11 @@ void main() {
     var str = yesterday.smartString(from: d);
     expect(str.split(" ")[0], "Yesterday");
   });
+
+  test('as month abbr', () {
+    initializeDateFormatting("en_US", null);
+    var d = DateTime(2021, 11, 7, 8, 19);
+    var str = d.getMonthABBR();
+    expect(str, "Nov");
+  });
 }

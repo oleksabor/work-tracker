@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:work_tracker/classes/calendar.dart';
 import 'package:work_tracker/classes/calendar_strip/strip_bloc.dart';
+import 'package:work_tracker/classes/date_extension.dart';
 import 'package:work_tracker/classes/item_list_status.dart';
 import 'package:work_tracker/classes/items_list/list_bloc.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
@@ -34,9 +35,6 @@ class CalendarDays extends StatelessWidget {
   Widget build(BuildContext context) {
     var t = AppLocalizations.of(context)!;
     var theme = Theme.of(context);
-    var bl = BlocListener<ListBloc, ListState>(
-      listener: (ctx, st) {},
-    );
     return BlocBuilder<StripBloc, StripState>(builder: (context, state) {
       var body = state.data.isEmpty
           ? emptyDataPlaceholder(state.status, t)
@@ -48,11 +46,20 @@ class CalendarDays extends StatelessWidget {
     });
   }
 
+  static const double padWidth = 3;
+
   List<Widget> getDaysStrip(List<CalendarData> data, ThemeData theme) {
-    return data.map((_) => getDay(_, theme)).toList();
+    var res = <Widget>[];
+    if (data.isNotEmpty) {
+      res.add(getMonth(data.first.date));
+    }
+    for (var cd in data) {
+      res.addAll(getDay(cd, theme));
+    }
+    return res;
   }
 
-  Widget getDay(CalendarData cd, ThemeData theme) {
+  List<Widget> getDay(CalendarData cd, ThemeData theme) {
     var background =
         theme.textTheme.bodyMedium?.backgroundColor ?? Colors.white;
     var isData = cd.items.isNotEmpty;
@@ -62,14 +69,26 @@ class CalendarDays extends StatelessWidget {
             color: background,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(6),
-              side: BorderSide(color: color, width: 3),
+              side: BorderSide(color: color, width: padWidth),
             ))
         : null;
-    var pad = !isData ? const EdgeInsets.only(top: 3) : null;
+    var pad = const EdgeInsets.only(top: padWidth);
+    var res = [
+      Container(
+          decoration: deco,
+          padding: (!isData ? pad : null),
+          child: Text(cd.date.day.toString(), textAlign: TextAlign.center))
+    ];
+    if (cd.date.day == 1) {
+      res.insert(0, getMonth(cd.date));
+    }
+    return res;
+  }
+
+  Container getMonth(DateTime date) {
     return Container(
-        decoration: deco,
-        padding: pad,
-        child: Text(cd.date.day.toString(), textAlign: TextAlign.center));
+        padding: const EdgeInsets.only(top: padWidth, left: padWidth),
+        child: Text("${date.getMonthABBR()}:"));
   }
 
   Widget emptyDataPlaceholder(ItemListStatus status, AppLocalizations t) {
