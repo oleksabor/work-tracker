@@ -60,8 +60,7 @@ class CalendarDays extends StatelessWidget {
   }
 
   List<Widget> getDay(CalendarData cd, ThemeData theme) {
-    var background =
-        theme.textTheme.bodyMedium?.backgroundColor ?? Colors.white;
+    var background = theme.colorScheme.surface;
     var isData = cd.items.isNotEmpty;
     var color = !isData ? background : Colors.green;
     var deco = isData
