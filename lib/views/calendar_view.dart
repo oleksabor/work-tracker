@@ -54,6 +54,9 @@ class CalendarDays extends StatelessWidget {
       res.add(getMonth(data.first.date));
     }
     for (var cd in data) {
+    if (cd.date.day == 1 && res.length > 1) {
+      res.insert(0, getMonth(cd.date));
+    }
       res.addAll(getDay(cd, theme));
     }
     return res;
@@ -78,9 +81,6 @@ class CalendarDays extends StatelessWidget {
           padding: (!isData ? pad : null),
           child: Text(cd.date.day.toString(), textAlign: TextAlign.center))
     ];
-    if (cd.date.day == 1) {
-      res.insert(0, getMonth(cd.date));
-    }
     return res;
   }
 
