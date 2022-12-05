@@ -48,13 +48,46 @@ class Calendar {
     }
     return res;
   }
+
+  /// updates [CalendarData.title] with text value
+  /// adds month name as first element and before 1st day of a month
+  List<CalendarData> getDataTitle(List<CalendarData> data) {
+    var res = <CalendarData>[];
+    for (var cd in data) {
+      if (cd.date.day == 1 || res.isEmpty) {
+        res.add(getMonth(cd));
+      }
+      cd.title = cd.date.day.toString();
+      res.add(cd);
+    }
+    return res;
+  }
+
+  CalendarData getMonth(CalendarData cd) {
+    return cd.copyWith(cd.date, <WorkKind>[], "${cd.date.getMonthABBR()}:");
+  }
 }
 
 class CalendarData {
   DateTime date;
   List<WorkKind> items;
 
-  CalendarData(this.date, this.items);
+  CalendarData(this.date, this.items, {this.title});
+
+  bool get isData => items.isNotEmpty;
+  String? title;
+
+  CalendarData copyWith(
+    DateTime? dt,
+    List<WorkKind>? items,
+    String? title,
+  ) {
+    return CalendarData(
+      dt ?? date,
+      items ?? this.items,
+      title: title ?? this.title,
+    );
+  }
 }
 
 /// helper class used to display calendar
