@@ -49,22 +49,13 @@ class CalendarDays extends StatelessWidget {
   static const double padWidth = 3;
 
   List<Widget> getDaysStrip(List<CalendarData> data, ThemeData theme) {
-    var res = <Widget>[];
-    if (data.isNotEmpty) {
-      res.add(getMonth(data.first.date));
-    }
-    for (var cd in data) {
-    if (cd.date.day == 1 && res.length > 1) {
-      res.add(getMonth(cd.date));
-    }
-      res.addAll(getDay(cd, theme));
-    }
-    return res;
+    var res = data.map((_) => getDay(_, theme));
+    return res.toList();
   }
 
-  List<Widget> getDay(CalendarData cd, ThemeData theme) {
+  Widget getDay(CalendarData cd, ThemeData theme) {
     var background = theme.colorScheme.surface;
-    var isData = cd.items.isNotEmpty;
+    var isData = cd.isData;
     var color = !isData ? background : Colors.green;
     var deco = isData
         ? ShapeDecoration(
@@ -75,19 +66,11 @@ class CalendarDays extends StatelessWidget {
             ))
         : null;
     var pad = const EdgeInsets.only(top: padWidth);
-    var res = [
-      Container(
-          decoration: deco,
-          padding: (!isData ? pad : null),
-          child: Text(cd.date.day.toString(), textAlign: TextAlign.center))
-    ];
+    var res = Container(
+        decoration: deco,
+        padding: (!isData ? pad : null),
+        child: Text(cd.title ?? "nd", textAlign: TextAlign.center));
     return res;
-  }
-
-  Container getMonth(DateTime date) {
-    return Container(
-        padding: const EdgeInsets.only(top: padWidth, left: padWidth),
-        child: Text("${date.getMonthABBR()}:"));
   }
 
   Widget emptyDataPlaceholder(ItemListStatus status, AppLocalizations t) {

@@ -27,6 +27,7 @@ class StripBloc extends Bloc<StripEvent, StripState> {
     var items = await wm.loadItems();
     var kinds = await wm.loadKinds();
     var data = ca.getData(items, kinds, event.when, event.daysBack);
+    data = ca.getDataTitle(data);
     emitter(
         state.copyWith(status: () => ItemListStatus.success, data: () => data));
   }
