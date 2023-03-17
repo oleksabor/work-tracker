@@ -1,3 +1,6 @@
+### 1.16.2
+- month name fixed for first day
+
 ### 1.16.0
 - calendar introduced on main screen
 - version number moved from the main screen to config page
