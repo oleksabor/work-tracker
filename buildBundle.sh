@@ -1,4 +1,9 @@
 # parses gitversion tool output for major, minor and patch
+##
+##
+## flutter 3.3.10
+## jdk-17
+
 json=$(gitversion)
 
 major=$(echo $json | jq '.Major')
