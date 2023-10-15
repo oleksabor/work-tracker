@@ -17,7 +17,7 @@ extension DateMethods on DateTime {
     var now = from ?? DateTime.now();
     var diff = now.difference(this);
 
-    if (now.day - day == 1) {
+    if (now.day - day == 1 && diff.inDays <= 1) {
       var format = DateFormat.jm(localeStr);
       return "Yesterday at ${format.format(this)}";
     }
