@@ -4,13 +4,13 @@
 ## flutter 3.3.10
 ## jdk-17
 
-json=$(gitversion)
+json=$(dotnet-gitversion)
 
-major=$(echo $json | jq '.Major')
-minor=$(echo $json | jq '.Minor')
-patch=$(echo $json | jq '.Patch')
-label=$(echo $json | jq '.PreReleaseLabelWithDash' | xargs)
-mmp=$(echo $json | jq '.MajorMinorPatch' | xargs)
+major=$(echo $json | jq-win64 '.Major')
+minor=$(echo $json | jq-win64 '.Minor')
+patch=$(echo $json | jq-win64 '.Patch')
+label=$(echo $json | jq-win64 '.PreReleaseLabelWithDash' | xargs)
+mmp=$(echo $json | jq-win64 '.MajorMinorPatch' | xargs)
 
 echo 'MajorMinorPatch: ' $mmp
 
@@ -40,4 +40,4 @@ echo $mmp ' => ' $mmp$label'+'$num
 
 flutter clean
 
-flutter build appbundle --build-name $mmp$label --build-number  $num
+flutter build appbundle --build-name $mmp$label --build-number  $num -t  lib/main.dart
