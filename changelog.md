@@ -1,3 +1,7 @@
+### 1.16.3
+- targetSdkVersion 33 #140
+- uesterday date calculation fixed #139
+
 ### 1.16.2
 - month name fixed for first day
 
