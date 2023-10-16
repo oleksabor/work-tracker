@@ -126,6 +126,7 @@ class WorkItemView extends StatelessWidget {
             value: value,
             decrementContent: t.decrementLabel,
             incrementContent: t.incrementLabel)
+          ..fontMulti = 1.5
       ]),
     );
   }
