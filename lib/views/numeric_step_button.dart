@@ -7,6 +7,9 @@ class NumericStepButton extends StatefulWidget {
   int? maxValue;
   int? value;
 
+  /// multiplier to increase font size (optional)
+  double? fontMulti;
+
   /// increment icon content description for screen readers
   String incrementContent;
 
@@ -133,7 +136,9 @@ class _NumericStepButtonState extends State<NumericStepButton> {
             widget.onChanged(counter);
             setState(() {});
           },
-        )..fraction = 0,
+        )
+          ..fraction = 0
+          ..fontMulti = widget.fontMulti,
         buildIcon((i, {int count = 0}) => increment(i, count: count), Icons.add,
             widget.incrementContent),
       ],
