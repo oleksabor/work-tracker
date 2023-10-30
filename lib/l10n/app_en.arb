@@ -71,5 +71,6 @@
     }
   },
   "scheduleFailed": "Failed to schedule notification",
-  "calendar": "Calendar"
+  "calendar": "Calendar",
+  "qtyWeightEqCap": "Qty with weight"
 }

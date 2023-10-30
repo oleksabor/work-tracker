@@ -6,6 +6,7 @@ class NumericStepButton extends StatefulWidget {
   int? minValue;
   int? maxValue;
   int? value;
+  bool? readOnly;
 
   /// multiplier to increase font size (optional)
   double? fontMulti;
@@ -23,6 +24,7 @@ class NumericStepButton extends StatefulWidget {
       this.minValue,
       this.maxValue,
       required this.onChanged,
+      this.readOnly,
       this.decrementContent = "",
       this.incrementContent = ""})
       : super(key: key);

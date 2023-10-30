@@ -23,9 +23,13 @@ class ChartViewModel {
   ChartData mapWI(WorkItem src, ConfigGraph cg) {
     var res = ChartData(src.created, value: src.qty.toDouble());
     if (cg.weight4graph && cg.bodyWeight > 0) {
-      res.value += res.value * src.weight / cg.bodyWeight;
+      res.value += weightIt(res.value, src.weight, cg.bodyWeight);
     }
     return res;
+  }
+
+  static double weightIt(double value, double weight, double bodyWeight) {
+    return value * weight / bodyWeight;
   }
 
   Map<DateTime, List<ChartData>> groupByDate(

@@ -1,4 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:work_tracker/classes/chart_view_model.dart';
+import 'package:work_tracker/classes/config.dart';
+import 'package:work_tracker/classes/config_model.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:work_tracker/classes/edit_item_status.dart';
 import 'package:work_tracker/classes/items_list/list_bloc.dart';
@@ -9,6 +12,7 @@ import 'package:work_tracker/classes/work_item/item_event.dart';
 import 'package:work_tracker/classes/work_item/item_state.dart';
 import 'package:work_tracker/classes/work_kind.dart';
 import 'package:work_tracker/classes/work_view_model.dart';
+import 'package:work_tracker/views/numeric_edit.dart';
 import 'package:work_tracker/views/numeric_step_button.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -48,6 +52,8 @@ class WorkItemView extends StatelessWidget {
   WorkItemView({super.key});
 
   late EditItemState state;
+
+  Config? config;
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +97,21 @@ class WorkItemView extends StatelessWidget {
           0,
           t),
     ];
+    var weighted =
+        bloc.state.weight > 0 && config != null && config!.graph.bodyWeight > 0
+            ? NumericEdit(
+                t.qtyWeightEqCap,
+                bloc.state.qty +
+                    ChartViewModel.weightIt(bloc.state.qty.toDouble(),
+                        bloc.state.weight, config!.graph.bodyWeight),
+                readOnly: true,
+              )
+            : const SizedBox(height: 48);
+    res.add(Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [weighted])));
     if (!item.created.isSameDay(DateTime.now())) {
       res.add(Padding(
         padding: const EdgeInsets.all(16.0),

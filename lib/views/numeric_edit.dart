@@ -10,12 +10,18 @@ class NumericEdit extends StatefulWidget {
   Function(double)? onSubmitted;
   final double? min;
   final double? max;
+  bool? readOnly;
 
   /// multiplier to increase font size (optional)
   double? fontMulti;
 
   NumericEdit(this.title, this.value,
-      {this.onChanged, this.onSubmitted, this.min, this.max, Key? key})
+      {this.onChanged,
+      this.onSubmitted,
+      this.min,
+      this.max,
+      this.readOnly,
+      Key? key})
       : super(key: key);
 
   @override
@@ -69,6 +75,7 @@ class _NumericEditState extends State<NumericEdit> {
           child: TextFormField(
             textAlign: TextAlign.center,
             style: style,
+            readOnly: widget.readOnly ?? false,
             controller: textController,
             validator: validateText,
             keyboardType: const TextInputType.numberWithOptions(
