@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:work_tracker/classes/config.dart';
+import 'package:work_tracker/classes/config_model.dart';
 import 'package:work_tracker/classes/date_extension.dart';
 import 'package:work_tracker/classes/edit_item_status.dart';
 import 'package:work_tracker/classes/items_list/list_bloc.dart';
@@ -60,36 +62,41 @@ class WorkItemView extends StatelessWidget {
         appBar: AppBar(
           title: Text(state.workKind.title),
         ),
-        body: Builder(builder: (context) {
-          var rows = buildRows(state.initialItem!, t, context);
-          rows.add(Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ElevatedButton(
-              onPressed: state.status.isLoadingOrSuccess
-                  ? null
-                  : () => context.read<EditItemBloc>().add(ItemAdded()),
-              child: Text(t.okCap),
-            ),
-          ));
-          var res = Center(
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center, children: rows));
-          return res;
-        }));
+        body: FutureBuilder<Config>(
+            future: RepositoryProvider.of<ConfigModel>(context).load(),
+            builder: (context, snapshot) {
+              var config = snapshot.hasData ? snapshot.data : null;
+              var rows = buildRows(state.initialItem!, t, context, config);
+              rows.add(Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
+                  onPressed: state.status.isLoadingOrSuccess
+                      ? null
+                      : () => context.read<EditItemBloc>().add(ItemAdded()),
+                  child: Text(t.okCap),
+                ),
+              ));
+              var res = Center(
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: rows));
+              return res;
+            }));
   }
 
   List<Widget> buildRows(
-      WorkItem item, AppLocalizations t, BuildContext context) {
+      WorkItem item, AppLocalizations t, BuildContext context, Config? config) {
     final bloc = context.read<EditItemBloc>();
     var res = [
-      buildNumericRow(
-          t.qtyCap, (v) => bloc.add(ItemQtyChanged(v)), bloc.state.qty, 1, t),
+      buildNumericRow(t.qtyCap, (v) => bloc.add(ItemQtyChanged(v)),
+          bloc.state.qty, 1, t, config?.ui.qtyFontMulti),
       buildNumericRow(
           t.weightCap,
           (v) => bloc.add(ItemWeightChanged(v.toDouble())),
           bloc.state.weight.toInt(),
           0,
-          t),
+          t,
+          config?.ui.qtyFontMulti),
     ];
     if (!item.created.isSameDay(DateTime.now())) {
       res.add(Padding(
@@ -115,7 +122,7 @@ class WorkItemView extends StatelessWidget {
   late WorkItem item;
 
   Widget buildNumericRow(String caption, Function(int) diff, int value,
-      final int minValue, AppLocalizations t) {
+      final int minValue, AppLocalizations t, double? fontSizeMulti) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -126,7 +133,7 @@ class WorkItemView extends StatelessWidget {
             value: value,
             decrementContent: t.decrementLabel,
             incrementContent: t.incrementLabel)
-          ..fontMulti = 1.5
+          ..fontSizeMulti = 1.5
       ]),
     );
   }

@@ -1,37 +1,30 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'config_graph.dart';
+part of 'config_ui.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class ConfigGraphAdapter extends TypeAdapter<ConfigGraph> {
+class ConfigUIAdapter extends TypeAdapter<ConfigUI> {
   @override
-  final int typeId = 3;
+  final int typeId = 7;
 
   @override
-  ConfigGraph read(BinaryReader reader) {
+  ConfigUI read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return ConfigGraph()
-      ..weight4graph = fields[0] as bool
-      ..bodyWeight = fields[1] as double
-      ..bodyWeightList = (fields[2] as List).cast<WeightBody>();
+    return ConfigUI()..qtyFontMulti = fields[0] as double;
   }
 
   @override
-  void write(BinaryWriter writer, ConfigGraph obj) {
+  void write(BinaryWriter writer, ConfigUI obj) {
     writer
-      ..writeByte(3)
-      ..writeByte(0)
-      ..write(obj.weight4graph)
       ..writeByte(1)
-      ..write(obj.bodyWeight)
-      ..writeByte(2)
-      ..write(obj.bodyWeightList);
+      ..writeByte(0)
+      ..write(obj.qtyFontMulti);
   }
 
   @override
@@ -40,7 +33,7 @@ class ConfigGraphAdapter extends TypeAdapter<ConfigGraph> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ConfigGraphAdapter &&
+      other is ConfigUIAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

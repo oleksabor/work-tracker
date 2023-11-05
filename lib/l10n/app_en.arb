@@ -71,5 +71,8 @@
     }
   },
   "scheduleFailed": "Failed to schedule notification",
-  "calendar": "Calendar"
+  "calendar": "Calendar",
+  "fontSizeLabel": "Font size",
+  "sampleLabel": "Sample",
+  "uiLabel": "UI"
 }

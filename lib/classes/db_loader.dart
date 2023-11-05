@@ -4,6 +4,7 @@ import 'package:work_tracker/classes/config.dart';
 import 'package:work_tracker/classes/config_graph.dart';
 import 'package:work_tracker/classes/config_log.dart';
 import 'package:work_tracker/classes/config_notify.dart';
+import 'package:work_tracker/classes/config_ui.dart';
 import 'package:work_tracker/classes/weight_body.dart';
 import 'package:work_tracker/classes/work_item.dart';
 import 'package:work_tracker/classes/work_kind.dart';
@@ -100,6 +101,7 @@ class DbLoader {
         Hive.registerAdapter(ConfigGraphAdapter());
         Hive.registerAdapter(ConfigLogAdapter());
         Hive.registerAdapter(ConfigNotifyAdapter());
+        Hive.registerAdapter(ConfigUIAdapter());
       });
       initialized = true;
     }

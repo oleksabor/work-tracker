@@ -12,10 +12,15 @@ class NumericEdit extends StatefulWidget {
   final double? max;
 
   /// multiplier to increase font size (optional)
-  double? fontMulti;
+  double? fontSizeMulti;
 
   NumericEdit(this.title, this.value,
-      {this.onChanged, this.onSubmitted, this.min, this.max, Key? key})
+      {this.onChanged,
+      this.onSubmitted,
+      this.min,
+      this.max,
+      this.fontSizeMulti,
+      Key? key})
       : super(key: key);
 
   @override
@@ -60,12 +65,12 @@ class _NumericEditState extends State<NumericEdit> {
     var txtTheme = Theme.of(context).textTheme;
     var body = txtTheme.bodyText1 ?? txtTheme.bodyText2;
     var fontSize = body?.fontSize;
-    var style = widget.fontMulti == null
+    var style = widget.fontSizeMulti == null
         ? const TextStyle()
-        : TextStyle(fontSize: fontSize! * 1.5);
+        : TextStyle(fontSize: fontSize! * widget.fontSizeMulti!);
     var children = <Widget>[
       SizedBox(
-          width: 50,
+          width: 75, //TODO calculate width dynamically ?
           child: TextFormField(
             textAlign: TextAlign.center,
             style: style,
@@ -101,6 +106,8 @@ class _NumericEditState extends State<NumericEdit> {
     if (widget.title != null) {
       children.insert(0, Text(widget.title!));
     }
+    //TODO throws FlutterError (setState() or markNeedsBuild() called during build.
+    //when debugging
     textController.value =
         textController.value.copyWith(text: widgetValueAsString);
     return Row(

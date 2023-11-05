@@ -16,20 +16,13 @@ class ConfigNotifyAdapter extends TypeAdapter<ConfigNotify> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    try {
-      return ConfigNotify()
-        ..volume = fields[0] as double
-        ..notification = fields[1] as String
-        ..playAfterNewResult = fields[2] as bool
-        ..delay = fields[3] as int
-        ..kind = NotificationKind.values[fields[4] as int]
-        ..asAlarm = fields[5];
-    } catch (e) {
-      if (kDebugMode) {
-        print("failed to read configNotify ${e.toString()}");
-      }
-      return ConfigNotify();
-    }
+    return ConfigNotify()
+      ..volume = fields[0] as double
+      ..notification = fields[1] as String
+      ..delay = fields[2] as int
+      ..playAfterNewResult = fields[3] as bool
+      ..kind = fields[4] as NotificationKind
+      ..asAlarm = fields[5] as bool;
   }
 
   @override
@@ -41,11 +34,11 @@ class ConfigNotifyAdapter extends TypeAdapter<ConfigNotify> {
       ..writeByte(1)
       ..write(obj.notification)
       ..writeByte(2)
-      ..write(obj.playAfterNewResult)
-      ..writeByte(3)
       ..write(obj.delay)
+      ..writeByte(3)
+      ..write(obj.playAfterNewResult)
       ..writeByte(4)
-      ..write(obj.kind.index)
+      ..write(obj.kind)
       ..writeByte(5)
       ..write(obj.asAlarm);
   }

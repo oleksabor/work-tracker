@@ -5,12 +5,15 @@ import 'package:work_tracker/classes/config.dart';
 import 'package:work_tracker/classes/config_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:work_tracker/classes/config_notify.dart';
+import 'package:work_tracker/classes/config_ui.dart';
 import 'package:work_tracker/classes/notify_model.dart';
+import 'package:work_tracker/views/numeric_edit.dart';
 import 'package:work_tracker/views/numeric_step_button.dart';
 import 'package:simple_logger/simple_logger.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 part 'config_page_notification.dart';
+part 'config_page_ui.dart';
 
 class ConfigPage extends StatefulWidget {
   const ConfigPage({super.key});
@@ -27,6 +30,7 @@ class ConfigPageState extends State<ConfigPage> {
   late Future<SimpleLogger> loggerF; // = getIt.getAsync<SimpleLogger>();
   SimpleLogger? logger;
   late NotifyModel notifyModel; // = getIt.get<NotifyModel>();
+  double _fontSizeMulti = 0;
 
   @override
   void initState() {
@@ -63,6 +67,7 @@ class ConfigPageState extends State<ConfigPage> {
       t!.titleConfigChart: buildChartsTab,
       t.titleConfigNotify: buildNotifyTab,
       t.titleConfigLog: buildLogsTab,
+      t.uiLabel: buildUITab,
     };
     return WillPopScope(
         onWillPop: () async {
@@ -138,6 +143,11 @@ class ConfigPageState extends State<ConfigPage> {
   }
 
   late IgnorePointer weightPointer;
+
+  Widget buildUITab(BuildContext context, Config? config) {
+    var t = AppLocalizations.of(context)!;
+    return Column(children: uiControls(t, config!.ui));
+  }
 
   Widget buildLogsTab(BuildContext context, Config? config) {
     var t = AppLocalizations.of(context)!;

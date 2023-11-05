@@ -16,14 +16,9 @@ class WeightBodyAdapter extends TypeAdapter<WeightBody> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    var res = WeightBody();
-    if (fields[0] != null) {
-      res.date = fields[0] as DateTime;
-    }
-    if (fields[1] != null) {
-      res.weight = fields[1] as double;
-    }
-    return res;
+    return WeightBody()
+      ..date = fields[0] as DateTime
+      ..weight = fields[1] as double;
   }
 
   @override

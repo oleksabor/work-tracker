@@ -6,4 +6,7 @@ class HiveTypesEnum {
   static const int configLog = 4;
   static const int configNotify = 5;
   static const int weightBody = 6;
+  static const int configUI = 7;
 }
+
+// adapter has to be registered in the DbLoader.openBox
