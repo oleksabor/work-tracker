@@ -72,7 +72,7 @@
   },
   "scheduleFailed": "Помилка з створення нотифікації",
   "calendar": "Календар",
-  "fontSize": "Розмір шрифта",
+  "fontSizeLabel": "Розмір шрифта",
   "sampleLabel": "Приклад",
   "uiLabel": "UI"
 }
