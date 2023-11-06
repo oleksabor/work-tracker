@@ -30,7 +30,6 @@ class ConfigPageState extends State<ConfigPage> {
   late Future<SimpleLogger> loggerF; // = getIt.getAsync<SimpleLogger>();
   SimpleLogger? logger;
   late NotifyModel notifyModel; // = getIt.get<NotifyModel>();
-  double _fontSizeMulti = 0;
 
   @override
   void initState() {

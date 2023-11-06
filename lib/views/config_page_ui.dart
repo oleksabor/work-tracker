@@ -3,28 +3,28 @@ part of 'config_page.dart';
 extension ConfigPageUI on ConfigPageState {
 // those controls are arranged in a column
   List<Widget> uiControls(AppLocalizations t, ConfigUI config) {
-    if (_fontSizeMulti == 0) _fontSizeMulti = config.qtyFontMulti;
-    if (_fontSizeMulti == 0) _fontSizeMulti = 1;
+    var qtyFontMulti = config.qtyFontMulti;
+    if (qtyFontMulti == 0) qtyFontMulti = 1.0;
 
     List<Widget> res = [
       const SizedBox(height: 25),
       Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
         Text(t.fontSizeLabel),
         Slider(
-          value: _fontSizeMulti,
+          value: qtyFontMulti,
           min: 1,
           max: 4,
           divisions: 6,
-          label: _fontSizeMulti.toString(),
+          label: qtyFontMulti.toString(),
           onChanged: (double value) {
             setState(() {
-              _fontSizeMulti = value;
+              qtyFontMulti = config.qtyFontMulti = value;
             });
           },
         ),
       ]),
-      NumericEdit(t.sampleLabel, _fontSizeMulti)
-        ..fontSizeMulti = _fontSizeMulti
+      NumericEdit(t.sampleLabel, qtyFontMulti)
+        ..fontSizeMulti = qtyFontMulti
         ..fraction = 1,
     ];
     return res;
