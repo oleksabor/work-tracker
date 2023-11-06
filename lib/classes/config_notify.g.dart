@@ -21,7 +21,7 @@ class ConfigNotifyAdapter extends TypeAdapter<ConfigNotify> {
       ..notification = fields[1] as String
       ..delay = fields[2] as int
       ..playAfterNewResult = fields[3] as bool
-      ..kind = fields[4] as NotificationKind
+      ..kind = NotificationKind.values[fields[4] as int]
       ..asAlarm = fields[5] as bool;
   }
 
@@ -38,7 +38,7 @@ class ConfigNotifyAdapter extends TypeAdapter<ConfigNotify> {
       ..writeByte(3)
       ..write(obj.playAfterNewResult)
       ..writeByte(4)
-      ..write(obj.kind)
+      ..write(obj.kind.index)
       ..writeByte(5)
       ..write(obj.asAlarm);
   }
